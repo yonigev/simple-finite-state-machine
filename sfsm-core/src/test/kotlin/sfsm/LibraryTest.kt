@@ -3,8 +3,9 @@
  */
 package sfsm
 
-class Library {
-    fun someLibraryMethod(): Boolean {
-        return true
-    }
+import kotlin.test.Test
+import kotlin.test.assertTrue
+
+class LibraryTest {
+
 }
