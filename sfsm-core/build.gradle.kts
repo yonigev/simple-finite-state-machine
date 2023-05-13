@@ -1,8 +1,18 @@
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.8.10"
+    id("com.diffplug.spotless") version "6.18.0"
     `java-library`
 }
 
+configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+    kotlin {
+        ktfmt()
+        ktlint()
+    }
+    kotlinGradle {
+        ktlint()
+    }
+}
 repositories {
     mavenCentral()
 }
@@ -12,6 +22,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
     api("org.apache.commons:commons-math3:3.6.1")
     implementation("com.google.guava:guava:31.1-jre")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+    implementation("ch.qos.logback:logback-classic:1.4.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
