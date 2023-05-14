@@ -9,3 +9,12 @@ import statemachine.context.StateMachineContext
 interface Guard<S, T> {
     fun evaluate(stateMachineContext: StateMachineContext<S, T>): Boolean
 }
+
+
+fun <S, T> ofPredicate(predicate: () -> Boolean): Guard<S, T> {
+    return object : Guard<S, T> {
+        override fun evaluate(stateMachineContext: StateMachineContext<S, T>): Boolean {
+            return predicate()
+        }
+    }
+}

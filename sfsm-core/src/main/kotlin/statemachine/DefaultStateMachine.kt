@@ -7,14 +7,14 @@ import statemachine.exception.StateMachineException
 import statemachine.state.State
 import statemachine.transition.DefaultTransitionContext
 import statemachine.transition.TransitionContext
-import statemachine.transition.TransitionSet
+import statemachine.transition.TransitionMap
 import statemachine.trigger.Trigger
 
 class DefaultStateMachine<S, T>(
     override val id: String,
     initialState: State<S>,
     val states: Collection<State<S>>,
-    private val transitions: TransitionSet<S, T>,
+    private val transitions: TransitionMap<S, T>,
 ) : StateMachine<S, T> {
     private val log = LoggerFactory.getLogger(this.javaClass)
     private var started = false

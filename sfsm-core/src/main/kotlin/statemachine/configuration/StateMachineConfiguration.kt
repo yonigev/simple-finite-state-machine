@@ -1,10 +1,10 @@
 package statemachine.configuration
 
 import statemachine.state.State
-import statemachine.transition.TransitionSet
+import statemachine.transition.Transition
 
-class StateMachineConfiguration<S, T> {
-    lateinit var initialState: State<S>
-    lateinit var states: Set<State<S>>
-    lateinit var transitions: TransitionSet<S, T>
+interface StateMachineConfiguration<S, T> {
+    fun initial(initialState: State<S>): StateMachineConfiguration<S, T>
+    fun states(vararg states: State<S>): StateMachineConfiguration<S, T>
+    fun transitions(vararg transitions: Transition<S, T>): StateMachineConfiguration<S, T>
 }
