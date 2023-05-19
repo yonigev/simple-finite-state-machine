@@ -7,7 +7,7 @@ class DefaultStateMachineContext<S, T>(
     override var state: State<S>,
     private val properties: MutableMap<Any, Any> = mutableMapOf(),
 ) : StateMachineContext<S, T> {
-    override fun transitionState(state: State<S>): State<S> {
+    override fun transitionToState(state: State<S>): State<S> {
         this.state = state
         return this.state
     }

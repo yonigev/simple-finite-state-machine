@@ -26,6 +26,9 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.0")
 }
 
+tasks.test {
+    useJUnitPlatform()
+}
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
