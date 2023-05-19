@@ -12,5 +12,5 @@ interface TransitionsConfiguration<S, T> {
     /**
      * Returns the configured transition definitions
      */
-    fun getTransitionDefinitions(): Set<Transition<S, T>>
+    fun getTransitions(): Set<Transition<S, T>>
 }

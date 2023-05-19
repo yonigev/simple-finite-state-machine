@@ -1,4 +1,3 @@
 package statemachine.configuration
 
-class StateMachineConfigurationException(s: String?) : IllegalArgumentException(s) {
-}
+class StateMachineConfigurationException(s: String?) : IllegalArgumentException(s)

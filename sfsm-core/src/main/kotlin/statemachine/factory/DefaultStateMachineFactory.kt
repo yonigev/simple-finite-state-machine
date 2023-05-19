@@ -4,8 +4,6 @@ import org.slf4j.LoggerFactory
 import statemachine.DefaultStateMachine
 import statemachine.StateMachine
 import statemachine.configuration.StateMachineConfiguration
-import statemachine.configuration.StateMachineConfigurationException
-import statemachine.state.State
 
 /**
  * A default StateMachineFactory implementation

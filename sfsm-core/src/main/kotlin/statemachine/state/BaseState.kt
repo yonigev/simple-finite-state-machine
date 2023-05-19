@@ -2,7 +2,7 @@ package statemachine.state
 import statemachine.state.State.Type
 class BaseState<S> private constructor(
     private val id: S,
-    private val type: Type = Type.STANDARD
+    private val type: Type = Type.STANDARD,
 ) : State<S> {
     override fun getId(): S {
         return id

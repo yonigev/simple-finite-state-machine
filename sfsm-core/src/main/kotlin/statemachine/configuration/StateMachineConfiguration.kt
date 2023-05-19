@@ -3,7 +3,6 @@ package statemachine.configuration
 import statemachine.configuration.state.StatesConfiguration
 import statemachine.configuration.transition.TransitionsConfiguration
 import statemachine.state.State
-import statemachine.transition.Transition
 import statemachine.transition.TransitionMap
 
 /**
@@ -14,6 +13,7 @@ interface StateMachineConfiguration<S, T> {
     var finalized: Boolean
     var states: Set<State<S>>
     var transitionMap: TransitionMap<S, T>
+
     /**
      * Return a states configurator
      */

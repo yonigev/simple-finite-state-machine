@@ -15,14 +15,12 @@ class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
     }
 
     override fun setTerminal(state: S) {
-        BaseState.end(state)
+        BaseState.end(state).also { states.add(it) }
     }
 
     override fun add(state: S) {
         states.add(BaseState.create(state))
     }
-
-
 
     /**
      * Return an *immutable* State set

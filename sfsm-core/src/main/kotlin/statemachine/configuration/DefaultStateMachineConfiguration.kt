@@ -25,7 +25,7 @@ class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
     override fun configureStates(): StatesConfiguration<S, T> {
         if (finalized) {
             "State Machine Configuration already finalized".also {
-                log.error(it);
+                log.error(it)
                 throw StateMachineConfigurationException(it)
             }
         }
@@ -35,7 +35,7 @@ class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
     override fun configureTransitions(): TransitionsConfiguration<S, T> {
         if (finalized) {
             "State Machine Configuration already finalized".also {
-                log.error(it);
+                log.error(it)
                 throw StateMachineConfigurationException(it)
             }
         }
@@ -43,15 +43,12 @@ class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
     }
 
     override fun finalize() {
-        validateConfiguration()
-        this.initialState = states.first { State.Type.INITIAL == it.getType() }
-        this.transitionMap = TransitionMap(transitionsConfiguration.getTransitionDefinitions())
-        finalized = true
-    }
-
-    private fun validateConfiguration() {
         validateStates()
+        this.states = statesConfiguration.getStates()
+        this.initialState = statesConfiguration.getStates().first { State.Type.INITIAL == it.getType() }
         validateTransitions()
+        this.transitionMap = TransitionMap(transitionsConfiguration.getTransitions())
+        finalized = true
     }
 
     /**
@@ -65,15 +62,15 @@ class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
         // Validate there is 1 INITIAL state
         if (initialStates.size != 1) {
             "Invalid number of INIITIAL states!: $initialStates".also {
-                    log.error(it); throw StateMachineConfigurationException(it)
-                }
+                log.error(it); throw StateMachineConfigurationException(it)
+            }
         }
 
         // Validate there is at least 1 END state
         if (endStates.isEmpty()) {
             "Invalid number of END states!: $endStates".also {
-                    log.error(it); throw StateMachineConfigurationException(it)
-                }
+                log.error(it); throw StateMachineConfigurationException(it)
+            }
         }
     }
 
@@ -81,19 +78,20 @@ class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
      * Validate that the transitions configuration is valid
      */
     private fun validateTransitions() {
-        val transitions = transitionsConfiguration.getTransitionDefinitions()
-        val transitionStates = transitions.map { setOf(it.source, it.target) }.flatten().toHashSet()
+        val transitions = transitionsConfiguration.getTransitions()
+        val transitionStates: Set<S> = transitions.map { setOf(it.source, it.target) }.flatten().toHashSet()
+        val stateIds = this.states.map { it.getId() }
 
         if (transitions.firstOrNull { it.source == it.target } != null) {
             throw StateMachineConfigurationException("Simple Finite State Machine does not currently support self transitions.")
         }
 
-        if (transitionStates != states && (transitionStates + states).size > states.size) {
+        if (transitionStates != stateIds && (transitionStates + stateIds).size > states.size) {
             "Some transition states: $transitionStates are not defined in the states set: $states".let {
-                    throw StateMachineConfigurationException(
-                        it
-                    )
-                }
+                throw StateMachineConfigurationException(
+                    it,
+                )
+            }
         }
     }
 }
