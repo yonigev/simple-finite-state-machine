@@ -12,10 +12,12 @@ import statemachine.trigger.Trigger
 
 class DefaultStateMachine<S, T>(
     override val id: String,
-    initialState: State<S>,
-    val states: Collection<State<S>>,
+    states: Collection<State<S>>,
     private val transitions: TransitionMap<S, T>,
 ) : StateMachine<S, T> {
+    private val initialState = states.first { State.Type.TERMINAL == it.getType() }
+    private val stateMap: Map<S, State<S>> = states.associateBy { it.getId() }
+
     private val log = LoggerFactory.getLogger(this.javaClass)
     private var started = false
     private val context: StateMachineContext<S, T> = DefaultStateMachineContext(initialState)
@@ -33,7 +35,7 @@ class DefaultStateMachine<S, T>(
 
     override fun trigger(trigger: Trigger<T>): State<S> {
         val state = context.state
-        val transition = transitions.getTransition(state, trigger)
+        val transition = transitions.getTransition(state.getId(), trigger.getId())
         if (transition == null) {
             log.debug("No transition found for state: {} and trigger: {}", state, trigger)
             return state
@@ -44,7 +46,7 @@ class DefaultStateMachine<S, T>(
         try {
             val shouldPerformTransition = evaluate(transitionContext)
             if (shouldPerformTransition) {
-                val newState = context.transitionState(transition.target)
+                val newState = context.transitionToState(stateMap[transition.target]!!)
                 transition.actions.forEach { it.act() }
                 return newState
             }

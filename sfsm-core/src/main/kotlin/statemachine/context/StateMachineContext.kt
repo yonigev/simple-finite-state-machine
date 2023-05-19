@@ -8,7 +8,7 @@ import statemachine.state.State
  */
 interface StateMachineContext<S, T> {
     val state: State<S>
-    fun transitionState(state: State<S>): State<S>
+    fun transitionToState(state: State<S>): State<S>
     fun getProperty(key: Any): Any?
     fun setProperty(key: Any, value: Any): Any
 }

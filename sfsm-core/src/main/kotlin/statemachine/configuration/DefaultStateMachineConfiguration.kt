@@ -1,8 +1,11 @@
 package statemachine.configuration
 
-import statemachine.state.BaseState
+import org.slf4j.LoggerFactory
+import statemachine.configuration.state.DefaultStatesConfiguration
+import statemachine.configuration.state.StatesConfiguration
+import statemachine.configuration.transition.DefaultTransitionsConfiguration
+import statemachine.configuration.transition.TransitionsConfiguration
 import statemachine.state.State
-import statemachine.transition.Transition
 import statemachine.transition.TransitionMap
 
 /**
@@ -10,54 +13,87 @@ import statemachine.transition.TransitionMap
  * Contains all necessary properties to build a [statemachine.StateMachine]
  */
 class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
-    lateinit var initialState: State<S>
-    lateinit var states: Set<State<S>>
-    lateinit var transitions: TransitionMap<S, T>
+    private val statesConfiguration = DefaultStatesConfiguration<S, T>()
+    private val transitionsConfiguration = DefaultTransitionsConfiguration<S, T>()
+    private val log = LoggerFactory.getLogger(this.javaClass)
 
-    companion object {
-        operator fun <S, T> invoke(
-            initialState: State<S>,
-            states: Set<State<S>>,
-            transitionMap: TransitionMap<S, T>
-        ): DefaultStateMachineConfiguration<S, T> {
-            validate(initialState, states, transitionMap)
-            return DefaultStateMachineConfiguration<S, T>()
-                .also {
-                    it.initialState = initialState
-                    it.states = states
-                    it.transitions = transitionMap
+    private var initialState: State<S>? = null
+    override lateinit var states: Set<State<S>>
+    override lateinit var transitionMap: TransitionMap<S, T>
+    override var finalized: Boolean = false
+
+    override fun configureStates(): StatesConfiguration<S, T> {
+        if (finalized) {
+            "State Machine Configuration already finalized".also {
+                log.error(it);
+                throw StateMachineConfigurationException(it)
+            }
+        }
+        return statesConfiguration
+    }
+
+    override fun configureTransitions(): TransitionsConfiguration<S, T> {
+        if (finalized) {
+            "State Machine Configuration already finalized".also {
+                log.error(it);
+                throw StateMachineConfigurationException(it)
+            }
+        }
+        return transitionsConfiguration
+    }
+
+    override fun finalize() {
+        validateConfiguration()
+        this.initialState = states.first { State.Type.INITIAL == it.getType() }
+        this.transitionMap = TransitionMap(transitionsConfiguration.getTransitionDefinitions())
+        finalized = true
+    }
+
+    private fun validateConfiguration() {
+        validateStates()
+        validateTransitions()
+    }
+
+    /**
+     * Validate that the states configuration is valid
+     */
+    private fun validateStates() {
+        val states = statesConfiguration.getStates()
+        val initialStates = states.filter { State.Type.INITIAL == it.getType() }
+        val endStates = states.filter { State.Type.TERMINAL == it.getType() }
+
+        // Validate there is 1 INITIAL state
+        if (initialStates.size != 1) {
+            "Invalid number of INIITIAL states!: $initialStates".also {
+                    log.error(it); throw StateMachineConfigurationException(it)
                 }
         }
 
-        private fun <S, T> validate(initialState: State<S>, states: Set<State<S>>, transitionMap: TransitionMap<S, T>) {
-            val transitions = transitionMap.getTransitionSet()
-            val transitionStates = transitions.map { setOf(it.source, it.target) }.flatten().toHashSet()
-
-            if (transitions.firstOrNull { it.source.getId() == it.target.getId() } != null) {
-                throw StateMachineConfigurationException("Simple Finite State Machine does not currently support self transitions.")
-            }
-
-            // validate states
-            if (transitionStates != states && (transitionStates + states).size > states.size) {
-                "Some transition states: $transitionStates are not defined in the states set: $states"
-                    .let { throw StateMachineConfigurationException(it) }
-            }
-
+        // Validate there is at least 1 END state
+        if (endStates.isEmpty()) {
+            "Invalid number of END states!: $endStates".also {
+                    log.error(it); throw StateMachineConfigurationException(it)
+                }
         }
     }
 
-    override fun initial(initialState: State<S>): StateMachineConfiguration<S, T> {
-        this.initialState = initialState
-        return this
-    }
+    /**
+     * Validate that the transitions configuration is valid
+     */
+    private fun validateTransitions() {
+        val transitions = transitionsConfiguration.getTransitionDefinitions()
+        val transitionStates = transitions.map { setOf(it.source, it.target) }.flatten().toHashSet()
 
-    override fun states(vararg states: State<S>): StateMachineConfiguration<S, T> {
-        this.states = states.toSet()
-        return this
-    }
+        if (transitions.firstOrNull { it.source == it.target } != null) {
+            throw StateMachineConfigurationException("Simple Finite State Machine does not currently support self transitions.")
+        }
 
-    override fun transitions(vararg transitions: Transition<S, T>): StateMachineConfiguration<S, T> {
-        this.transitions = TransitionMap(transitions.toSet())
-        return this
+        if (transitionStates != states && (transitionStates + states).size > states.size) {
+            "Some transition states: $transitionStates are not defined in the states set: $states".let {
+                    throw StateMachineConfigurationException(
+                        it
+                    )
+                }
+        }
     }
 }

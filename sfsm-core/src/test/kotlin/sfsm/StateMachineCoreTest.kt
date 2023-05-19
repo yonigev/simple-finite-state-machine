@@ -5,25 +5,37 @@ package sfsm
 
 
 import org.junit.jupiter.api.Test
-import sfsm.State.*
+import statemachine.StateMachine
 import statemachine.configuration.DefaultStateMachineConfiguration
+import statemachine.configuration.transition.DefaultTransitionsConfiguration
+import statemachine.factory.DefaultStateMachineFactory
 import statemachine.guard.ofPredicate
-import statemachine.transition.DefaultTransition
 
 class StateMachineCoreTest {
+    private val positiveGuard = ofPredicate<State, Trigger> { true }
+
 
     @Test
     fun testStateMachineConstruction() {
         val config = DefaultStateMachineConfiguration<State, Trigger>()
-        val positiveGuard = ofPredicate<State, Trigger> { true }
+        val factory = DefaultStateMachineFactory(config)
 
-//        config.initial(INITIAL)
-//        config.states(INITIAL, STATE_A, STATE_B, TERMINAL_STATE)
-//
-//        config.transitions(DefaultTransition(INITIAL, STATE_A, MOVE_TO_A))
+        config.configureStates().also {
+            it.setInitial(State.INITIAL)
+            it.add(State.STATE_A)
+            it.add(State.STATE_B)
+            it.setTerminal(State.TERMINAL_STATE)
+        }
+
+        (config.configureTransitions() as (DefaultTransitionsConfiguration)).also {
+            it.add(State.INITIAL, State.STATE_A, Trigger.MOVE_TO_A, positiveGuard)
+            it.add(State.STATE_A, State.STATE_B, Trigger.MOVE_TO_B, positiveGuard)
+            it.add(State.STATE_B, State.TERMINAL_STATE, Trigger.END, positiveGuard)
+        }
+
+        val sm : StateMachine<State, Trigger> = factory.create("TEST_ID")
 
     }
-
 }
 
 enum class State {
