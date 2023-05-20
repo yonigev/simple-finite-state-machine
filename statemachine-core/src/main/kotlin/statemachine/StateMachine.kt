@@ -9,7 +9,7 @@ interface StateMachine<S, T> {
     val state: State<S>
 
     /** Trigger a state machine to run */
-    fun trigger(trigger: Trigger<T>): State<S>
+    fun trigger(trigger: Trigger<T>?): State<S>
     fun start()
     fun stop()
 }
