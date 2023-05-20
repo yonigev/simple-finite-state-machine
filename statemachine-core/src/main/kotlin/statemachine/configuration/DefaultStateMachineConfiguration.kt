@@ -20,11 +20,11 @@ class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
     private var initialState: State<S>? = null
     override lateinit var states: Set<State<S>>
     override lateinit var transitionMap: TransitionMap<S, T>
-    override var finalized: Boolean = false
+    override var processed: Boolean = false
 
     override fun configureStates(): StatesConfiguration<S, T> {
-        if (finalized) {
-            "State Machine Configuration already finalized".also {
+        if (processed) {
+            "State Machine Configuration already processed".also {
                 log.error(it)
                 throw StateMachineConfigurationException(it)
             }
@@ -33,8 +33,8 @@ class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
     }
 
     override fun configureTransitions(): TransitionsConfiguration<S, T> {
-        if (finalized) {
-            "State Machine Configuration already finalized".also {
+        if (processed) {
+            "State Machine Configuration already processed".also {
                 log.error(it)
                 throw StateMachineConfigurationException(it)
             }
@@ -42,13 +42,13 @@ class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
         return transitionsConfiguration
     }
 
-    override fun finalize() {
+    override fun process() {
         validateStates()
         this.states = statesConfiguration.getStates()
         this.initialState = statesConfiguration.getStates().first { State.Type.INITIAL == it.getType() }
         validateTransitions()
         this.transitionMap = TransitionMap(transitionsConfiguration.getTransitions())
-        finalized = true
+        processed = true
     }
 
     /**

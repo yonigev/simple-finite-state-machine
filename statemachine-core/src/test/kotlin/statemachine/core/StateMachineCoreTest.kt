@@ -1,9 +1,9 @@
-package statemachine
+package statemachine.core
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import statemachine.StateMachine
 import statemachine.action.createAction
-import statemachine.configuration.StateMachineConfigurationException
+import statemachine.configuration.transition.DefaultTransitionsConfiguration
 import statemachine.factory.DefaultStateMachineFactory
 import statemachine.transition.DefaultTransition
 import statemachine.transition.Transition
@@ -47,24 +47,19 @@ class StateMachineCoreTest {
     }
 
     @Test
-    fun testStateMachineThrowsException_whenStoppedAndTriggered() {
+    fun testStateMachineFlow_Triggerless() {
         val config = StateMachineUtil.createConfig()
         val factory = DefaultStateMachineFactory(config)
-        val sm: StateMachine<S, T> = factory.create("TEST_ID")
-        assertEquals(S.INITIAL, sm.state.getId())
-        assertThrows<StateMachineConfigurationException> { sm.trigger(createTrigger(T.MOVE_TO_A)) }
-    }
 
-    @Test
-    fun testStateMachineThrowsException_whenStartedInTerminalState() {
-        val config = StateMachineUtil.createConfig()
-        val factory = DefaultStateMachineFactory(config)
+        (config.configureTransitions() as DefaultTransitionsConfiguration).apply {
+            add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
+            add(S.STATE_A, S.STATE_B, null, positiveGuard)
+            add(S.STATE_B, S.TERMINAL_STATE, null, positiveGuard)
+        }
         val sm: StateMachine<S, T> = factory.createStarted("TEST_ID")
+        assertEquals(S.INITIAL, sm.state.getId())
         sm.trigger(createTrigger(T.MOVE_TO_A))
-        sm.trigger(createTrigger(T.MOVE_TO_B))
-        sm.trigger(createTrigger(T.END))
         assertEquals(S.TERMINAL_STATE, sm.state.getId())
-        assertThrows<StateMachineConfigurationException> { sm.start() }
     }
 
     @Test

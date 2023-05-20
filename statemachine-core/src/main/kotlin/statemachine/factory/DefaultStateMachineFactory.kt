@@ -17,9 +17,9 @@ class DefaultStateMachineFactory<S, T>(override val configuration: StateMachineC
     }
 
     override fun create(id: String): StateMachine<S, T> {
-        if (!configuration.finalized) {
-            log.warn("State Machine configuration not yet finalized! finalizing now.")
-            configuration.finalize()
+        if (!configuration.processed) {
+            log.warn("State Machine configuration not yet processed! processing now.")
+            configuration.process()
         }
         val states = configuration.states
         val transitions = configuration.transitionMap
