@@ -1,6 +1,5 @@
 package statemachine.configuration.state
 
-import statemachine.state.BaseState
 import statemachine.state.State
 
 class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
@@ -10,16 +9,16 @@ class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
         if (this::initialState.isInitialized) {
             states.remove(this.initialState)
         }
-        this.initialState = BaseState.initial(state)
+        this.initialState = State.initial(state)
         states.add(initialState)
     }
 
     override fun setTerminal(state: S) {
-        BaseState.end(state).also { states.add(it) }
+        State.end(state).also { states.add(it) }
     }
 
     override fun add(state: S) {
-        states.add(BaseState.create(state))
+        states.add(State.create(state))
     }
 
     /**
