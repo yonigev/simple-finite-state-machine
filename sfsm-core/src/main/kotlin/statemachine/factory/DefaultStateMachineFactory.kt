@@ -11,6 +11,11 @@ import statemachine.configuration.StateMachineConfiguration
 class DefaultStateMachineFactory<S, T>(override val configuration: StateMachineConfiguration<S, T>) :
     StateMachineFactory<S, T> {
     private val log = LoggerFactory.getLogger(this.javaClass)
+
+    fun createStarted(id: String): StateMachine<S, T> {
+        return create(id).apply { start() }
+    }
+
     override fun create(id: String): StateMachine<S, T> {
         if (!configuration.finalized) {
             log.warn("State Machine configuration not yet finalized! finalizing now.")

@@ -2,6 +2,9 @@ package statemachine.configuration.state
 
 import statemachine.state.State
 
+/**
+ * Used to configure [statemachine.StateMachine] states
+ */
 interface StatesConfiguration<S, T> {
     /**
      * Defines an initial state for the state machine.
