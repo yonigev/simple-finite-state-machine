@@ -7,10 +7,10 @@ import statemachine.transition.TransitionMap
 
 /**
  * This class is used to configure a state machine's states and transitions
- * this must be [finalized] before creating a state machine.
+ * this must be [processed] before creating a state machine.
  */
 interface StateMachineConfiguration<S, T> {
-    var finalized: Boolean
+    var processed: Boolean
     var states: Set<State<S>>
     var transitionMap: TransitionMap<S, T>
 
@@ -25,8 +25,8 @@ interface StateMachineConfiguration<S, T> {
     fun configureTransitions(): TransitionsConfiguration<S, T>
 
     /**
-     * Finalize the configuration by validating the [StatesConfiguration] and [TransitionsConfiguration]
+     * Process and finalize the configuration by validating the [StatesConfiguration] and [TransitionsConfiguration]
      * and instantiating the [states] and [transitionMap]
      */
-    fun finalize()
+    fun process()
 }

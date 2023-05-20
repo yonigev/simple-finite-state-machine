@@ -3,7 +3,7 @@ package statemachine.context
 import statemachine.state.State
 
 /** A default [StateMachineContext] implementation, uses a [MutableMap] as a property store. */
-class DefaultStateMachineContext<S, T>(
+open class DefaultStateMachineContext<S, T>(
     override var state: State<S>,
     private val properties: MutableMap<Any, Any> = mutableMapOf(),
 ) : StateMachineContext<S, T> {
