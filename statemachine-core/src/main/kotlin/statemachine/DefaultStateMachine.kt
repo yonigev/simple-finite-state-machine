@@ -11,6 +11,9 @@ import statemachine.transition.TransitionContext
 import statemachine.transition.TransitionMap
 import statemachine.trigger.Trigger
 
+/**
+ * A Default [statemachine.StateMachine] implementation
+ */
 class DefaultStateMachine<S, T>(
     override val id: String,
     states: Collection<State<S>>,
@@ -28,10 +31,9 @@ class DefaultStateMachine<S, T>(
         get() = context.state
 
     override fun start() {
-        if (finished) {
-            throw StateMachineConfigurationException("Cannot start the state machine as it's in a terminal state.")
-        }
+        assertNotFinished()
         started = true
+        assertStarted()
     }
 
     override fun stop() {
@@ -39,11 +41,7 @@ class DefaultStateMachine<S, T>(
     }
 
     override fun trigger(trigger: Trigger<T>): State<S> {
-        if (!started) {
-            "State Machine not running!".also {
-                log.error(it); throw StateMachineConfigurationException(it)
-            }
-        }
+        assertStarted()
         val state = context.state
         val transition = transitions.getTransition(state.getId(), trigger.getId())
         if (transition == null) {
@@ -76,6 +74,20 @@ class DefaultStateMachine<S, T>(
 
         return (transition.guard.evaluate(transitionContext.stateMachineContext)).also {
             log.debug("Evaluation of transition {} is: {}", transition, it)
+        }
+    }
+
+    private fun assertStarted() {
+        if (!started) {
+            "State Machine not running!".also {
+                log.error(it); throw StateMachineConfigurationException(it)
+            }
+        }
+    }
+
+    private fun assertNotFinished() {
+        if (finished) {
+            throw StateMachineConfigurationException("Cannot start the state machine as it's in a terminal state.")
         }
     }
 }
