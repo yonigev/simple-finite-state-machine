@@ -5,7 +5,7 @@ package java.example;
 
 import org.junit.jupiter.api.Test;
 
-class FlightStateMachineExampleTest {
+class StateMachineApplicationTest {
     @Test void appHasAGreeting() {
     }
 }

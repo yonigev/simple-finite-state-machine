@@ -14,7 +14,7 @@ class DefaultTransitionsConfiguration<S, T> : TransitionsConfiguration<S, T> {
     private val transitions = mutableSetOf<Transition<S, T>>()
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    fun add(source: S, target: S, trigger: T?, guard: Guard<S, T>, transitionAction: Action<S, T>? = null) {
+    override fun add(source: S, target: S, trigger: T?, guard: Guard<S, T>, transitionAction: Action<S, T>?) {
         add(
             DefaultTransition(
                 source,

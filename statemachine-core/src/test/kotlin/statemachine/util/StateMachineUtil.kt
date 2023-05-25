@@ -5,6 +5,7 @@ import statemachine.configuration.StateMachineConfiguration
 import statemachine.configuration.transition.DefaultTransitionsConfiguration
 import statemachine.guard.Guard.Companion.createGuard
 import statemachine.trigger.Trigger
+import java.util.Objects
 
 val positiveGuard = createGuard<S, T> { true }
 val negativeGuard = createGuard<S, T> { false }
@@ -40,7 +41,7 @@ class StateMachineUtil {
                     return t
                 }
 
-                override fun getArguments(): Map<*, *> {
+                override fun getPayload(): Any {
                     return mapOf<String, String>()
                 }
             }

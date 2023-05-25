@@ -12,7 +12,7 @@ import statemachine.transition.TransitionMap
  * Defines and validates a State Machine's configuration
  * Contains all necessary properties to build a [statemachine.StateMachine]
  */
-class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
+open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
     private val statesConfiguration = DefaultStatesConfiguration<S, T>()
     private val transitionsConfiguration = DefaultTransitionsConfiguration<S, T>()
     private val log = LoggerFactory.getLogger(this.javaClass)

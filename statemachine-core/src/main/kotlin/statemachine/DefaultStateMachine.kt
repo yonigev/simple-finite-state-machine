@@ -85,7 +85,7 @@ open class DefaultStateMachine<S, T>(
     private fun evaluate(transitionContext: TransitionContext<S, T>): Boolean {
         val transition = transitionContext.transition
 
-        return (transition.guard.evaluate(transitionContext.stateMachineContext)).also {
+        return (transition.guard.evaluate(transitionContext)).also {
             log.debug("Evaluation of transition {} is: {}", transition, it)
         }
     }
