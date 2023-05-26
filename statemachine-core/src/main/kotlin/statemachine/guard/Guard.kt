@@ -7,12 +7,12 @@ import statemachine.transition.TransitionContext
  * evaluate() returns true
  */
 interface Guard<S, T> {
-    fun evaluate(stateMachineContext: TransitionContext<S, T>): Boolean
+    fun transition(transitionContext: TransitionContext<S, T>): Boolean
 
     companion object {
         fun <S, T> createGuard(predicate: () -> Boolean): Guard<S, T> {
             return object : Guard<S, T> {
-                override fun evaluate(stateMachineContext: TransitionContext<S, T>): Boolean {
+                override fun transition(transitionContext: TransitionContext<S, T>): Boolean {
                     return predicate()
                 }
             }

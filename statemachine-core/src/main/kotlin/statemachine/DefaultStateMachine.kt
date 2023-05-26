@@ -62,13 +62,13 @@ open class DefaultStateMachine<S, T>(
     private fun runTrigger(trigger: Trigger<T>?): State<S> {
         assertStarted()
         try {
-            val transition: Transition<S, T> = transitions.getTransition(state.getId(), trigger?.getId())
+            val transition: Transition<S, T> = transitions.getTransition(state.getId(), trigger?.getTriggerId())
                 ?: return state
                     .also {
-                        log.info("No transition found for state: {} and trigger: {}", it.getId(), trigger?.getId())
+                        log.info("No transition found for state: {} and trigger: {}", it.getId(), trigger?.getTriggerId())
                     }
 
-            val transitionContext = DefaultTransitionContext(context, transition)
+            val transitionContext = DefaultTransitionContext(context, transition, trigger)
             if (evaluate(transitionContext)) {
                 val target = stateMap[transition.target]!!
                 log.info("Guard evaluated to true. transitioning to ${target.getId()}")
@@ -85,7 +85,7 @@ open class DefaultStateMachine<S, T>(
     private fun evaluate(transitionContext: TransitionContext<S, T>): Boolean {
         val transition = transitionContext.transition
 
-        return (transition.guard.evaluate(transitionContext)).also {
+        return (transition.guard.transition(transitionContext)).also {
             log.debug("Evaluation of transition {} is: {}", transition, it)
         }
     }

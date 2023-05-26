@@ -37,12 +37,8 @@ class StateMachineUtil {
 
         fun createTrigger(t: T): Trigger<T> {
             return object : Trigger<T> {
-                override fun getId(): T {
+                override fun getTriggerId(): T {
                     return t
-                }
-
-                override fun getPayload(): Any {
-                    return mapOf<String, String>()
                 }
             }
         }
