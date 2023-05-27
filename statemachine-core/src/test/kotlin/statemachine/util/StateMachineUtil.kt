@@ -3,11 +3,11 @@ package statemachine.util
 import statemachine.configuration.DefaultStateMachineConfiguration
 import statemachine.configuration.StateMachineConfiguration
 import statemachine.configuration.transition.DefaultTransitionsConfiguration
-import statemachine.guard.Guard.Companion.createGuard
+import statemachine.guard.Guard.Companion.ofPredicate
 import statemachine.trigger.Trigger
 
-val positiveGuard = createGuard<S, T> { true }
-val negativeGuard = createGuard<S, T> { false }
+val positiveGuard = ofPredicate<S, T> { true }
+val negativeGuard = ofPredicate<S, T> { false }
 
 /**
  * A Basic state machine configuration creator - for tests
@@ -36,12 +36,8 @@ class StateMachineUtil {
 
         fun createTrigger(t: T): Trigger<T> {
             return object : Trigger<T> {
-                override fun getId(): T {
+                override fun getTriggerId(): T {
                     return t
-                }
-
-                override fun getArguments(): Map<*, *> {
-                    return mapOf<String, String>()
                 }
             }
         }

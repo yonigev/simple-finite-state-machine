@@ -2,7 +2,7 @@ package statemachine.core
 
 import org.junit.jupiter.api.Test
 import statemachine.StateMachine
-import statemachine.action.createAction
+import statemachine.action.Action.Companion.createAction
 import statemachine.configuration.transition.DefaultTransitionsConfiguration
 import statemachine.factory.DefaultStateMachineFactory
 import statemachine.transition.DefaultTransition
