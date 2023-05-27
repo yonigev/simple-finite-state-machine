@@ -6,5 +6,4 @@ rootProject.name = "simple-finite-state-machine"
 include("statemachine-core")
 include(":statemachine-examples")
 include(":statemachine-examples:demo")
-include("statemachine-core:statemachine-core")
 findProject(":statemachine-core:statemachine-core")?.name = "statemachine-core"

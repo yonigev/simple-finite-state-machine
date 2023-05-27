@@ -23,6 +23,6 @@ public class LandingGuard implements Guard<FlightState, FlightTrigger> {
         flightInfo.updatePlaneLocation(planeLocationUpdate.getUpdatedLocation());
         double planeAltitude = flightInfo.getPlaneLocation().getAltitude();
         // Obviously not a real-life example, but will suffice for the sake of the demo.
-        return planeAltitude < 400;
+        return planeAltitude <= 400;
     }
 }

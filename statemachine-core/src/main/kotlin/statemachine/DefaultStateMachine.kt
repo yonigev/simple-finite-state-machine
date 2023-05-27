@@ -2,7 +2,6 @@ package statemachine
 
 import org.slf4j.LoggerFactory
 import statemachine.configuration.StateMachineConfigurationException
-import statemachine.context.DefaultStateMachineContext
 import statemachine.context.StateMachineContext
 import statemachine.exception.StateMachineException
 import statemachine.state.State
@@ -19,6 +18,7 @@ open class DefaultStateMachine<S, T>(
     override val id: String,
     states: Collection<State<S>>,
     private val transitions: TransitionMap<S, T>,
+    private val context: StateMachineContext<S, T>,
 ) : StateMachine<S, T> {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -26,7 +26,6 @@ open class DefaultStateMachine<S, T>(
     private val stateMap: Map<S, State<S>> = states.associateBy { it.getId() }
     private var started = false
     private var finished = false
-    private val context: StateMachineContext<S, T> = DefaultStateMachineContext(initialState)
 
     override val state: State<S>
         get() = context.state
@@ -65,13 +64,13 @@ open class DefaultStateMachine<S, T>(
             val transition: Transition<S, T> = transitions.getTransition(state.getId(), trigger?.getTriggerId())
                 ?: return state
                     .also {
-                        log.info("No transition found for state: {} and trigger: {}", it.getId(), trigger?.getTriggerId())
+                        log.debug("No transition found for state: {} and trigger: {}", it.getId(), trigger?.getTriggerId())
                     }
 
             val transitionContext = DefaultTransitionContext(context, transition, trigger)
-            if (evaluate(transitionContext)) {
+            if (transition(transitionContext)) {
                 val target = stateMap[transition.target]!!
-                log.info("Guard evaluated to true. transitioning to ${target.getId()}")
+                log.debug("Guard evaluated to true. transitioning to {}", target.getId())
                 context.transitionToState(target)
                 transition.actions.forEach { it.act() }
             }
@@ -82,7 +81,7 @@ open class DefaultStateMachine<S, T>(
         }
     }
 
-    private fun evaluate(transitionContext: TransitionContext<S, T>): Boolean {
+    private fun transition(transitionContext: TransitionContext<S, T>): Boolean {
         val transition = transitionContext.transition
 
         return (transition.guard.transition(transitionContext)).also {

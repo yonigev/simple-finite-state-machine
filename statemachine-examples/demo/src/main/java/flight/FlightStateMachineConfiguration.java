@@ -32,7 +32,7 @@ public class FlightStateMachineConfiguration extends DefaultStateMachineConfigur
     // Allows transition only when the plane has arrived at the destination.
     ArrivalGuard arrivalGuard = new ArrivalGuard();
 
-    Guard<FlightState, FlightTrigger> alwaysTrueGuard = Guard.Companion.createGuard(() -> true);
+    Guard<FlightState, FlightTrigger> alwaysTrueGuard = Guard.Companion.ofPredicate(() -> true);
 
     @NotNull
     @Override

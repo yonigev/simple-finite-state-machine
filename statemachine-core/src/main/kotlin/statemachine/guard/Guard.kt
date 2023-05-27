@@ -10,7 +10,7 @@ interface Guard<S, T> {
     fun transition(transitionContext: TransitionContext<S, T>): Boolean
 
     companion object {
-        fun <S, T> createGuard(predicate: () -> Boolean): Guard<S, T> {
+        fun <S, T> ofPredicate(predicate: () -> Boolean): Guard<S, T> {
             return object : Guard<S, T> {
                 override fun transition(transitionContext: TransitionContext<S, T>): Boolean {
                     return predicate()

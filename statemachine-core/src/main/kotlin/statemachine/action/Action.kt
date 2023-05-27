@@ -20,5 +20,3 @@ interface Action<S, T> {
         }
     }
 }
-
-

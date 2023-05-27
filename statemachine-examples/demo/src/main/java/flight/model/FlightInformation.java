@@ -1,13 +1,15 @@
 package flight.model;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@RequiredArgsConstructor
 public class FlightInformation {
-    Location source;
-    Location destination;
+    private final Location source;
+    private final Location destination;
+    private final int bookedPassengers;
     Location planeLocation;
-    int bookedPassengers;
     int currentPassengerCount;
 
     public void addPassengers(int add) {

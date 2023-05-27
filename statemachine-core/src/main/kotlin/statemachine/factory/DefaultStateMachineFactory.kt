@@ -4,16 +4,24 @@ import org.slf4j.LoggerFactory
 import statemachine.DefaultStateMachine
 import statemachine.StateMachine
 import statemachine.configuration.StateMachineConfiguration
+import statemachine.context.DefaultStateMachineContext
+import statemachine.context.StateMachineContext
+import statemachine.state.State
 
 /**
  * A default StateMachineFactory implementation
  */
-class DefaultStateMachineFactory<S, T>(override val configuration: StateMachineConfiguration<S, T>) :
+open class DefaultStateMachineFactory<S, T>(override val configuration: StateMachineConfiguration<S, T>) :
     StateMachineFactory<S, T> {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     fun createStarted(id: String): StateMachine<S, T> {
         return create(id).apply { start() }
+    }
+
+    open fun setupInitialStateMachineContext(): StateMachineContext<S, T> {
+        val initial = configuration.states.first { State.Type.INITIAL == it.getType() }
+        return DefaultStateMachineContext(initial)
     }
 
     override fun create(id: String): StateMachine<S, T> {
@@ -23,7 +31,7 @@ class DefaultStateMachineFactory<S, T>(override val configuration: StateMachineC
         }
         val states = configuration.states
         val transitions = configuration.transitionMap
-
-        return DefaultStateMachine(id, states, transitions)
+        val initialContext = setupInitialStateMachineContext()
+        return DefaultStateMachine(id, states, transitions, initialContext)
     }
 }

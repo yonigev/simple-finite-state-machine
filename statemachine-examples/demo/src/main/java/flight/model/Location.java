@@ -1,8 +1,10 @@
 package flight.model;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Value
+@Data
+@AllArgsConstructor
 public class Location {
     double latitude;
     double longitude;

@@ -43,6 +43,8 @@ open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S,
     }
 
     override fun process() {
+        configureStates()
+        configureTransitions()
         validateStates()
         this.states = statesConfiguration.getStates()
         this.initialState = statesConfiguration.getStates().first { State.Type.INITIAL == it.getType() }

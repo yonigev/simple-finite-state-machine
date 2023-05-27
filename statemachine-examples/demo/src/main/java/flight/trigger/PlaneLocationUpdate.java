@@ -12,7 +12,7 @@ public class PlaneLocationUpdate implements Trigger<FlightTrigger> {
     Location updatedLocation;
 
     public PlaneLocationUpdate(Location location) {
-        this.updatedLocation = location;
+        this.updatedLocation = new Location(location.getLatitude(), location.getLongitude(), location.getAltitude());
     }
 
     @Override
