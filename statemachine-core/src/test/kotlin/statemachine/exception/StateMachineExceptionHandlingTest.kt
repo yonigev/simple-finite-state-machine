@@ -3,11 +3,11 @@ package statemachine.exception
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import statemachine.StateMachine
-import statemachine.action.createAction
+import statemachine.action.Action.Companion.createAction
 import statemachine.configuration.StateMachineConfigurationException
 import statemachine.configuration.transition.DefaultTransitionsConfiguration
 import statemachine.factory.DefaultStateMachineFactory
-import statemachine.guard.Guard.Companion.createGuard
+import statemachine.guard.Guard.Companion.ofPredicate
 import statemachine.transition.DefaultTransition
 import statemachine.transition.Transition
 import statemachine.util.S
@@ -21,7 +21,7 @@ class StateMachineExceptionHandlingTest {
     @Test
     fun testExceptionThrownInGuardIsPropagated() {
         val config = StateMachineUtil.createConfig()
-        val exceptionThrowingGuard = createGuard<S, T> { throw Exception("Test exception") }
+        val exceptionThrowingGuard = ofPredicate<S, T> { throw Exception("Test exception") }
         (config.configureTransitions() as (DefaultTransitionsConfiguration))
             .add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, exceptionThrowingGuard)
         val factory = DefaultStateMachineFactory(config)

@@ -1,6 +1,14 @@
 package statemachine.trigger
 
 interface Trigger<T> {
-    fun getId(): T
-    fun getArguments(): Map<*, *>
+    fun getTriggerId(): T
+    companion object {
+        fun <S, T> ofId(id: T): Trigger<T> {
+            return object : Trigger<T> {
+                override fun getTriggerId(): T {
+                    return id
+                }
+            }
+        }
+    }
 }

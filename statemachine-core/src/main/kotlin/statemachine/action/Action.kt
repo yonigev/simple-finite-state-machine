@@ -5,15 +5,18 @@ package statemachine.action
  */
 interface Action<S, T> {
     fun act()
-}
 
-/**
- * Convenience function for creating a basic [Action] instance
- */
-fun <S, T> createAction(f: () -> Unit): Action<S, T> {
-    return object : Action<S, T> {
-        override fun act() {
-            f.invoke()
+    companion object {
+        /**
+         * Convenience function for creating a basic [Action] instance
+         */
+        @JvmStatic
+        fun <S, T> createAction(f: Function0<Unit>): Action<S, T> {
+            return object : Action<S, T> {
+                override fun act() {
+                    f.invoke()
+                }
+            }
         }
     }
 }

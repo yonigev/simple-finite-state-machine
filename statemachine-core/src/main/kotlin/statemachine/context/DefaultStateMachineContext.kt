@@ -12,8 +12,12 @@ open class DefaultStateMachineContext<S, T>(
         return this.state
     }
 
-    override fun getProperty(key: Any): Any? {
-        return properties[key]
+    override fun getProperty(key: Any): Any {
+        return properties[key]!!
+    }
+
+    override fun getPropertyOrDefault(key: Any, default: Any): Any {
+        return properties.getOrDefault(key, default)
     }
 
     override fun setProperty(key: Any, value: Any): Any {

@@ -10,4 +10,8 @@ open class DefaultTransition<S, T>(
     override val trigger: T?,
     override val guard: Guard<S, T>,
     override val actions: Iterable<Action<S, T>>,
-) : Transition<S, T>
+) : Transition<S, T> {
+    override fun toString(): String {
+        return "DefaultTransition(source=$source, target=$target, trigger=$trigger, guard=$guard, actions=$actions)"
+    }
+}
