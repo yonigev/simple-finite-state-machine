@@ -20,7 +20,7 @@ open class DefaultStateMachineFactory<S, T>(override val configuration: StateMac
     }
 
     open fun setupInitialStateMachineContext(): StateMachineContext<S, T> {
-        val initial = configuration.states.first { State.Type.INITIAL == it.getType() }
+        val initial = configuration.states.first { State.PseudoStateType.INITIAL == it.getType() }
         return DefaultStateMachineContext(initial)
     }
 

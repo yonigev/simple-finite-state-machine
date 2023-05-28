@@ -5,5 +5,5 @@ This library allows Kotlin & Java developers to use  a _**simplified**_ (hence t
 ### You can find this useful if:
 * You are writing a state-based application with a simple Trigger -> Transition logic
 * You can describe the problem you are solving using a basic State Machine diagram.
-* You do _**not**_ require any fancy Statemachine features like Junction, Choice states or Regions.
+* You do _**not**_ require any fancy Statemachine features like sub-machine / sub regions or composite states.
 
