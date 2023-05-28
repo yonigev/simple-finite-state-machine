@@ -47,19 +47,19 @@ open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S,
         configureTransitions()
         validateStates()
         this.states = statesConfiguration.getStates()
-        this.initialState = statesConfiguration.getStates().first { State.Type.INITIAL == it.getType() }
+        this.initialState = statesConfiguration.getStates().first { State.PseudoStateType.INITIAL == it.getType() }
         validateTransitions()
         this.transitionMap = TransitionMap(transitionsConfiguration.getTransitions())
         processed = true
     }
 
     /**
-     * Validate that the states configuration is valid
+     * Validate the states configuration
      */
     private fun validateStates() {
         val states = statesConfiguration.getStates()
-        val initialStates = states.filter { State.Type.INITIAL == it.getType() }
-        val endStates = states.filter { State.Type.TERMINAL == it.getType() }
+        val initialStates = states.filter { State.PseudoStateType.INITIAL == it.getType() }
+        val endStates = states.filter { State.PseudoStateType.TERMINAL == it.getType() }
 
         // Validate there is 1 INITIAL state
         if (initialStates.size != 1) {
@@ -77,23 +77,46 @@ open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S,
     }
 
     /**
-     * Validate that the transitions configuration is valid
+     * Validate the transitions configuration
      */
     private fun validateTransitions() {
         val transitions = transitionsConfiguration.getTransitions()
-        val transitionStates: Set<S> = transitions.map { setOf(it.source, it.target) }.flatten().toHashSet()
         val stateIds = this.states.map { it.getId() }
+        val statesMap: Map<S, State<S>> = states.associateBy { it.getId() }
 
-        if (transitions.firstOrNull { it.source == it.target } != null) {
-            throw StateMachineConfigurationException("Simple Finite State Machine does not currently support self transitions.")
-        }
-
+        val transitionStates: Set<S> = transitions.map { setOf(it.source, it.target) }.flatten().toSet()
         if (transitionStates != stateIds && (transitionStates + stateIds).size > states.size) {
             "Some transition states: $transitionStates are not defined in the states set: $states".let {
                 throw StateMachineConfigurationException(
                     it,
                 )
             }
+        }
+
+        // Validate transition with a CHOICE state source
+        for (choiceState in states.filter { it.getType() == State.PseudoStateType.CHOICE }) {
+            val choiceSourceTransitions = transitions.filter { it.source == choiceState.getId() }
+            if (choiceSourceTransitions.size < 2) {
+                throw StateMachineConfigurationException("Choice state with $choiceSourceTransitions.size outgoing transitions")
+            }
+        }
+
+        // Validate transition with a non-choice state source
+        for (nonChoiceStateTransition in transitions.filter { statesMap[it.source]!!.getType() != State.PseudoStateType.CHOICE }) {
+            val similarTransitions = transitions.filter {
+                it.source == nonChoiceStateTransition.source &&
+                    it.trigger == nonChoiceStateTransition.trigger
+            }
+            if (similarTransitions.size > 1) {
+                throw StateMachineConfigurationException(
+                    "Found multiple transitions with non-choice source state: ${nonChoiceStateTransition.source} " +
+                        "and trigger: ${nonChoiceStateTransition.trigger}",
+                )
+            }
+        }
+
+        if (transitions.firstOrNull { it.source == it.target } != null) {
+            throw StateMachineConfigurationException("Simple Finite State Machine does not currently support self transitions.")
         }
     }
 }

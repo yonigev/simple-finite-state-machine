@@ -4,7 +4,7 @@ import statemachine.StateMachine
 
 class StateMachineException(cause: Exception, private val sm: StateMachine<*, *>) :
     Exception(cause) {
-    constructor(errorMessage: String, sm: StateMachine<Any, Any>) : this(Exception(errorMessage), sm)
+    constructor(errorMessage: String, sm: StateMachine<*, *>) : this(Exception(errorMessage), sm)
     fun getStateMachineId(): String {
         return sm.id
     }

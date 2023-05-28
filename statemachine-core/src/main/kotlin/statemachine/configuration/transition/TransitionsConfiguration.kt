@@ -11,6 +11,7 @@ interface TransitionsConfiguration<S, T> {
      */
     fun add(transition: Transition<S, T>)
     fun add(source: S, target: S, trigger: T?, guard: Guard<S, T>, transitionAction: Action<S, T>? = null)
+    fun add(source: S, target: S, trigger: T?, guard: Guard<S, T>, transitionActions: List<Action<S, T>>)
 
     /**
      * Returns the configured transition definitions
