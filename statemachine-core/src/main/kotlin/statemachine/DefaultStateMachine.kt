@@ -3,7 +3,6 @@ package statemachine
 import org.slf4j.LoggerFactory
 import statemachine.configuration.StateMachineConfigurationException
 import statemachine.context.StateMachineContext
-import statemachine.exception.StateMachineException
 import statemachine.state.State
 import statemachine.transition.DefaultTransitionContext
 import statemachine.transition.Transition

@@ -2,12 +2,13 @@ package statemachine.configuration.state
 
 import statemachine.state.State
 
+/**
+ * A default implementation for the [DefaultStatesConfiguration]
+ */
 class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
-    private lateinit var initialState: State<S>
     private val states = mutableSetOf<State<S>>()
     override fun setInitial(state: S) {
-        this.initialState = State.initial(state)
-        states.add(initialState)
+        states.add(State.initial(state))
     }
 
     override fun setTerminal(state: S) {
@@ -23,7 +24,7 @@ class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
     }
 
     /**
-     * Return an *immutable* State set
+     * Returns an *immutable* State set
      */
     override fun getStates(): Set<State<S>> {
         return states.toSet()

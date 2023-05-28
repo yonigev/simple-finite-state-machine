@@ -6,7 +6,6 @@ import statemachine.configuration.transition.DefaultTransitionsConfiguration
 import statemachine.util.S
 import statemachine.util.T
 import statemachine.util.positiveGuard
-import kotlin.test.Ignore
 
 class DefaultStateMachineConfigurationValidationTest {
 
