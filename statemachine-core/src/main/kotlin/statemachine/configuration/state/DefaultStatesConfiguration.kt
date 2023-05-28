@@ -6,9 +6,6 @@ class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
     private lateinit var initialState: State<S>
     private val states = mutableSetOf<State<S>>()
     override fun setInitial(state: S) {
-        if (this::initialState.isInitialized) {
-            states.remove(this.initialState)
-        }
         this.initialState = State.initial(state)
         states.add(initialState)
     }
@@ -17,8 +14,12 @@ class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
         State.end(state).also { states.add(it) }
     }
 
-    override fun add(state: S) {
+    override fun simple(state: S) {
         states.add(State.create(state))
+    }
+
+    override fun choice(state: S) {
+        states.add(State.create(state, State.PseudoStateType.CHOICE))
     }
 
     /**

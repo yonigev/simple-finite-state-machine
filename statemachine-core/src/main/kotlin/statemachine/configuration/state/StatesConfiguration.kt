@@ -13,9 +13,15 @@ interface StatesConfiguration<S, T> {
     fun setInitial(state: S)
 
     /**
-     * Adds a possible state of the StateMachine
+     * Adds a simple state of the StateMachine
      */
-    fun add(state: S)
+    fun simple(state: S)
+
+    /**
+     * Adds a choice state of the StateMachine.
+     * Note that this state should have at least two outgoing transitions with the same trigger.
+     */
+    fun choice(state: S)
 
     /**
      * Defines a terminal state for the state machine.
