@@ -48,31 +48,31 @@ public class FlightStateMachineConfiguration extends DefaultStateMachineConfigur
     @Override
     public TransitionsConfiguration<FlightState, FlightTrigger> configureTransitions() {
         TransitionsConfiguration<FlightState, FlightTrigger> transitionsConfig = super.configureTransitions();
-        transitionsConfig.add(BOARDING, BOARDING_COMPLETE, PASSENGERS_BOARDED, boardingGuard, createAction(() -> {
+        transitionsConfig.add(BOARDING, BOARDING_COMPLETE, PASSENGERS_BOARDED, boardingGuard, createAction((context) -> {
             log.info("Boarding is complete");
             return null;
         }));
-        transitionsConfig.add(BOARDING_COMPLETE, EN_ROUTE_TO_RUNWAY, LEAVE_GATE, alwaysTrueGuard, createAction(() -> {
+        transitionsConfig.add(BOARDING_COMPLETE, EN_ROUTE_TO_RUNWAY, LEAVE_GATE, alwaysTrueGuard, createAction((context) -> {
             log.info("En Route to the Runway");
             return null;
         }));
-        transitionsConfig.add(EN_ROUTE_TO_RUNWAY, WAITING_AT_RUNWAY, LOCATION_UPDATE, runwayGuard, createAction(() -> {
+        transitionsConfig.add(EN_ROUTE_TO_RUNWAY, WAITING_AT_RUNWAY, LOCATION_UPDATE, runwayGuard, createAction((context) -> {
             log.info("Waiting for clearance");
             return null;
         }));
-        transitionsConfig.add(WAITING_AT_RUNWAY, TAKING_OFF, DEPARTURE_CLEARED, alwaysTrueGuard, createAction(() -> {
+        transitionsConfig.add(WAITING_AT_RUNWAY, TAKING_OFF, DEPARTURE_CLEARED, alwaysTrueGuard, createAction((context) -> {
             log.info("Beginning takeoff");
             return null;
         }));
-        transitionsConfig.add(TAKING_OFF, CRUISING, LOCATION_UPDATE, cruisingGuard, createAction(() -> {
+        transitionsConfig.add(TAKING_OFF, CRUISING, LOCATION_UPDATE, cruisingGuard, createAction((context) -> {
             log.info("Cruising altitude reached");
             return null;
         }));
-        transitionsConfig.add(CRUISING, LANDING, LOCATION_UPDATE, landingGuard, createAction(() -> {
+        transitionsConfig.add(CRUISING, LANDING, LOCATION_UPDATE, landingGuard, createAction((context) -> {
             log.info("Beginning landing");
             return null;
         }));
-        transitionsConfig.add(LANDING, LANDED, LOCATION_UPDATE, arrivalGuard, createAction(() -> {
+        transitionsConfig.add(LANDING, LANDED, LOCATION_UPDATE, arrivalGuard, createAction((context) -> {
             log.info("The plane has landed, welcome to Somewhere!");
             return null;
         }));

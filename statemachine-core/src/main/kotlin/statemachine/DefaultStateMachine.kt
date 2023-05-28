@@ -76,7 +76,9 @@ open class DefaultStateMachine<S, T>(
 
             verifyTransition(transitions, trigger)
             for (transition in transitions) {
-                handleSimpleTransition(transition, trigger)
+                if (handleSimpleTransition(transition, trigger)) {
+                    break
+                }
             }
 
             return state.also { it.onTerminal() }
@@ -102,11 +104,16 @@ open class DefaultStateMachine<S, T>(
 
     private fun handleSimpleTransition(transition: Transition<S, T>, trigger: Trigger<T>?): Boolean {
         val transitionContext = DefaultTransitionContext(context, transition, trigger)
+
+        if (transition.source != state.getId()) {
+            throw StateMachineException("Wrong source state for transition: $transition", this)
+        }
+
         if (transition(transitionContext)) {
             val target = stateMap[transition.target]!!
             log.debug("Guard evaluated to true. transitioning to {}", target.getId())
             context.transitionToState(target)
-            transition.actions.forEach { it.act() }
+            transition.actions.forEach { it.act(transitionContext) }
             return true
         }
         return false

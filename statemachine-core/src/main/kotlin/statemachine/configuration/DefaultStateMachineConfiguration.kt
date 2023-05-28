@@ -114,9 +114,5 @@ open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S,
                 )
             }
         }
-
-        if (transitions.firstOrNull { it.source == it.target } != null) {
-            throw StateMachineConfigurationException("Simple Finite State Machine does not currently support self transitions.")
-        }
     }
 }
