@@ -40,27 +40,6 @@ class DefaultStateMachineConfigurationValidationTest {
     }
 
     @Test
-    @Ignore
-    fun testSelfTransitionThrowsException() {
-        val config = DefaultStateMachineConfiguration<S, T>()
-        config.configureStates().apply {
-            setInitial(S.INITIAL)
-            simple(S.STATE_A)
-            simple(S.STATE_B)
-            setTerminal(S.TERMINAL_STATE)
-        }
-
-        (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
-            add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
-            add(S.STATE_A, S.STATE_A, T.MOVE_TO_A, positiveGuard)
-            add(S.STATE_A, S.TERMINAL_STATE, T.END, positiveGuard)
-        }
-        assertThrows<StateMachineConfigurationException> {
-            config.process()
-        }
-    }
-
-    @Test
     fun testUnknownStatesInTransitionsThrowsException() {
         val config = DefaultStateMachineConfiguration<S, T>()
         config.configureStates().apply {
