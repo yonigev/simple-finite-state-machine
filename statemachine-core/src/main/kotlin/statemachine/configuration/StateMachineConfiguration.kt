@@ -15,18 +15,19 @@ interface StateMachineConfiguration<S, T> {
     var transitionMap: TransitionMap<S, T>
 
     /**
-     * Return a states configurator
+     * Returns a [StatesConfiguration]
+     * Override or call this method to configure state machine states.
      */
     fun configureStates(): StatesConfiguration<S, T>
 
     /**
-     * Return a transition configurator
+     * Returns a [TransitionsConfiguration]
+     * Override or call this method to configure state machine [statemachine.transition.Transition].
      */
     fun configureTransitions(): TransitionsConfiguration<S, T>
 
     /**
-     * Process and finalize the configuration by validating the [StatesConfiguration] and [TransitionsConfiguration]
-     * and instantiating the [states] and [transitionMap]
+     * Process validate and finalize the configured [StatesConfiguration] and [TransitionsConfiguration]
      */
     fun process()
 }

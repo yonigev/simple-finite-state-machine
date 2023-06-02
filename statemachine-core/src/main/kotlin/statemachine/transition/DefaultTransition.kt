@@ -14,4 +14,25 @@ open class DefaultTransition<S, T>(
     override fun toString(): String {
         return "DefaultTransition(source=$source, target=$target, trigger=$trigger, guard=$guard, actions=$actions)"
     }
+
+    companion object {
+        fun <S, T> create(
+            source: S,
+            target: S,
+            trigger: T?,
+            guard: Guard<S, T>,
+            transitionAction: Action<S, T>? = null,
+        ): DefaultTransition<S, T> {
+            return DefaultTransition(
+                source,
+                target,
+                trigger,
+                guard,
+                when (transitionAction) {
+                    null -> emptyList()
+                    else -> listOf(transitionAction)
+                },
+            )
+        }
+    }
 }

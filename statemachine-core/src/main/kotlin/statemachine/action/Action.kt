@@ -3,7 +3,7 @@ package statemachine.action
 import statemachine.transition.TransitionContext
 
 /**
- * Defines an Action that will act when after a state transition.
+ * Defines an Action that will act after a state transition.
  */
 interface Action<S, T> {
     fun act(transitionContext: TransitionContext<S, T>)

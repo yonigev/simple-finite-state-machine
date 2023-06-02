@@ -29,5 +29,9 @@ interface StatesConfiguration<S, T> {
      */
     fun setTerminal(state: S)
 
+    /**
+     * Returns the configured [State] definitions
+     * used by the [statemachine.configuration.StateMachineConfiguration] to configure the StateMachine
+     */
     fun getStates(): Set<State<S>>
 }
