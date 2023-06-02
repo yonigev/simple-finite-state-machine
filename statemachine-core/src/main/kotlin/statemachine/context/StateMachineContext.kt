@@ -3,8 +3,8 @@ package statemachine.context
 import statemachine.state.State
 
 /**
- * Represents the more extended state of the state machine i.e. the state itself and the additional
- * properties that define it
+ * Represents the context in which the [statemachine.StateMachine] runs in, including the machine's specific [State]
+ * along with additional properties that define that state.
  */
 interface StateMachineContext<S, T> {
     val state: State<S>

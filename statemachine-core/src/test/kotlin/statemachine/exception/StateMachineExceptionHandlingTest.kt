@@ -3,6 +3,7 @@ package statemachine.exception
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import statemachine.StateMachine
+import statemachine.StateMachineException
 import statemachine.action.Action.Companion.createAction
 import statemachine.configuration.DefaultStateMachineConfiguration
 import statemachine.configuration.StateMachineConfigurationException

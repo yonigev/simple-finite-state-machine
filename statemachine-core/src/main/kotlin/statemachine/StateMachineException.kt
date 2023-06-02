@@ -1,6 +1,4 @@
-package statemachine.exception
-
-import statemachine.StateMachine
+package statemachine
 
 class StateMachineException(cause: Exception, private val sm: StateMachine<*, *>) :
     Exception(cause) {
