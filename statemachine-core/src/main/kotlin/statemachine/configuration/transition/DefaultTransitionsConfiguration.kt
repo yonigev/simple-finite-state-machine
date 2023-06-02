@@ -20,6 +20,18 @@ class DefaultTransitionsConfiguration<S, T> : TransitionsConfiguration<S, T> {
         transitions.add(transition)
     }
 
+    override fun add(source: S, target: S, trigger: T?, guard: Guard<S, T>, transitionActions: List<Action<S, T>>) {
+        add(
+            DefaultTransition(
+                source,
+                target,
+                trigger,
+                guard,
+                transitionActions,
+            ),
+        )
+    }
+
     override fun getTransitions(): Set<Transition<S, T>> {
         return transitions.toSet()
     }
