@@ -1,8 +1,9 @@
 name: CI
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
@@ -32,9 +33,9 @@ jobs:
           output=$(./.github/version_bumper.sh ${{ steps.get-version.outputs.version }} ${{ steps.get-version.outputs.bump }})
           echo "::set-output name=bumped_version::$output"
       # Runs a set of commands using the runners shell
-      - name: Tag Commits
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git tag -a "v${{ steps.version-bump.outputs.bumped_version }}" -m "Automatically tagged by GitHub Action"
-          git push origin --tags
+#      - name: Tag Commits
+#        run: |
+#          git config --local user.email "action@github.com"
+#          git config --local user.name "GitHub Action"
+#          git tag -a "v${{ steps.version-bump.outputs.bumped_version }}" -m "Automatically tagged by GitHub Action"
+#          git push origin --tags
