@@ -1,0 +1,21 @@
+name: PR
+on:
+  pull_request:
+    types: [opened, reopened, edited]
+
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Determine version bump
+        id: determine-bump
+        run: |
+          chmod +x .github/determine_version_bump.sh
+#          bump=$(./.github/determine_version_bump.sh ${{ github.event.pull_request.body }})
+          echo "bump is $bump"
+#          echo "::set-output name=bump::$bump"
+

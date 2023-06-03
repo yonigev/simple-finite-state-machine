@@ -1,45 +1,52 @@
-name: CI
-on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      # Get the latest version number
-      - name: Read current version
-        id: get-version
-        run: |
-          echo "latest_tag=$(git tag --sort=-v:refname --list "v[0-9]*")" >> $GITHUB_ENV
-      - name: Get version
-        run: |
-            echo "The selected version is ${{ env.latest_tag }}"
-
-      # Get the required version bump (Major, minor or Patch) according to the PR description
-      - name: Determine version bump
-        id: determine-bump
-        run: |
-          chmod +x .github/determine_version_bump.sh
-          bump=$(./.github/determine_version_bump.sh)
-          echo "::set-output name=bump::$bump"
-      # Do version bump
-      - name: Bump the current version
-        id: version-bump
-        run: |
-          echo "the version is  ${{ steps.get-version.outputs.version }}"
-#          chmod +x .github/version_bumper.sh
-#          output=$(./.github/version_bumper.sh ${{ steps.get-version.outputs.version }} ${{ steps.get-version.outputs.bump }})
-#          echo "::set-output name=bumped_version::$output"
-      # Runs a set of commands using the runners shell
-#      - name: Tag Commits
+#name: CI
+#on:
+#  push:
+#    branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
+#
+#  workflow_dispatch:
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#
+#      # Get the latest version number
+#      - name: Read current version
+#        id: get-version
 #        run: |
-#          git config --local user.email "action@github.com"
-#          git config --local user.name "GitHub Action"
-#          git tag -a "v${{ steps.version-bump.outputs.bumped_version }}" -m "Automatically tagged by GitHub Action"
-#          git push origin --tags
+#          echo "Github base ref is  ${{ github.base_ref }}"
+#          echo "Github event json is   ${{ toJson(github.event) }}"
+#          echo "PR body is ${{ github.event.pull_request.body }}"
+#          chmod +x .github/determine_latest_tag.sh
+#          output=$(./.github/determine_latest_tag.sh)
+#          echo $output
+#      - name: test env
+#        id: test-env
+#        run: env
+#
+#      # Get the required version bump (Major, minor or Patch) according to the PR description
+##      - name: Determine version bump
+##        id: determine-bump
+##        run: |
+##          chmod +x .github/determine_version_bump.sh
+##          bump=$(./.github/determine_version_bump.sh)
+##          echo "bump is $bump"
+##          echo "::set-output name=bump::$bump"
+##      # Do version bump
+##      - name: Bump the current version
+##        id: version-bump
+##        run: |
+##          echo "the version is  ${{ steps.get-version.outputs.version }}"
+##          chmod +x .github/version_bumper.sh
+##          output=$(./.github/version_bumper.sh ${{ steps.get-version.outputs.version }} ${{ steps.get-version.outputs.bump }})
+##          echo "::set-output name=bumped_version::$output"
+#      # Runs a set of commands using the runners shell
+##      - name: Tag Commits
+##        run: |
+##          git config --local user.email "action@github.com"
+##          git config --local user.name "GitHub Action"
+##          git tag -a "v${{ steps.version-bump.outputs.bumped_version }}" -m "Automatically tagged by GitHub Action"
+##          git push origin --tags
