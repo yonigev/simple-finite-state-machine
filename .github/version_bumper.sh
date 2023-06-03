@@ -1,4 +1,5 @@
 #!/bin/bash
+shopt -s nocasematch  # Enable case-insensitive matching
 
 bump_version() {
     local version=$1
@@ -9,19 +10,18 @@ bump_version() {
     major=${parts[0]}
     minor=${parts[1]}
     patch=${parts[2]}
-
     # Bump the specified part
     case "$part" in
-        major)
+        MAJOR)
             ((major++))
             minor=0
             patch=0
             ;;
-        minor)
+        MINOR)
             ((minor++))
             patch=0
             ;;
-        patch)
+        PATCH)
             ((patch++))
             ;;
         *)
