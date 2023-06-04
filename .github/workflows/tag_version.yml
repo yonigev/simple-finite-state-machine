@@ -1,40 +1,45 @@
 name: CI
 on:
-  push:
-    branches:
-      - master
+  pull_request_target:
+    types:
+      - closed
   workflow_dispatch:
 
 jobs:
-  build:
+  pr-merged:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      # Get the latest version number
-      - name: Read current version
-        id: get-version
-        run: |
-          current_version=$(git tag --sort=-v:refname --list "v[0-9]*" | head -n 1)
-          echo "::set-output name=version::$current_version"
-      # Get the required version bump (Major, minor or Patch) according to the PR description
-      - name: Determine version bump
+
+      - name: Determine required version bump from PR description
         id: determine-bump
         run: |
           chmod +x .github/determine_version_bump.sh
-          bump=$(./.github/determine_version_bump.sh)
-          echo "::set-output name=bump::$bump"
-      # Do version bump
-      - name: Bump the current version
-        id: version-bump
+          DETERMINED_BUMP=$(./.github/determine_version_bump.sh "${{ github.event.pull_request.body }}")
+          echo "BUMP=$(echo $DETERMINED_BUMP)" >> $GITHUB_ENV
+
+      - name: Determine latest tag/version
+        id: determine-latest-version
         run: |
+          chmod +x .github/determine_latest_tag.sh
+          LATEST_TAG=$(./.github/determine_latest_tag.sh)
+          echo "LATEST_TAG=$LATEST_TAG" >> "$GITHUB_ENV"
+
+      - name: Bump latest version
+        id: bump-latest-version
+        run: |
+          echo "Performing a ${{ env.BUMP }} bump for version ${{ env.LATEST_TAG }}"
           chmod +x .github/version_bumper.sh
-          output=$(./.github/version_bumper.sh ${{ steps.get-version.outputs.version }} ${{ steps.get-version.outputs.bump }})
-          echo "::set-output name=version::$output"
+          BUMPED_VERSION=$(./.github/version_bumper.sh ${{ env.LATEST_TAG }} ${{ env.BUMP }})
+          echo "BUMPED_VERSION=$BUMPED_VERSION" >> "$GITHUB_ENV"
+          echo "next version is $BUMPED_VERSION"
+
       # Runs a set of commands using the runners shell
       - name: Tag Commits
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git tag -a "v${{ steps.version-bump.outputs.version }}" -m "Automatically tagged by GitHub Action"
+          git tag -a "${{ env.BUMPED_VERSION }}" -m "Automatically tagged by GitHub Action"
           git push origin --tags

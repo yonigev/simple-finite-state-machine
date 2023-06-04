@@ -11,15 +11,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      # Get the latest version number
-      - name: Determine version bump from PR description
-        id: get-version
+
+      - name: Determine required version bump from PR description
+        id: determine-bump
+        run: |          
+          chmod +x .github/determine_version_bump.sh
+          DETERMINED_BUMP=$(./.github/determine_version_bump.sh "${{ github.event.pull_request.body }}")
+          echo "Determined bump is $DETERMINED_BUMP"
+          echo "BUMP=$(echo $DETERMINED_BUMP)" >> $GITHUB_ENV
+      - name: Determine latest tag/version
+        id: determine-latest-version
         run: |
-          echo "PR body is ${{ github.event.pull_request.body }}"
-          if [[ "${{ github.event.pull_request.body }}" =~ ([x] ?[Mm]inor) ]]; then
-            echo "minor"
-          elif [[ "${{ github.event.pull_request.body }}" =~ ([x] ?[Mm]ajor) ]]; then
-            echo "major"
-          else
-            echo "patch"
-          fi
+          chmod +x .github/determine_latest_tag.sh
+          LATEST_TAG=$(./.github/determine_latest_tag.sh)
+          echo "LATEST_TAG=$LATEST_TAG" >> "$GITHUB_ENV"
+          
+          

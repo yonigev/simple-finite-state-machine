@@ -2,9 +2,9 @@
 
 pr_body=$1
 
-if [[ $pr_body =~ (\[x\] ?[Mm]inor) ]]; then
+if echo "$pr_body" | grep -qE "\[[xX]\] ?[Mm]inor"; then
   echo "minor"
-elif [[ $pr_body =~ (\[x\] ?[Mm]ajor) ]]; then
+elif echo "$pr_body" | grep -qE "\[[xX]\] ?[Mm]ajor"; then
   echo "major"
 else
   echo "patch"
