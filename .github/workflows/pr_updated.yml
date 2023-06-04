@@ -1,0 +1,25 @@
+name: PR update
+on:
+  pull_request:
+    types: [opened, reopened, edited]
+
+  workflow_dispatch:
+
+jobs:
+  extract-pr-version-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      # Get the latest version number
+      - name: Determine version bump from PR description
+        id: get-version
+        run: |
+          echo "PR body is ${{ github.event.pull_request.body }}"
+          if [[ "${{ github.event.pull_request.body }}" =~ ([x] ?[Mm]inor) ]]; then
+            echo "minor"
+          elif [[ "${{ github.event.pull_request.body }}" =~ ([x] ?[Mm]ajor) ]]; then
+            echo "major"
+          else
+            echo "patch"
+          fi
