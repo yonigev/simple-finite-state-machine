@@ -1,11 +1,10 @@
 #!/bin/bash
 
-#pr_description=$(curl -sSL $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER | jq -r '.body')
-pr_description="[x] major"
+pr_body=$1
 
-if [[ $pr_description =~ (\[x\] ?[Mm]inor) ]]; then
+if echo "$pr_body" | grep -qE "\[[xX]\] ?[Mm]inor"; then
   echo "minor"
-elif [[ $pr_description =~ (\[x\] ?[Mm]ajor) ]]; then
+elif echo "$pr_body" | grep -qE "\[[xX]\] ?[Mm]ajor"; then
   echo "major"
 else
   echo "patch"
