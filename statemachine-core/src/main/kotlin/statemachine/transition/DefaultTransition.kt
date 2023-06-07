@@ -1,6 +1,6 @@
 package statemachine.transition
 
-import statemachine.action.Action
+import statemachine.action.TransitionAction
 import statemachine.guard.Guard
 
 /** A Default Transition implementation */
@@ -9,7 +9,7 @@ open class DefaultTransition<S, T>(
     override val target: S,
     override val trigger: T?,
     override val guard: Guard<S, T>,
-    override val actions: Iterable<Action<S, T>>,
+    override val actions: Iterable<TransitionAction<S, T>>,
 ) : Transition<S, T> {
     override fun toString(): String {
         return "DefaultTransition(source=$source, target=$target, trigger=$trigger, guard=$guard, actions=$actions)"
@@ -21,7 +21,7 @@ open class DefaultTransition<S, T>(
             target: S,
             trigger: T?,
             guard: Guard<S, T>,
-            transitionAction: Action<S, T>? = null,
+            transitionAction: TransitionAction<S, T>? = null,
         ): DefaultTransition<S, T> {
             return DefaultTransition(
                 source,

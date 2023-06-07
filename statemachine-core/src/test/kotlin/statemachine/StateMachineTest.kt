@@ -1,7 +1,7 @@
 package statemachine
 
 import org.junit.jupiter.api.Test
-import statemachine.action.Action.Companion.createAction
+import statemachine.action.TransitionAction.Companion.create
 import statemachine.configuration.DefaultStateMachineConfiguration
 import statemachine.configuration.transition.DefaultTransitionsConfiguration
 import statemachine.factory.DefaultStateMachineFactory
@@ -104,9 +104,9 @@ class StateMachineTest {
             T.FORCE_MOVE_TO_C,
             positiveGuard,
             listOf(
-                createAction { output.add(1) },
-                createAction { output.add(2) },
-                createAction { output.add(3) },
+                create { output.add(1) },
+                create { output.add(2) },
+                create { output.add(3) },
             ),
         )
         val config = StateMachineTestUtil.createConfig()

@@ -14,7 +14,7 @@ import demo.userlogin.LoginStateMachineConfiguration.LoginTrigger.SEND_EMAIL
 import demo.userlogin.LoginStateMachineConfiguration.LoginTrigger.SEND_PASSWORD
 import demo.userlogin.trigger.EmailInputTrigger
 import demo.userlogin.trigger.PasswordInputTrigger
-import statemachine.action.Action
+import statemachine.action.TransitionAction
 import statemachine.configuration.transition.TransitionsConfiguration
 import statemachine.guard.Guard
 import statemachine.transition.TransitionContext
@@ -46,7 +46,7 @@ class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginSta
 
         transitionsConfiguration.apply {
             add(INITIAL_STATE, EMAIL_INPUT, BEGIN_LOGIN_FLOW, Guard.ofPredicate { true })
-            add(EMAIL_INPUT, PASSWORD_INPUT, SEND_EMAIL, emailValidatorGuard, Action.createAction { c ->
+            add(EMAIL_INPUT, PASSWORD_INPUT, SEND_EMAIL, emailValidatorGuard, TransitionAction.create { c ->
                 c.stateMachineContext.setProperty("email", (c.trigger as EmailInputTrigger).email)
             })
             // PASSWORD_INPUT is a Choice state:
@@ -55,7 +55,7 @@ class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginSta
             // otherwise, if login attempts exceeded - fail the login flow
             add(PASSWORD_INPUT, LOGIN_COMPLETE, SEND_PASSWORD, passwordValidatorGuard)
             add(PASSWORD_INPUT, LOGIN_FAILED, SEND_PASSWORD, passwordAttemptsExceededGuard)
-            add(PASSWORD_INPUT, PASSWORD_INPUT, SEND_PASSWORD, Guard.ofPredicate { true }, Action.createAction { c ->
+            add(PASSWORD_INPUT, PASSWORD_INPUT, SEND_PASSWORD, Guard.ofPredicate { true }, TransitionAction.create { c ->
                 val attempts = (c.stateMachineContext.getPropertyOrDefault("attempts", 0) as Int)
                 c.stateMachineContext.setProperty("attempts", attempts + 1)
             })
