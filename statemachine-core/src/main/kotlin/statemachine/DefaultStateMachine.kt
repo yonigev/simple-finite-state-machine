@@ -20,8 +20,6 @@ open class DefaultStateMachine<S, T>(
     private val context: StateMachineContext<S, T>,
 ) : StateMachine<S, T> {
     private val log = LoggerFactory.getLogger(this.javaClass)
-
-    private val initialState = states.first { State.PseudoStateType.INITIAL == it.getType() }
     private val stateMap: Map<S, State<S>> = states.associateBy { it.getId() }
     private var started = false
     private var finished = false
@@ -60,20 +58,16 @@ open class DefaultStateMachine<S, T>(
     private fun runTrigger(trigger: Trigger<T>?): State<S> {
         assertStarted()
         try {
-            val transitions: Collection<Transition<S, T>> =
-                transitionMap.getTransitions(state.getId(), trigger?.getTriggerId())
-                    .ifEmpty {
-                        return state
-                            .also {
-                                log.debug(
-                                    "No transition found for state: {} and trigger: {}",
-                                    it.getId(),
-                                    trigger?.getTriggerId(),
-                                )
-                            }
-                    }
+            val transitions = transitionMap.getTransitions(state.getId(), trigger?.getTriggerId())
+                .ifEmpty {
+                    log.debug(
+                        "No transition found for state: {} and trigger: {}",
+                        state.getId(),
+                        trigger?.getTriggerId(),
+                    )
+                    return state
+                }
 
-            verifyTransition(transitions, trigger)
             for (transition in transitions) {
                 if (handleSimpleTransition(transition, trigger)) {
                     break
@@ -83,21 +77,6 @@ open class DefaultStateMachine<S, T>(
             return state.also { it.onTerminal() }
         } catch (e: Exception) {
             throw StateMachineException(e, this)
-        }
-    }
-
-    /**
-     * Verify it's a valid transition list.
-     * if there is more than one transition defined current state and
-     * the current state is not a [statemachine.state.State.PseudoStateType.CHOICE], throws an exception.
-     */
-    private fun verifyTransition(transitions: Collection<Transition<S, T>>, trigger: Trigger<T>?) {
-        if (transitions.size > 1 && state.getType() != State.PseudoStateType.CHOICE) {
-            throw StateMachineException(
-                "Multiple transitions with trigger ${trigger?.getTriggerId()}" +
-                    " and non-choice source state ${state.getId()}",
-                this,
-            )
         }
     }
 

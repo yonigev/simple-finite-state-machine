@@ -2,6 +2,7 @@ package statemachine.configuration
 
 import org.slf4j.LoggerFactory
 import statemachine.configuration.state.DefaultStatesConfiguration
+import statemachine.configuration.state.StateDefinition
 import statemachine.configuration.state.StatesConfiguration
 import statemachine.configuration.transition.DefaultTransitionsConfiguration
 import statemachine.configuration.transition.TransitionsConfiguration
@@ -13,14 +14,12 @@ import statemachine.transition.TransitionMap
  * Contains all necessary properties to build a [statemachine.StateMachine]
  */
 open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
+    private val log = LoggerFactory.getLogger(this.javaClass)
     private val statesConfiguration = DefaultStatesConfiguration<S, T>()
     private val transitionsConfiguration = DefaultTransitionsConfiguration<S, T>()
-    private val log = LoggerFactory.getLogger(this.javaClass)
-
-    private var initialState: State<S>? = null
-    override lateinit var states: Set<State<S>>
-    override lateinit var transitionMap: TransitionMap<S, T>
     override var processed: Boolean = false
+    override lateinit var stateDefinitions: List<StateDefinition<S, T>>
+    override lateinit var transitionMap: TransitionMap<S, T>
 
     override fun configureStates(): StatesConfiguration<S, T> {
         if (processed) {
@@ -46,9 +45,8 @@ open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S,
         configureStates()
         configureTransitions()
         validateStates()
-        this.states = statesConfiguration.getStates()
-        this.initialState = statesConfiguration.getStates().first { State.PseudoStateType.INITIAL == it.getType() }
         validateTransitions()
+        this.stateDefinitions = statesConfiguration.getStateDefinitions()
         this.transitionMap = TransitionMap(transitionsConfiguration.getTransitions())
         processed = true
     }
@@ -57,7 +55,8 @@ open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S,
      * Validate the states configuration
      */
     private fun validateStates() {
-        val states = statesConfiguration.getStates()
+        val stateDefinitions = statesConfiguration.getStateDefinitions()
+        val states = stateDefinitions.map { it.state }
         val initialStates = states.filter { State.PseudoStateType.INITIAL == it.getType() }
         val endStates = states.filter { State.PseudoStateType.TERMINAL == it.getType() }
 
@@ -80,9 +79,10 @@ open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S,
      * Validate the transitions configuration
      */
     private fun validateTransitions() {
+        val states = statesConfiguration.getStateDefinitions().map { it.state }
         val transitions = transitionsConfiguration.getTransitions()
-        val stateIds = this.states.map { it.getId() }
-        val statesMap: Map<S, State<S>> = states.associateBy { it.getId() }
+        val stateIds = states.map { it.getId() }
+        val statesMap = states.associateBy { it.getId() }
 
         val transitionStates: Set<S> = transitions.map { setOf(it.source, it.target) }.flatten().toSet()
         if (transitionStates != stateIds && (transitionStates + stateIds).size > states.size) {
