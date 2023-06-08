@@ -47,11 +47,13 @@ open class DefaultStateMachine<S, T>(
         var t = trigger
 
         do {
-            val preTriggerState: S = state.getId()
-            val postTriggerState = runTrigger(t).getId()
-            // Try a no-trigger transition in case it's defined.
+            val sourceStateId: S = state.getId()
+            runTrigger(t)
+            val targetStateId = state.getId()
+            val transitioned = targetStateId != sourceStateId
+            // Try a trigger-less transition in case it's defined.
             t = null
-        } while (!finished && postTriggerState != preTriggerState)
+        } while (!finished && transitioned)
         return state
     }
 
@@ -67,14 +69,8 @@ open class DefaultStateMachine<S, T>(
                     )
                     return state
                 }
-
-            for (transition in transitions) {
-                if (handleSimpleTransition(transition, trigger)) {
-                    break
-                }
-            }
-
-            return state.also { it.onTerminal() }
+            transitions.firstOrNull { handleSimpleTransition(it, trigger) }
+            return state.also { onTerminal() }
         } catch (e: Exception) {
             throw StateMachineException(e, this)
         }
@@ -127,8 +123,8 @@ open class DefaultStateMachine<S, T>(
         }
     }
 
-    private fun State<S>.onTerminal() {
-        if (State.PseudoStateType.TERMINAL == getType()) {
+    private fun onTerminal() {
+        if (State.PseudoStateType.TERMINAL == state.getType()) {
             finished = true
             stop()
         }
