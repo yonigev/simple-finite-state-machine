@@ -12,8 +12,12 @@ interface State<S> {
             return create(id, PseudoStateType.INITIAL)
         }
 
-        fun <S> end(id: S): State<S> {
+        fun <S> terminal(id: S): State<S> {
             return create(id, PseudoStateType.TERMINAL)
+        }
+
+        fun <S> choice(id: S): State<S> {
+            return create(id, PseudoStateType.CHOICE)
         }
 
         fun <S> create(id: S, pseudoStateType: PseudoStateType = PseudoStateType.SIMPLE): State<S> {

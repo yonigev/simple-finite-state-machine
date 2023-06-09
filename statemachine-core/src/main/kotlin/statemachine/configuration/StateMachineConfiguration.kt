@@ -1,8 +1,8 @@
 package statemachine.configuration
 
+import statemachine.configuration.state.StateDefinition
 import statemachine.configuration.state.StatesConfiguration
 import statemachine.configuration.transition.TransitionsConfiguration
-import statemachine.state.State
 import statemachine.transition.TransitionMap
 
 /**
@@ -11,7 +11,7 @@ import statemachine.transition.TransitionMap
  */
 interface StateMachineConfiguration<S, T> {
     var processed: Boolean
-    var states: Set<State<S>>
+    var stateDefinitions: List<StateDefinition<S, T>>
     var transitionMap: TransitionMap<S, T>
 
     /**

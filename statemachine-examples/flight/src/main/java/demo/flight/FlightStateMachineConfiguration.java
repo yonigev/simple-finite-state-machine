@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 import static demo.flight.FlightStateMachineConfiguration.FlightState.*;
 import static demo.flight.FlightStateMachineConfiguration.FlightTrigger.*;
-import static statemachine.action.Action.createAction;
+import static statemachine.action.TransitionAction.create;
 
 @Slf4j
 public class FlightStateMachineConfiguration extends DefaultStateMachineConfiguration<FlightState, FlightTrigger> {
@@ -39,7 +39,7 @@ public class FlightStateMachineConfiguration extends DefaultStateMachineConfigur
     public StatesConfiguration<FlightState, FlightTrigger> configureStates() {
         StatesConfiguration<FlightState, FlightTrigger> statesConfig = super.configureStates();
         statesConfig.setInitial(BOARDING);
-        statesConfig.setTerminal(FlightState.LANDED);
+        statesConfig.terminal(FlightState.LANDED);
         Arrays.stream(FlightState.values()).forEach(statesConfig::simple);
         return statesConfig;
     }
@@ -48,31 +48,31 @@ public class FlightStateMachineConfiguration extends DefaultStateMachineConfigur
     @Override
     public TransitionsConfiguration<FlightState, FlightTrigger> configureTransitions() {
         TransitionsConfiguration<FlightState, FlightTrigger> transitionsConfig = super.configureTransitions();
-        transitionsConfig.add(BOARDING, BOARDING_COMPLETE, PASSENGERS_BOARDED, boardingGuard, createAction((context) -> {
+        transitionsConfig.add(BOARDING, BOARDING_COMPLETE, PASSENGERS_BOARDED, boardingGuard, create((context) -> {
             log.info("Boarding is complete");
             return null;
         }));
-        transitionsConfig.add(BOARDING_COMPLETE, EN_ROUTE_TO_RUNWAY, LEAVE_GATE, alwaysTrueGuard, createAction((context) -> {
+        transitionsConfig.add(BOARDING_COMPLETE, EN_ROUTE_TO_RUNWAY, LEAVE_GATE, alwaysTrueGuard, create((context) -> {
             log.info("En Route to the Runway");
             return null;
         }));
-        transitionsConfig.add(EN_ROUTE_TO_RUNWAY, WAITING_AT_RUNWAY, LOCATION_UPDATE, runwayGuard, createAction((context) -> {
+        transitionsConfig.add(EN_ROUTE_TO_RUNWAY, WAITING_AT_RUNWAY, LOCATION_UPDATE, runwayGuard, create((context) -> {
             log.info("Waiting for clearance");
             return null;
         }));
-        transitionsConfig.add(WAITING_AT_RUNWAY, TAKING_OFF, DEPARTURE_CLEARED, alwaysTrueGuard, createAction((context) -> {
+        transitionsConfig.add(WAITING_AT_RUNWAY, TAKING_OFF, DEPARTURE_CLEARED, alwaysTrueGuard, create((context) -> {
             log.info("Beginning takeoff");
             return null;
         }));
-        transitionsConfig.add(TAKING_OFF, CRUISING, LOCATION_UPDATE, cruisingGuard, createAction((context) -> {
+        transitionsConfig.add(TAKING_OFF, CRUISING, LOCATION_UPDATE, cruisingGuard, create((context) -> {
             log.info("Cruising altitude reached");
             return null;
         }));
-        transitionsConfig.add(CRUISING, LANDING, LOCATION_UPDATE, landingGuard, createAction((context) -> {
+        transitionsConfig.add(CRUISING, LANDING, LOCATION_UPDATE, landingGuard, create((context) -> {
             log.info("Beginning landing");
             return null;
         }));
-        transitionsConfig.add(LANDING, LANDED, LOCATION_UPDATE, arrivalGuard, createAction((context) -> {
+        transitionsConfig.add(LANDING, LANDED, LOCATION_UPDATE, arrivalGuard, create((context) -> {
             log.info("The plane has landed, welcome to Somewhere!");
             return null;
         }));

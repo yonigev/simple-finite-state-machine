@@ -1,6 +1,6 @@
 package statemachine.transition
 
-import statemachine.action.Action
+import statemachine.action.TransitionAction
 import statemachine.guard.Guard
 
 /**
@@ -13,5 +13,5 @@ interface Transition<S, T> {
     val target: S
     val trigger: T?
     val guard: Guard<S, T>
-    val actions: Iterable<Action<S, T>>
+    val actions: Iterable<TransitionAction<S, T>>
 }

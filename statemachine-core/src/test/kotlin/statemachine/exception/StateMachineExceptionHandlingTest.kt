@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import statemachine.StateMachine
 import statemachine.StateMachineException
-import statemachine.action.Action.Companion.createAction
+import statemachine.action.TransitionAction.Companion.create
 import statemachine.configuration.DefaultStateMachineConfiguration
 import statemachine.configuration.StateMachineConfigurationException
 import statemachine.configuration.transition.DefaultTransitionsConfiguration
@@ -25,7 +25,7 @@ class StateMachineExceptionHandlingTest {
             setInitial(S.INITIAL)
             simple(S.STATE_A)
             simple(S.STATE_B)
-            setTerminal(S.TERMINAL_STATE)
+            terminal(S.TERMINAL_STATE)
         }
 
         (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
@@ -44,11 +44,11 @@ class StateMachineExceptionHandlingTest {
             setInitial(S.INITIAL)
             simple(S.STATE_A)
             simple(S.STATE_B)
-            setTerminal(S.TERMINAL_STATE)
+            terminal(S.TERMINAL_STATE)
         }
 
         (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
-            add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard, createAction<S, T> { throw Exception("Exception thrown in a Transition Action") })
+            add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard, create<S, T> { throw Exception("Exception thrown in a Transition Action") })
             add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
         }
         val factory = DefaultStateMachineFactory(config)
