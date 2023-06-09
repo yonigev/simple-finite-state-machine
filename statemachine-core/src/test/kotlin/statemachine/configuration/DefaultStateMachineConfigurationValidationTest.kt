@@ -16,7 +16,7 @@ class DefaultStateMachineConfigurationValidationTest {
             setInitial(S.INITIAL)
             setInitial(S.STATE_A)
             simple(S.STATE_B)
-            setTerminal(S.TERMINAL_STATE)
+            terminal(S.TERMINAL_STATE)
         }
 
         assertThrows<StateMachineConfigurationException> {
@@ -45,7 +45,7 @@ class DefaultStateMachineConfigurationValidationTest {
             setInitial(S.INITIAL)
             simple(S.STATE_A)
             simple(S.STATE_B)
-            setTerminal(S.TERMINAL_STATE)
+            terminal(S.TERMINAL_STATE)
         }
 
         (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
@@ -67,7 +67,7 @@ class DefaultStateMachineConfigurationValidationTest {
             simple(S.STATE_A)
             simple(S.STATE_B)
             simple(S.STATE_C)
-            setTerminal(S.TERMINAL_STATE)
+            terminal(S.TERMINAL_STATE)
         }
 
         (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
@@ -92,7 +92,7 @@ class DefaultStateMachineConfigurationValidationTest {
             simple(S.STATE_A)
             choice(S.STATE_B)
             simple(S.STATE_C)
-            setTerminal(S.TERMINAL_STATE)
+            terminal(S.TERMINAL_STATE)
         }
 
         (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {

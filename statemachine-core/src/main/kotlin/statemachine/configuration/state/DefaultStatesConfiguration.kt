@@ -12,8 +12,12 @@ class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
         addStateDefinition(State.initial(stateId))
     }
 
-    override fun setTerminal(stateId: S) {
-        addStateDefinition(State.terminal(stateId))
+    override fun terminal(stateId: S, entryAction: StateAction<S, T>?) {
+        addStateDefinition(State.terminal(stateId), entryAction, null)
+    }
+
+    override fun terminal(stateId: S) {
+        addStateDefinition(State.terminal(stateId), null, null)
     }
 
     override fun simple(stateId: S, entryAction: StateAction<S, T>?, exitAction: StateAction<S, T>?) {

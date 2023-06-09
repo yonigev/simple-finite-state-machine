@@ -3,7 +3,7 @@ package statemachine.action
 import statemachine.context.StateMachineContext
 
 /**
- * An Action that will act either after entering a particular state or before exiting one
+ * An Action that will act either after entering a particular state (entry action) or before exiting one (exit action)
  */
 interface StateAction<S, T> {
     fun act(stateMachineContext: StateMachineContext<S, T>)

@@ -39,7 +39,7 @@ public class FlightStateMachineConfiguration extends DefaultStateMachineConfigur
     public StatesConfiguration<FlightState, FlightTrigger> configureStates() {
         StatesConfiguration<FlightState, FlightTrigger> statesConfig = super.configureStates();
         statesConfig.setInitial(BOARDING);
-        statesConfig.setTerminal(FlightState.LANDED);
+        statesConfig.terminal(FlightState.LANDED);
         Arrays.stream(FlightState.values()).forEach(statesConfig::simple);
         return statesConfig;
     }

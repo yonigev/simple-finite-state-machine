@@ -34,8 +34,8 @@ class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginSta
             setInitial(INITIAL_STATE)
             simple(EMAIL_INPUT)
             choice(PASSWORD_INPUT)
-            setTerminal(LOGIN_COMPLETE)
-            setTerminal(LOGIN_FAILED)
+            terminal(LOGIN_COMPLETE)
+            terminal(LOGIN_FAILED)
         }
 
         return statesConfig

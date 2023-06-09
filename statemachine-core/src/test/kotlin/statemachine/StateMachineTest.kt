@@ -1,6 +1,7 @@
 package statemachine
 
 import org.junit.jupiter.api.Test
+import statemachine.action.StateAction
 import statemachine.action.TransitionAction.Companion.create
 import statemachine.configuration.DefaultStateMachineConfiguration
 import statemachine.configuration.transition.DefaultTransitionsConfiguration
@@ -17,14 +18,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class StateMachineTest {
-    @Test
-    fun testStateMachineBuilding() {
-        val config = StateMachineTestUtil.createConfig()
-        val factory = DefaultStateMachineFactory(config)
-
-        val sm: StateMachine<S, T> = factory.create("TEST_ID").also { it.start() }
-        sm.stop()
-    }
 
     @Test
     fun testBasicStateMachineFlow() {
@@ -49,7 +42,7 @@ class StateMachineTest {
             simple(S.STATE_A)
             choice(S.STATE_B)
             simple(S.STATE_C)
-            setTerminal(S.TERMINAL_STATE)
+            terminal(S.TERMINAL_STATE)
         }
 
         (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
@@ -80,7 +73,7 @@ class StateMachineTest {
     }
 
     @Test
-    fun testStateMachineFlow_Triggerless() {
+    fun testStateMachineTriggerlessFlow() {
         val config = StateMachineTestUtil.createConfig()
         val factory = DefaultStateMachineFactory(config)
 
@@ -120,5 +113,35 @@ class StateMachineTest {
             }
         assertEquals(S.STATE_C, sm.state.getId())
         assertEquals(output, listOf(1, 2, 3))
+    }
+
+    @Test
+    fun testStateMachine_stateActions_RunningSequentially() {
+        val output = mutableListOf<Int>()
+
+        val config = DefaultStateMachineConfiguration<S, T>()
+        config.configureStates().apply {
+            setInitial(S.INITIAL)
+            simple(S.STATE_A, StateAction.create { output.add(2) }, StateAction.create { output.add(3) })
+            simple(S.STATE_B, StateAction.create { output.add(5) }, StateAction.create { output.add(6) })
+            terminal(S.TERMINAL_STATE, StateAction.create { output.add(8) })
+        }
+
+        (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
+            add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard, create { output.add(1) })
+            add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard, create { output.add(4) })
+            add(S.STATE_B, S.TERMINAL_STATE, T.END, positiveGuard, create { output.add(7) })
+        }
+
+        val factory = DefaultStateMachineFactory(config)
+
+        factory.createStarted("TEST")
+            .also { assertEquals(S.INITIAL, it.state.getId()) }
+            .apply {
+                trigger(createTrigger(T.MOVE_TO_A))
+                trigger(createTrigger(T.MOVE_TO_B))
+                trigger(createTrigger(T.END))
+            }
+        assertEquals(listOf(1, 2, 3, 4, 5, 6, 7, 8), output)
     }
 }

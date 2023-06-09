@@ -21,7 +21,7 @@ class StateMachineTestUtil {
                 simple(S.STATE_A)
                 simple(S.STATE_B)
                 simple(S.STATE_C)
-                setTerminal(S.TERMINAL_STATE)
+                terminal(S.TERMINAL_STATE)
             }
 
             (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {

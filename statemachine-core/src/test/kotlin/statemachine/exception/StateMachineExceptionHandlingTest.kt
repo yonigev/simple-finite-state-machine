@@ -25,7 +25,7 @@ class StateMachineExceptionHandlingTest {
             setInitial(S.INITIAL)
             simple(S.STATE_A)
             simple(S.STATE_B)
-            setTerminal(S.TERMINAL_STATE)
+            terminal(S.TERMINAL_STATE)
         }
 
         (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
@@ -44,7 +44,7 @@ class StateMachineExceptionHandlingTest {
             setInitial(S.INITIAL)
             simple(S.STATE_A)
             simple(S.STATE_B)
-            setTerminal(S.TERMINAL_STATE)
+            terminal(S.TERMINAL_STATE)
         }
 
         (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
