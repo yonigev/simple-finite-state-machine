@@ -18,7 +18,7 @@ import java.util.Objects;
 public class BoardingGuard implements Guard<FlightStateMachineConfiguration.FlightState, FlightStateMachineConfiguration.FlightTrigger> {
 
     @Override
-    public boolean transition(@NotNull TransitionContext<FlightStateMachineConfiguration.FlightState, FlightStateMachineConfiguration.FlightTrigger> transitionContext) {
+    public boolean allow(@NotNull TransitionContext<FlightStateMachineConfiguration.FlightState, FlightStateMachineConfiguration.FlightTrigger> transitionContext) {
         Objects.requireNonNull(transitionContext.getTrigger());
 
         PassengerUpdateTrigger passengerUpdate = (PassengerUpdateTrigger) transitionContext.getTrigger();

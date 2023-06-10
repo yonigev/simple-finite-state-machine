@@ -6,6 +6,7 @@ import statemachine.configuration.state.StateDefinition
 import statemachine.context.StateMachineContext
 import statemachine.state.State
 import statemachine.transition.DefaultTransitionContext
+import statemachine.transition.Transition
 import statemachine.transition.TransitionContext
 import statemachine.transition.TransitionMap
 import statemachine.trigger.Trigger
@@ -14,19 +15,20 @@ import statemachine.trigger.Trigger
  * A Default [statemachine.StateMachine] implementation
  */
 open class DefaultStateMachine<S, T>(
-    override val id: String,
-    statesDefinitions: List<StateDefinition<S, T>>,
-    private val transitionMap: TransitionMap<S, T>,
-    private val context: StateMachineContext<S, T>,
+    statesDefinitions: Set<StateDefinition<S, T>>,
+    transitions: Set<Transition<S, T>>,
+    override val context: StateMachineContext<S, T>,
 ) : StateMachine<S, T> {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
-    private val stateDefinitionMap: Map<S, StateDefinition<S, T>> = statesDefinitions.associateBy { it.state.getId() }
-
+    private val stateDefinitionMap = statesDefinitions.associateBy { it.state.getId() }
+    private val transitionMap = TransitionMap(transitions)
     private var started = false
     private var finished = false
 
-    override val state: State<S> get() = context.state
+    override val state: State<S> get() = context.getState()
+    override val id: String get() = context.getId()
+
     private val stateDefinition: StateDefinition<S, T> get() = stateDefinitionMap[state.getId()]!!
 
     override fun start() {
@@ -79,15 +81,16 @@ open class DefaultStateMachine<S, T>(
                 // execute entry action
                 stateDefinition.entryAction?.act(context)
             }.let {
-            onTerminal()
+            ifTerminal()
             state
         }
     }
 
     private fun attemptTransition(transitionContext: TransitionContext<S, T>): Boolean {
         val transition = transitionContext.transition
+        val transitionGuard = transition.guard
 
-        return (transition.guard.transition(transitionContext)).also {
+        return (transitionGuard.allow(transitionContext)).also {
             log.debug("Evaluation of transition {} is: {}", transition, it)
         }
     }
@@ -114,7 +117,7 @@ open class DefaultStateMachine<S, T>(
         }
     }
 
-    private fun onTerminal() {
+    private fun ifTerminal() {
         if (State.PseudoStateType.TERMINAL == state.getType()) {
             finished = true
             stop()

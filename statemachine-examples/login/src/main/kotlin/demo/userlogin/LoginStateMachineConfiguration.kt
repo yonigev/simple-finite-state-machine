@@ -73,7 +73,7 @@ class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginSta
 
 
     inner class EmailValidatorGuard : Guard<LoginState, LoginTrigger> {
-        override fun transition(transitionContext: TransitionContext<LoginState, LoginTrigger>): Boolean {
+        override fun allow(transitionContext: TransitionContext<LoginState, LoginTrigger>): Boolean {
             val email = (transitionContext.trigger as EmailInputTrigger).email
             return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$".toRegex()) && mockExistingEmails.contains(email)
         }
@@ -81,7 +81,7 @@ class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginSta
     }
 
     inner class PasswordValidatorGuard : Guard<LoginState, LoginTrigger> {
-        override fun transition(transitionContext: TransitionContext<LoginState, LoginTrigger>): Boolean {
+        override fun allow(transitionContext: TransitionContext<LoginState, LoginTrigger>): Boolean {
             val smContext = transitionContext.stateMachineContext
             val email: String = smContext.getPropertyOrDefault("email", "") as String
 
@@ -92,7 +92,7 @@ class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginSta
     }
 
     inner class AttemptsExceededGuard : Guard<LoginState, LoginTrigger> {
-        override fun transition(transitionContext: TransitionContext<LoginState, LoginTrigger>): Boolean {
+        override fun allow(transitionContext: TransitionContext<LoginState, LoginTrigger>): Boolean {
             val attempts: Int = transitionContext.stateMachineContext.getPropertyOrDefault("attempts", 1) as Int
             return attempts + 1 >= MAX_ATTEMPTS
         }

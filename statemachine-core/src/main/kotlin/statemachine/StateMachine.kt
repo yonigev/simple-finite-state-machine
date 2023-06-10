@@ -1,5 +1,6 @@
 package statemachine
 
+import statemachine.context.StateMachineContext
 import statemachine.state.State
 import statemachine.trigger.Trigger
 
@@ -9,6 +10,7 @@ import statemachine.trigger.Trigger
 interface StateMachine<S, T> {
     val id: String
     val state: State<S>
+    val context: StateMachineContext<S, T>
 
     /** Trigger a state machine to run */
     fun trigger(trigger: Trigger<T>?): State<S>

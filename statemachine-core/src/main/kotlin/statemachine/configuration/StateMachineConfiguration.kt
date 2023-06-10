@@ -3,7 +3,7 @@ package statemachine.configuration
 import statemachine.configuration.state.StateDefinition
 import statemachine.configuration.state.StatesConfiguration
 import statemachine.configuration.transition.TransitionsConfiguration
-import statemachine.transition.TransitionMap
+import statemachine.transition.Transition
 
 /**
  * This class is used to configure a state machine's states and transitions
@@ -11,8 +11,8 @@ import statemachine.transition.TransitionMap
  */
 interface StateMachineConfiguration<S, T> {
     var processed: Boolean
-    var stateDefinitions: List<StateDefinition<S, T>>
-    var transitionMap: TransitionMap<S, T>
+    var stateDefinitions: Set<StateDefinition<S, T>>
+    var transitions: Set<Transition<S, T>>
 
     /**
      * Returns a [StatesConfiguration]
