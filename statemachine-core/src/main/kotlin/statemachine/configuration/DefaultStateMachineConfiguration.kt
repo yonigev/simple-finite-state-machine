@@ -7,7 +7,7 @@ import statemachine.configuration.state.StatesConfiguration
 import statemachine.configuration.transition.DefaultTransitionsConfiguration
 import statemachine.configuration.transition.TransitionsConfiguration
 import statemachine.state.State
-import statemachine.transition.TransitionMap
+import statemachine.transition.Transition
 
 /**
  * Defines and validates a State Machine's configuration
@@ -17,9 +17,10 @@ open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S,
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val statesConfiguration = DefaultStatesConfiguration<S, T>()
     private val transitionsConfiguration = DefaultTransitionsConfiguration<S, T>()
+
+    override lateinit var stateDefinitions: Set<StateDefinition<S, T>>
+    override lateinit var transitions: Set<Transition<S, T>>
     override var processed: Boolean = false
-    override lateinit var stateDefinitions: List<StateDefinition<S, T>>
-    override lateinit var transitionMap: TransitionMap<S, T>
 
     override fun configureStates(): StatesConfiguration<S, T> {
         if (processed) {
@@ -47,7 +48,7 @@ open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S,
         validateStates()
         validateTransitions()
         this.stateDefinitions = statesConfiguration.getStateDefinitions()
-        this.transitionMap = TransitionMap(transitionsConfiguration.getTransitions())
+        this.transitions = transitionsConfiguration.getTransitions()
         processed = true
     }
 

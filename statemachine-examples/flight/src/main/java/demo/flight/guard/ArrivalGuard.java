@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class ArrivalGuard implements Guard<FlightStateMachineConfiguration.FlightState, FlightStateMachineConfiguration.FlightTrigger> {
     @Override
-    public boolean transition(@NotNull TransitionContext<FlightStateMachineConfiguration.FlightState, FlightStateMachineConfiguration.FlightTrigger> transitionContext) {
+    public boolean allow(@NotNull TransitionContext<FlightStateMachineConfiguration.FlightState, FlightStateMachineConfiguration.FlightTrigger> transitionContext) {
         Objects.requireNonNull(transitionContext.getTrigger());
         // Get the current extended flight state
         FlightInformation flightInfo = (FlightInformation) transitionContext.getStateMachineContext().getProperty(FlightStateMachineApplication.FLIGHT_INFO);

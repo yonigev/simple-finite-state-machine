@@ -4,12 +4,20 @@ import statemachine.state.State
 
 /** A default [StateMachineContext] implementation, uses a [MutableMap] as a property store. */
 open class DefaultStateMachineContext<S, T>(
-    override var state: State<S>,
+    private var id: String,
+    private var state: State<S>,
     private val properties: MutableMap<Any, Any> = mutableMapOf(),
 ) : StateMachineContext<S, T> {
-    override fun transitionToState(state: State<S>): State<S> {
+    override fun transitionToState(state: State<S>) {
         this.state = state
-        return this.state
+    }
+
+    override fun getId(): String {
+        return id
+    }
+
+    override fun getState(): State<S> {
+        return state
     }
 
     override fun getProperty(key: Any): Any {

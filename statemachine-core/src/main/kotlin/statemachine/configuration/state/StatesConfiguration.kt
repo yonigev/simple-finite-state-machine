@@ -51,5 +51,5 @@ interface StatesConfiguration<S, T> {
      * Returns the configured [StateDefinition] definitions
      * used by the [statemachine.configuration.StateMachineConfiguration] to configure the StateMachine
      */
-    fun getStateDefinitions(): List<StateDefinition<S, T>>
+    fun getStateDefinitions(): Set<StateDefinition<S, T>>
 }

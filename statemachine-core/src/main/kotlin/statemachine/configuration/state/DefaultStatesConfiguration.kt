@@ -47,7 +47,7 @@ class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
     /**
      * Returns an *immutable* State set
      */
-    override fun getStateDefinitions(): List<StateDefinition<S, T>> {
-        return statesDefinitions.toList()
+    override fun getStateDefinitions(): Set<StateDefinition<S, T>> {
+        return statesDefinitions.toSet()
     }
 }

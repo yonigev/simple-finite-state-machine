@@ -21,8 +21,8 @@ public class FlightStateMachineFactory extends DefaultStateMachineFactory<Flight
 
     @NotNull
     @Override
-    public StateMachineContext<FlightState, FlightTrigger> setupInitialStateMachineContext() {
-        StateMachineContext<FlightState, FlightTrigger> context = super.setupInitialStateMachineContext();
+    public StateMachineContext<FlightState, FlightTrigger> setupInitialStateMachineContext(@NotNull String id) {
+        StateMachineContext<FlightState, FlightTrigger> context = super.setupInitialStateMachineContext(id);
         context.setProperty(FLIGHT_INFO, flightInformation);
         return context;
     }
