@@ -14,4 +14,30 @@ interface Transition<S, T> {
     val trigger: T?
     val guard: Guard<S, T>
     val actions: Iterable<TransitionAction<S, T>>
+
+    companion object {
+        fun <S, T> create(
+            source: S,
+            target: S,
+            trigger: T?,
+            guard: Guard<S, T>,
+            transitionActions: List<TransitionAction<S, T>>? = null,
+        ): Transition<S, T> {
+            return object : Transition<S, T> {
+                override val source: S
+                    get() = source
+                override val target: S
+                    get() = target
+                override val trigger: T?
+                    get() = trigger
+                override val guard: Guard<S, T>
+                    get() = guard
+                override val actions: List<TransitionAction<S, T>>
+                    get() = when (transitionActions) {
+                        null -> emptyList()
+                        else -> transitionActions
+                    }
+            }
+        }
+    }
 }

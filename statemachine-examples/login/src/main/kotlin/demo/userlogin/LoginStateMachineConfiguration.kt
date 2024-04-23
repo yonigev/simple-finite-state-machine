@@ -15,7 +15,7 @@ import demo.userlogin.LoginStateMachineConfiguration.LoginTrigger.SEND_PASSWORD
 import demo.userlogin.trigger.EmailInputTrigger
 import demo.userlogin.trigger.PasswordInputTrigger
 import statemachine.action.TransitionAction
-import statemachine.configuration.transition.TransitionsConfiguration
+import statemachine.configuration.transition.TransitionsDefiner
 import statemachine.guard.Guard
 import statemachine.transition.TransitionContext
 
@@ -41,10 +41,10 @@ class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginSta
         return statesConfig
     }
 
-    override fun configureTransitions(): TransitionsConfiguration<LoginState, LoginTrigger> {
-        val transitionsConfiguration = super.configureTransitions()
+    override fun configureTransitions(): TransitionsDefiner<LoginState, LoginTrigger> {
+        val transitionsDefiner = super.configureTransitions()
 
-        transitionsConfiguration.apply {
+        transitionsDefiner.apply {
             add(INITIAL_STATE, EMAIL_INPUT, BEGIN_LOGIN_FLOW, Guard.ofPredicate { true })
             add(EMAIL_INPUT, PASSWORD_INPUT, SEND_EMAIL, emailValidatorGuard, TransitionAction.create { c ->
                 c.stateMachineContext.setProperty("email", (c.trigger as EmailInputTrigger).email)
@@ -60,7 +60,7 @@ class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginSta
                 c.stateMachineContext.setProperty("attempts", attempts + 1)
             })
         }
-        return transitionsConfiguration
+        return transitionsDefiner
     }
 
     enum class LoginState {

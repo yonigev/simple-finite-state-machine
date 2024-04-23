@@ -4,10 +4,9 @@ import org.junit.jupiter.api.Test
 import statemachine.action.StateAction
 import statemachine.action.TransitionAction.Companion.create
 import statemachine.configuration.DefaultStateMachineConfiguration
-import statemachine.configuration.transition.DefaultTransitionsConfiguration
+import statemachine.configuration.transition.DefaultTransitionsDefiner
 import statemachine.factory.DefaultStateMachineFactory
 import statemachine.guard.Guard
-import statemachine.transition.DefaultTransition
 import statemachine.transition.Transition
 import statemachine.util.S
 import statemachine.util.StateMachineTestUtil
@@ -45,7 +44,7 @@ class StateMachineTest {
             terminal(S.TERMINAL_STATE)
         }
 
-        (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
+        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
             add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
             // Transition to STATE_C will be allowed only if shouldEnd is false
@@ -77,7 +76,7 @@ class StateMachineTest {
         val config = StateMachineTestUtil.createConfig()
         val factory = DefaultStateMachineFactory(config)
 
-        (config.configureTransitions() as DefaultTransitionsConfiguration).apply {
+        (config.configureTransitions() as DefaultTransitionsDefiner).apply {
             add(S.STATE_A, S.STATE_B, null, positiveGuard)
             add(S.STATE_B, S.TERMINAL_STATE, null, positiveGuard)
         }
@@ -91,7 +90,7 @@ class StateMachineTest {
     fun testStateMachine_TransitionActions_RunningSequentially() {
         val output = mutableListOf<Int>()
 
-        val transition: Transition<S, T> = DefaultTransition(
+        val transition: Transition<S, T> = Transition.create(
             S.STATE_B,
             S.STATE_C,
             T.FORCE_MOVE_TO_C,
@@ -127,7 +126,7 @@ class StateMachineTest {
             terminal(S.TERMINAL_STATE, StateAction.create { output.add(8) })
         }
 
-        (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
+        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard, create { output.add(1) })
             add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard, create { output.add(4) })
             add(S.STATE_B, S.TERMINAL_STATE, T.END, positiveGuard, create { output.add(7) })

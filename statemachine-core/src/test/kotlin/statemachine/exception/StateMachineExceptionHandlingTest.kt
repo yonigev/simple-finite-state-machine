@@ -7,7 +7,7 @@ import statemachine.StateMachineException
 import statemachine.action.TransitionAction.Companion.create
 import statemachine.configuration.DefaultStateMachineConfiguration
 import statemachine.configuration.StateMachineConfigurationException
-import statemachine.configuration.transition.DefaultTransitionsConfiguration
+import statemachine.configuration.transition.DefaultTransitionsDefiner
 import statemachine.factory.DefaultStateMachineFactory
 import statemachine.guard.Guard.Companion.ofPredicate
 import statemachine.util.S
@@ -28,7 +28,7 @@ class StateMachineExceptionHandlingTest {
             terminal(S.TERMINAL_STATE)
         }
 
-        (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
+        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, ofPredicate { throw Exception("Exception Throwing Guard") })
             add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
         }
@@ -47,7 +47,7 @@ class StateMachineExceptionHandlingTest {
             terminal(S.TERMINAL_STATE)
         }
 
-        (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
+        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard, create<S, T> { throw Exception("Exception thrown in a Transition Action") })
             add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
         }

@@ -57,7 +57,7 @@ Action.createAction { log.info("Transition has happened") }
 
 Example:
 ```agsl
-transitionsConfiguration.apply {
+transitionsDefiner.apply {
             add(INITIAL_STATE, STATE_A, MOVE_TO_A, Guard.ofPredicate { /*Guard implementation*/ })
             add(STATE_A, STATE_B, MOVE_TO_B, someObjectImplementingGuard(), someObjectImplementingAction()
             ...
