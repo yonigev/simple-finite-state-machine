@@ -2,7 +2,7 @@ package statemachine.util
 
 import statemachine.configuration.DefaultStateMachineConfiguration
 import statemachine.configuration.StateMachineConfiguration
-import statemachine.configuration.transition.DefaultTransitionsConfiguration
+import statemachine.configuration.transition.DefaultTransitionsDefiner
 import statemachine.guard.Guard.Companion.ofPredicate
 import statemachine.trigger.Trigger
 
@@ -24,7 +24,7 @@ class StateMachineTestUtil {
                 terminal(S.TERMINAL_STATE)
             }
 
-            (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
+            (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
                 add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
                 add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
                 // Transition to STATE_C should be blocked, as the guard always returns false

@@ -1,7 +1,7 @@
 package statemachine.configuration
 
 import statemachine.configuration.state.StatesConfiguration
-import statemachine.configuration.transition.TransitionsConfiguration
+import statemachine.configuration.transition.TransitionsDefiner
 import statemachine.state.State
 import statemachine.transition.Transition
 
@@ -21,13 +21,13 @@ interface StateMachineConfiguration<S, T> {
     fun configureStates(): StatesConfiguration<S, T>
 
     /**
-     * Returns a [TransitionsConfiguration]
+     * Returns a [TransitionsDefiner]
      * Override or call this method to configure state machine [statemachine.transition.Transition].
      */
-    fun configureTransitions(): TransitionsConfiguration<S, T>
+    fun configureTransitions(): TransitionsDefiner<S, T>
 
     /**
-     * Process validate and finalize the configured [StatesConfiguration] and [TransitionsConfiguration]
+     * Process validate and finalize the configured [StatesConfiguration] and [TransitionsDefiner]
      */
     fun process()
 }

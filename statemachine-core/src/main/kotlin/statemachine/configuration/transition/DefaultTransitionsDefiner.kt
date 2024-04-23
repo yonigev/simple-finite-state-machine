@@ -5,13 +5,13 @@ import statemachine.guard.Guard
 import statemachine.transition.Transition
 
 /**
- * A default implementation for the [TransitionsConfiguration]
+ * A default implementation for the [TransitionsDefiner]
  */
-class DefaultTransitionsConfiguration<S, T> : TransitionsConfiguration<S, T> {
+class DefaultTransitionsDefiner<S, T> : TransitionsDefiner<S, T> {
     private val transitions = mutableSetOf<Transition<S, T>>()
 
-    override fun add(source: S, target: S, trigger: T?, guard: Guard<S, T>, transitionAction: TransitionAction<S, T>?) {
-        add(Transition.create(source, target, trigger, guard, transitionAction?.let { listOf(it) }))
+    override fun add(sourceId: S, targetId: S, triggerId: T?, guard: Guard<S, T>, transitionAction: TransitionAction<S, T>?) {
+        add(Transition.create(sourceId, targetId, triggerId, guard, transitionAction?.let { listOf(it) }))
     }
 
     override fun add(transition: Transition<S, T>) {
@@ -19,17 +19,17 @@ class DefaultTransitionsConfiguration<S, T> : TransitionsConfiguration<S, T> {
     }
 
     override fun add(
-        source: S,
-        target: S,
-        trigger: T?,
+        sourceId: S,
+        targetId: S,
+        triggerId: T?,
         guard: Guard<S, T>,
         transitionTransitionActions: List<TransitionAction<S, T>>,
     ) {
         add(
             Transition.create(
-                source,
-                target,
-                trigger,
+                sourceId,
+                targetId,
+                triggerId,
                 guard,
                 transitionTransitionActions,
             ),

@@ -2,7 +2,7 @@ package statemachine.configuration
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import statemachine.configuration.transition.DefaultTransitionsConfiguration
+import statemachine.configuration.transition.DefaultTransitionsDefiner
 import statemachine.util.S
 import statemachine.util.T
 import statemachine.util.positiveGuard
@@ -48,7 +48,7 @@ class DefaultStateMachineConfigurationValidationTest {
             terminal(S.TERMINAL_STATE)
         }
 
-        (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
+        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
             add(S.STATE_A, S.STATE_A, T.MOVE_TO_A, positiveGuard)
             add(S.STATE_C, S.TERMINAL_STATE, T.END, positiveGuard)
@@ -70,7 +70,7 @@ class DefaultStateMachineConfigurationValidationTest {
             terminal(S.TERMINAL_STATE)
         }
 
-        (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
+        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
             add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
             // STATE_B is NOT a choice state, yet treated like one.
@@ -95,7 +95,7 @@ class DefaultStateMachineConfigurationValidationTest {
             terminal(S.TERMINAL_STATE)
         }
 
-        (config.configureTransitions() as (DefaultTransitionsConfiguration)).apply {
+        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
             add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
             // STATE_B is NOT a choice state, yet treated like one.

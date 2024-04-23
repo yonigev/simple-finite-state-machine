@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import statemachine.configuration.DefaultStateMachineConfiguration;
 import statemachine.configuration.state.StatesConfiguration;
-import statemachine.configuration.transition.TransitionsConfiguration;
+import statemachine.configuration.transition.TransitionsDefiner;
 import statemachine.guard.Guard;
 
 import java.util.Arrays;
@@ -46,8 +46,8 @@ public class FlightStateMachineConfiguration extends DefaultStateMachineConfigur
 
     @NotNull
     @Override
-    public TransitionsConfiguration<FlightState, FlightTrigger> configureTransitions() {
-        TransitionsConfiguration<FlightState, FlightTrigger> transitionsConfig = super.configureTransitions();
+    public TransitionsDefiner<FlightState, FlightTrigger> configureTransitions() {
+        TransitionsDefiner<FlightState, FlightTrigger> transitionsConfig = super.configureTransitions();
         transitionsConfig.add(BOARDING, BOARDING_COMPLETE, PASSENGERS_BOARDED, boardingGuard, create((context) -> {
             log.info("Boarding is complete");
             return null;

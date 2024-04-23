@@ -2,6 +2,10 @@ package statemachine.state
 
 import statemachine.action.StateAction
 
+/**
+ * A State of a State Machine.
+ * [S] denotes the States ID type and [T] the trigger's
+ */
 interface State<S, T> {
     val id: S
     val type: PseudoStateType
