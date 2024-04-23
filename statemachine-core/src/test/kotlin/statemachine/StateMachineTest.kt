@@ -25,12 +25,12 @@ class StateMachineTest {
         val factory = DefaultStateMachineFactory(config)
 
         val sm: StateMachine<S, T> = factory.create("TEST_ID").also { it.start() }
-        assertEquals(S.INITIAL, sm.state.getId())
+        assertEquals(S.INITIAL, sm.state.id)
 
-        sm.trigger(createTrigger(T.MOVE_TO_A)).also { assertEquals(sm.state.getId(), S.STATE_A) }
-        sm.trigger(createTrigger(T.MOVE_TO_B)).also { assertEquals(sm.state.getId(), S.STATE_B) }
-        sm.trigger(createTrigger(T.MOVE_TO_C)).also { assertNotEquals(sm.state.getId(), S.STATE_C) }
-        sm.trigger(createTrigger(T.END)).also { assertEquals(sm.state.getId(), S.TERMINAL_STATE) }
+        sm.trigger(createTrigger(T.MOVE_TO_A)).also { assertEquals(sm.state.id, S.STATE_A) }
+        sm.trigger(createTrigger(T.MOVE_TO_B)).also { assertEquals(sm.state.id, S.STATE_B) }
+        sm.trigger(createTrigger(T.MOVE_TO_C)).also { assertNotEquals(sm.state.id, S.STATE_C) }
+        sm.trigger(createTrigger(T.END)).also { assertEquals(sm.state.id, S.TERMINAL_STATE) }
     }
 
     @Test
@@ -57,19 +57,19 @@ class StateMachineTest {
         val factory = DefaultStateMachineFactory(config)
 
         var sm: StateMachine<S, T> = factory.createStarted("SHOULD_STOP_AT_STATE_C")
-            .also { assertEquals(S.INITIAL, it.state.getId()) }
+            .also { assertEquals(S.INITIAL, it.state.id) }
 
-        sm.trigger(createTrigger(T.MOVE_TO_A)).also { assertEquals(S.STATE_A, sm.state.getId()) }
-        sm.trigger(createTrigger(T.MOVE_TO_B)).also { assertEquals(S.STATE_B, sm.state.getId()) }
+        sm.trigger(createTrigger(T.MOVE_TO_A)).also { assertEquals(S.STATE_A, sm.state.id) }
+        sm.trigger(createTrigger(T.MOVE_TO_B)).also { assertEquals(S.STATE_B, sm.state.id) }
 
-        sm.trigger(createTrigger(T.MOVE_TO_C_OR_END)).also { assertEquals(S.STATE_C, sm.state.getId()) }
+        sm.trigger(createTrigger(T.MOVE_TO_C_OR_END)).also { assertEquals(S.STATE_C, sm.state.id) }
         sm = factory.createStarted("SHOULD_END")
         shouldEnd = true
         sm.apply {
             trigger(createTrigger(T.MOVE_TO_A))
             trigger(createTrigger(T.MOVE_TO_B))
             trigger(createTrigger(T.MOVE_TO_C_OR_END))
-        }.also { assertEquals(S.TERMINAL_STATE, sm.state.getId()) }
+        }.also { assertEquals(S.TERMINAL_STATE, sm.state.id) }
     }
 
     @Test
@@ -82,9 +82,9 @@ class StateMachineTest {
             add(S.STATE_B, S.TERMINAL_STATE, null, positiveGuard)
         }
         val sm: StateMachine<S, T> = factory.createStarted("TEST_ID")
-        assertEquals(S.INITIAL, sm.state.getId())
+        assertEquals(S.INITIAL, sm.state.id)
         sm.trigger(createTrigger(T.MOVE_TO_A))
-        assertEquals(S.TERMINAL_STATE, sm.state.getId())
+        assertEquals(S.TERMINAL_STATE, sm.state.id)
     }
 
     @Test
@@ -111,7 +111,7 @@ class StateMachineTest {
                 trigger(createTrigger(T.MOVE_TO_B))
                 trigger(createTrigger(T.FORCE_MOVE_TO_C))
             }
-        assertEquals(S.STATE_C, sm.state.getId())
+        assertEquals(S.STATE_C, sm.state.id)
         assertEquals(output, listOf(1, 2, 3))
     }
 
@@ -136,7 +136,7 @@ class StateMachineTest {
         val factory = DefaultStateMachineFactory(config)
 
         factory.createStarted("TEST")
-            .also { assertEquals(S.INITIAL, it.state.getId()) }
+            .also { assertEquals(S.INITIAL, it.state.id) }
             .apply {
                 trigger(createTrigger(T.MOVE_TO_A))
                 trigger(createTrigger(T.MOVE_TO_B))

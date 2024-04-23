@@ -61,7 +61,7 @@ class StateMachineExceptionHandlingTest {
         val config = StateMachineTestUtil.createConfig()
         val factory = DefaultStateMachineFactory(config)
         val sm: StateMachine<S, T> = factory.create("TEST_ID")
-        assertEquals(S.INITIAL, sm.state.getId())
+        assertEquals(S.INITIAL, sm.state.id)
         assertThrows<StateMachineConfigurationException> { sm.trigger(createTrigger(T.MOVE_TO_A)) }
     }
 
@@ -73,7 +73,7 @@ class StateMachineExceptionHandlingTest {
         sm.trigger(createTrigger(T.MOVE_TO_A))
         sm.trigger(createTrigger(T.MOVE_TO_B))
         sm.trigger(createTrigger(T.END))
-        assertEquals(S.TERMINAL_STATE, sm.state.getId())
+        assertEquals(S.TERMINAL_STATE, sm.state.id)
         assertThrows<StateMachineConfigurationException> { sm.start() }
     }
 }

@@ -17,16 +17,16 @@ class LoginStateMachineTest {
         factory.createStarted("TEST_SM").apply {
             // Begin flow
             trigger(Trigger.ofId<LoginState, LoginTrigger>(LoginTrigger.BEGIN_LOGIN_FLOW))
-            assertEquals(LoginState.EMAIL_INPUT, state.getId())
+            assertEquals(LoginState.EMAIL_INPUT, state.id)
             // Enter email
             trigger(EmailInputTrigger("somebody2@email.com"))
-            assertEquals(LoginState.PASSWORD_INPUT, state.getId())
+            assertEquals(LoginState.PASSWORD_INPUT, state.id)
 
             trigger(PasswordInputTrigger("wrong password1"))
             trigger(PasswordInputTrigger("wrong password2"))
-            assertEquals(LoginState.PASSWORD_INPUT, state.getId())
+            assertEquals(LoginState.PASSWORD_INPUT, state.id)
             trigger(PasswordInputTrigger("somebody2spassword"))
-            assertEquals(LoginState.LOGIN_COMPLETE, state.getId())
+            assertEquals(LoginState.LOGIN_COMPLETE, state.id)
         }
     }
 
@@ -38,14 +38,14 @@ class LoginStateMachineTest {
         factory.createStarted("TEST_SM").apply {
             // Begin flow
             trigger(Trigger.ofId<LoginState, LoginTrigger>(LoginTrigger.BEGIN_LOGIN_FLOW))
-            assertEquals(LoginState.EMAIL_INPUT, state.getId())
+            assertEquals(LoginState.EMAIL_INPUT, state.id)
             // Enter email
             trigger(EmailInputTrigger("somebody2@email.com"))
-            assertEquals(LoginState.PASSWORD_INPUT, state.getId())
+            assertEquals(LoginState.PASSWORD_INPUT, state.id)
             trigger(PasswordInputTrigger("wrong password1"))
             trigger(PasswordInputTrigger("wrong password2"))
             trigger(PasswordInputTrigger("wrong password3"))
-            assertEquals(LoginState.LOGIN_FAILED, state.getId())
+            assertEquals(LoginState.LOGIN_FAILED, state.id)
         }
     }
 }

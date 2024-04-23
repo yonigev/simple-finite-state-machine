@@ -4,24 +4,24 @@ import statemachine.action.StateAction
 import statemachine.state.State
 
 /**
- * A default implementation for the [DefaultStatesConfiguration]
+ * A default implementation for the [StatesConfiguration]
  */
 class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
-    private val statesDefinitions = mutableListOf<StateDefinition<S, T>>()
+    private val states = mutableListOf<State<S, T>>()
     override fun setInitial(stateId: S) {
-        addStateDefinition(State.initial(stateId))
+        addState(State.initial(stateId))
     }
 
     override fun terminal(stateId: S, entryAction: StateAction<S, T>?) {
-        addStateDefinition(State.terminal(stateId), entryAction, null)
+        addState(State.terminal(stateId, entryAction))
     }
 
     override fun terminal(stateId: S) {
-        addStateDefinition(State.terminal(stateId), null, null)
+        addState(State.terminal(stateId))
     }
 
     override fun simple(stateId: S, entryAction: StateAction<S, T>?, exitAction: StateAction<S, T>?) {
-        addStateDefinition(State.create(stateId), entryAction, exitAction)
+        addState(State.create(stateId, State.PseudoStateType.SIMPLE, entryAction, exitAction))
     }
 
     override fun simple(stateId: S) {
@@ -29,25 +29,23 @@ class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
     }
 
     override fun choice(stateId: S, entryAction: StateAction<S, T>?, exitAction: StateAction<S, T>?) {
-        addStateDefinition(State.choice(stateId), entryAction, exitAction)
+        addState(State.choice(stateId, entryAction, exitAction))
     }
 
     override fun choice(stateId: S) {
         choice(stateId, null, null)
     }
 
-    private fun addStateDefinition(
-        state: State<S>,
-        entryAction: StateAction<S, T>? = null,
-        exitAction: StateAction<S, T>? = null,
+    private fun addState(
+        state: State<S, T>,
     ) {
-        statesDefinitions.add(StateDefinition(state, entryAction, exitAction))
+        states.add(state)
     }
 
     /**
      * Returns an *immutable* State set
      */
-    override fun getStateDefinitions(): Set<StateDefinition<S, T>> {
-        return statesDefinitions.toSet()
+    override fun getStates(): Set<State<S, T>> {
+        return states.toSet()
     }
 }

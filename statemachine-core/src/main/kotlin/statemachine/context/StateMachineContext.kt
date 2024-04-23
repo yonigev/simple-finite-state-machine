@@ -8,8 +8,8 @@ import statemachine.state.State
  */
 sealed interface StateMachineContext<S, T> {
     fun getId(): String
-    fun getState(): State<S>
-    fun transitionToState(state: State<S>)
+    fun getState(): State<S, T>
+    fun transitionToState(state: State<S, T>)
     fun getProperty(key: Any): Any
     fun getPropertyOrDefault(key: Any, default: Any): Any
     fun setProperty(key: Any, value: Any): Any
