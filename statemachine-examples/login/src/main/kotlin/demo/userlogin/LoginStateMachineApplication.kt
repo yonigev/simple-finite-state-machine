@@ -24,7 +24,7 @@ fun main() {
     sm.trigger(PasswordInputTrigger("wrong password1"))
     sm.trigger(PasswordInputTrigger("wrong password2"))
     sm.trigger(PasswordInputTrigger("somebody2spassword"))
-    if (sm.state.getId() != LoginStateMachineConfiguration.LoginState.LOGIN_COMPLETE) {
+    if (sm.state.id != LoginStateMachineConfiguration.LoginState.LOGIN_COMPLETE) {
         throw Exception("Failed to finish The login statemachine flow!")
     }
 }

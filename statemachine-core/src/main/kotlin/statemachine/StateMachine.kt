@@ -9,11 +9,11 @@ import statemachine.trigger.Trigger
  * */
 interface StateMachine<S, T> {
     val id: String
-    val state: State<S>
+    val state: State<S, T>
     val context: StateMachineContext<S, T>
 
     /** Trigger a state machine to run */
-    fun trigger(trigger: Trigger<T>?): State<S>
+    fun trigger(trigger: Trigger<T>?): State<S, T>
     fun start()
     fun stop()
 }

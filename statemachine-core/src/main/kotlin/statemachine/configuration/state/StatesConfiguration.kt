@@ -1,6 +1,7 @@
 package statemachine.configuration.state
 
 import statemachine.action.StateAction
+import statemachine.state.State
 
 /**
  * Used to configure [statemachine.StateMachine] states
@@ -48,8 +49,8 @@ interface StatesConfiguration<S, T> {
     fun terminal(stateId: S)
 
     /**
-     * Returns the configured [StateDefinition] definitions
+     * Returns the configured [State]s definition
      * used by the [statemachine.configuration.StateMachineConfiguration] to configure the StateMachine
      */
-    fun getStateDefinitions(): Set<StateDefinition<S, T>>
+    fun getStates(): Set<State<S, T>>
 }
