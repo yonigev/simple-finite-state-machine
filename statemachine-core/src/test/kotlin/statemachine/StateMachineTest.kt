@@ -7,7 +7,6 @@ import statemachine.configuration.DefaultStateMachineConfiguration
 import statemachine.configuration.transition.DefaultTransitionsConfiguration
 import statemachine.factory.DefaultStateMachineFactory
 import statemachine.guard.Guard
-import statemachine.transition.DefaultTransition
 import statemachine.transition.Transition
 import statemachine.util.S
 import statemachine.util.StateMachineTestUtil
@@ -91,7 +90,7 @@ class StateMachineTest {
     fun testStateMachine_TransitionActions_RunningSequentially() {
         val output = mutableListOf<Int>()
 
-        val transition: Transition<S, T> = DefaultTransition(
+        val transition: Transition<S, T> = Transition.create(
             S.STATE_B,
             S.STATE_C,
             T.FORCE_MOVE_TO_C,
