@@ -1,68 +1,67 @@
-package statemachine.configuration
+package statemachine.definition
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import statemachine.configuration.transition.DefaultTransitionsDefiner
 import statemachine.util.S
 import statemachine.util.T
 import statemachine.util.positiveGuard
 
-class DefaultStateMachineConfigurationValidationTest {
+class DefaultStateMachineDefinitionValidationTest {
 
     @Test
     fun testMultipleInitialStatesThrowsException() {
-        val config = DefaultStateMachineConfiguration<S, T>()
-        config.configureStates().apply {
+        val definition = DefaultStateMachineDefinition<S, T>()
+        definition.defineStates().apply {
             setInitial(S.INITIAL)
             setInitial(S.STATE_A)
             simple(S.STATE_B)
             terminal(S.TERMINAL_STATE)
         }
 
-        assertThrows<StateMachineConfigurationException> {
-            config.process()
+        assertThrows<StateMachineDefinitionException> {
+            definition.process()
         }
     }
 
     @Test
     fun testMissingEndStateThrowsException() {
-        val config = DefaultStateMachineConfiguration<S, T>()
-        config.configureStates().apply {
+        val definition = DefaultStateMachineDefinition<S, T>()
+        definition.defineStates().apply {
             setInitial(S.INITIAL)
             simple(S.STATE_A)
             simple(S.STATE_B)
         }
 
-        assertThrows<StateMachineConfigurationException> {
-            config.process()
+        assertThrows<StateMachineDefinitionException> {
+            definition.process()
         }
     }
 
     @Test
     fun testUnknownStatesInTransitionsThrowsException() {
-        val config = DefaultStateMachineConfiguration<S, T>()
-        config.configureStates().apply {
+        val definition = DefaultStateMachineDefinition<S, T>()
+        definition.defineStates().apply {
             setInitial(S.INITIAL)
             simple(S.STATE_A)
             simple(S.STATE_B)
             terminal(S.TERMINAL_STATE)
         }
 
-        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
+        definition.defineTransitions().apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
             add(S.STATE_A, S.STATE_A, T.MOVE_TO_A, positiveGuard)
             add(S.STATE_C, S.TERMINAL_STATE, T.END, positiveGuard)
         }
 
-        assertThrows<StateMachineConfigurationException> {
-            config.process()
+        assertThrows<StateMachineDefinitionException> {
+            definition.process()
         }
     }
 
     @Test
     fun testNonChoiceStateMultipleOutgoingTransitionSameTriggerThrowsException() {
-        val config = DefaultStateMachineConfiguration<S, T>()
-        config.configureStates().apply {
+        val definition = DefaultStateMachineDefinition<S, T>()
+        definition.defineStates().apply {
             setInitial(S.INITIAL)
             simple(S.STATE_A)
             simple(S.STATE_B)
@@ -70,7 +69,7 @@ class DefaultStateMachineConfigurationValidationTest {
             terminal(S.TERMINAL_STATE)
         }
 
-        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
+        definition.defineTransitions().apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
             add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
             // STATE_B is NOT a choice state, yet treated like one.
@@ -79,15 +78,15 @@ class DefaultStateMachineConfigurationValidationTest {
             add(S.STATE_C, S.TERMINAL_STATE, T.END, positiveGuard)
         }
 
-        assertThrows<StateMachineConfigurationException> {
-            config.process()
+        assertThrows<StateMachineDefinitionException> {
+            definition.process()
         }
     }
 
     @Test
     fun testChoiceStateSingleOutgoingTransitionThrowsException() {
-        val config = DefaultStateMachineConfiguration<S, T>()
-        config.configureStates().apply {
+        val definition = DefaultStateMachineDefinition<S, T>()
+        definition.defineStates().apply {
             setInitial(S.INITIAL)
             simple(S.STATE_A)
             choice(S.STATE_B)
@@ -95,7 +94,7 @@ class DefaultStateMachineConfigurationValidationTest {
             terminal(S.TERMINAL_STATE)
         }
 
-        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
+        definition.defineTransitions().apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
             add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
             // STATE_B is NOT a choice state, yet treated like one.
@@ -103,8 +102,8 @@ class DefaultStateMachineConfigurationValidationTest {
             add(S.STATE_C, S.TERMINAL_STATE, T.END, positiveGuard)
         }
 
-        assertThrows<StateMachineConfigurationException> {
-            config.process()
+        assertThrows<StateMachineDefinitionException> {
+            definition.process()
         }
     }
 }

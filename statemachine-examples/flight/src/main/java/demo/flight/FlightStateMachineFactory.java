@@ -2,9 +2,9 @@ package demo.flight;
 
 import demo.flight.model.FlightInformation;
 import org.jetbrains.annotations.NotNull;
-import statemachine.configuration.StateMachineConfiguration;
-import demo.flight.FlightStateMachineConfiguration.FlightState;
-import demo.flight.FlightStateMachineConfiguration.FlightTrigger;
+import statemachine.definition.StateMachineDefinition;
+import demo.flight.FlightStateMachineDefinition.FlightState;
+import demo.flight.FlightStateMachineDefinition.FlightTrigger;
 import statemachine.context.StateMachineContext;
 import statemachine.factory.DefaultStateMachineFactory;
 
@@ -13,9 +13,9 @@ import static demo.flight.FlightStateMachineApplication.FLIGHT_INFO;
 public class FlightStateMachineFactory extends DefaultStateMachineFactory<FlightState, FlightTrigger> {
 
     FlightInformation flightInformation;
-    public FlightStateMachineFactory(@NotNull StateMachineConfiguration<FlightState, FlightTrigger> configuration,
+    public FlightStateMachineFactory(@NotNull StateMachineDefinition<FlightState, FlightTrigger> definition,
                                      FlightInformation initialFlightInfo) {
-        super(configuration);
+        super(definition);
         this.flightInformation = initialFlightInfo;
     }
 

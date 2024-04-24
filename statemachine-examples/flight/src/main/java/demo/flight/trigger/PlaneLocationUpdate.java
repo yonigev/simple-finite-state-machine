@@ -1,7 +1,7 @@
 package demo.flight.trigger;
 
 import demo.flight.model.Location;
-import demo.flight.FlightStateMachineConfiguration.FlightTrigger;
+import demo.flight.FlightStateMachineDefinition.FlightTrigger;
 import lombok.Getter;
 import statemachine.trigger.Trigger;
 

@@ -3,8 +3,7 @@ package statemachine
 import org.junit.jupiter.api.Test
 import statemachine.action.StateAction
 import statemachine.action.TransitionAction.Companion.create
-import statemachine.configuration.DefaultStateMachineConfiguration
-import statemachine.configuration.transition.DefaultTransitionsDefiner
+import statemachine.definition.DefaultStateMachineDefinition
 import statemachine.factory.DefaultStateMachineFactory
 import statemachine.guard.Guard
 import statemachine.transition.Transition
@@ -20,8 +19,8 @@ class StateMachineTest {
 
     @Test
     fun testBasicStateMachineFlow() {
-        val config = StateMachineTestUtil.createConfig()
-        val factory = DefaultStateMachineFactory(config)
+        val definition = StateMachineTestUtil.createDefinition()
+        val factory = DefaultStateMachineFactory(definition)
 
         val sm: StateMachine<S, T> = factory.create("TEST_ID").also { it.start() }
         assertEquals(S.INITIAL, sm.state.id)
@@ -34,9 +33,9 @@ class StateMachineTest {
 
     @Test
     fun testStateMachineChoiceStateFlow() {
-        val config = DefaultStateMachineConfiguration<S, T>()
+        val definition = DefaultStateMachineDefinition<S, T>()
         var shouldEnd = false
-        config.configureStates().apply {
+        definition.defineStates().apply {
             setInitial(S.INITIAL)
             simple(S.STATE_A)
             choice(S.STATE_B)
@@ -44,7 +43,7 @@ class StateMachineTest {
             terminal(S.TERMINAL_STATE)
         }
 
-        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
+        definition.defineTransitions().apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
             add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
             // Transition to STATE_C will be allowed only if shouldEnd is false
@@ -53,7 +52,7 @@ class StateMachineTest {
             add(S.STATE_C, S.TERMINAL_STATE, T.END, positiveGuard)
         }
 
-        val factory = DefaultStateMachineFactory(config)
+        val factory = DefaultStateMachineFactory(definition)
 
         var sm: StateMachine<S, T> = factory.createStarted("SHOULD_STOP_AT_STATE_C")
             .also { assertEquals(S.INITIAL, it.state.id) }
@@ -73,10 +72,10 @@ class StateMachineTest {
 
     @Test
     fun testStateMachineTriggerlessFlow() {
-        val config = StateMachineTestUtil.createConfig()
-        val factory = DefaultStateMachineFactory(config)
+        val definition = StateMachineTestUtil.createDefinition()
+        val factory = DefaultStateMachineFactory(definition)
 
-        (config.configureTransitions() as DefaultTransitionsDefiner).apply {
+        definition.defineTransitions().apply {
             add(S.STATE_A, S.STATE_B, null, positiveGuard)
             add(S.STATE_B, S.TERMINAL_STATE, null, positiveGuard)
         }
@@ -101,9 +100,9 @@ class StateMachineTest {
                 create { output.add(3) },
             ),
         )
-        val config = StateMachineTestUtil.createConfig()
-            .also { it.configureTransitions().add(transition) }
-        val factory = DefaultStateMachineFactory(config)
+        val definition = StateMachineTestUtil.createDefinition()
+            .also { it.defineTransitions().add(transition) }
+        val factory = DefaultStateMachineFactory(definition)
         val sm: StateMachine<S, T> = factory.createStarted("TEST_ID")
             .apply {
                 trigger(createTrigger(T.MOVE_TO_A))
@@ -118,21 +117,21 @@ class StateMachineTest {
     fun testStateMachine_stateActions_RunningSequentially() {
         val output = mutableListOf<Int>()
 
-        val config = DefaultStateMachineConfiguration<S, T>()
-        config.configureStates().apply {
+        val definition = DefaultStateMachineDefinition<S, T>()
+        definition.defineStates().apply {
             setInitial(S.INITIAL)
             simple(S.STATE_A, StateAction.create { output.add(2) }, StateAction.create { output.add(3) })
             simple(S.STATE_B, StateAction.create { output.add(5) }, StateAction.create { output.add(6) })
             terminal(S.TERMINAL_STATE, StateAction.create { output.add(8) })
         }
 
-        (config.configureTransitions() as (DefaultTransitionsDefiner)).apply {
+        definition.defineTransitions().apply {
             add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard, create { output.add(1) })
             add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard, create { output.add(4) })
             add(S.STATE_B, S.TERMINAL_STATE, T.END, positiveGuard, create { output.add(7) })
         }
 
-        val factory = DefaultStateMachineFactory(config)
+        val factory = DefaultStateMachineFactory(definition)
 
         factory.createStarted("TEST")
             .also { assertEquals(S.INITIAL, it.state.id) }

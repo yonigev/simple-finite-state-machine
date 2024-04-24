@@ -7,10 +7,10 @@ import demo.flight.trigger.PlaneLocationUpdate;
 import org.junit.jupiter.api.Test;
 import statemachine.StateMachine;
 import statemachine.factory.DefaultStateMachineFactory;
-import demo.flight.FlightStateMachineConfiguration.*;
+import demo.flight.FlightStateMachineDefinition.*;
 import statemachine.trigger.Trigger;
 
-import static demo.flight.FlightStateMachineConfiguration.FlightState.*;
+import static demo.flight.FlightStateMachineDefinition.FlightState.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FlightStateMachineApplicationTest {
@@ -18,8 +18,8 @@ class FlightStateMachineApplicationTest {
 
     @Test
     public void testFlight() {
-        FlightStateMachineConfiguration flightStateMachineConfiguration = new FlightStateMachineConfiguration();
-        DefaultStateMachineFactory<FlightState, FlightTrigger> factory = new FlightStateMachineFactory(flightStateMachineConfiguration, flight);
+        FlightStateMachineDefinition flightStateMachineDefinition = new FlightStateMachineDefinition();
+        DefaultStateMachineFactory<FlightState, FlightTrigger> factory = new FlightStateMachineFactory(flightStateMachineDefinition, flight);
         StateMachine<FlightState, FlightTrigger> sm = factory.createStarted("TEST_SM");
 
         PassengerUpdateTrigger additionalFortyPassengers = new PassengerUpdateTrigger(40);

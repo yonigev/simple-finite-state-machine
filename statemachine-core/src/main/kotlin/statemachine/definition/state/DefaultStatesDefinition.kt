@@ -1,12 +1,12 @@
-package statemachine.configuration.state
+package statemachine.definition.state
 
 import statemachine.action.StateAction
 import statemachine.state.State
 
 /**
- * A default implementation for the [StatesConfiguration]
+ * A default implementation for the [StatesDefinition]
  */
-class DefaultStatesConfiguration<S, T> : StatesConfiguration<S, T> {
+class DefaultStatesDefinition<S, T> : StatesDefinition<S, T> {
     private val states = mutableListOf<State<S, T>>()
     override fun setInitial(stateId: S) {
         addState(State.initial(stateId))

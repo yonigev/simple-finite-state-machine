@@ -1,91 +1,90 @@
-package statemachine.configuration
+package statemachine.definition
 
 import org.slf4j.LoggerFactory
-import statemachine.configuration.state.DefaultStatesConfiguration
-import statemachine.configuration.state.StatesConfiguration
-import statemachine.configuration.transition.DefaultTransitionsDefiner
-import statemachine.configuration.transition.TransitionsDefiner
+import statemachine.definition.state.DefaultStatesDefinition
+import statemachine.definition.state.StatesDefinition
+import statemachine.definition.transition.TransitionsDefinition
 import statemachine.state.State
 import statemachine.transition.Transition
 
 /**
- * Defines and validates a State Machine's configuration
+ * Defines and validates a State Machine
  * Contains all necessary properties to build a [statemachine.StateMachine]
  */
-open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S, T> {
+open class DefaultStateMachineDefinition<S, T> : StateMachineDefinition<S, T> {
     private val log = LoggerFactory.getLogger(this.javaClass)
-    private val statesConfiguration = DefaultStatesConfiguration<S, T>()
-    private val transitionsDefiner = DefaultTransitionsDefiner<S, T>()
+    private val statesDefinition = DefaultStatesDefinition<S, T>()
+    private val transitionsDefinition = TransitionsDefinition<S, T>()
 
     override lateinit var states: Set<State<S, T>>
     override lateinit var transitions: Set<Transition<S, T>>
     override var processed: Boolean = false
 
-    override fun configureStates(): StatesConfiguration<S, T> {
+    override fun defineStates(): StatesDefinition<S, T> {
         if (processed) {
-            "State Machine Configuration already processed".also {
+            "State Machine Definition already processed".also {
                 log.error(it)
-                throw StateMachineConfigurationException(it)
+                throw StateMachineDefinitionException(it)
             }
         }
-        return statesConfiguration
+        return statesDefinition
     }
 
-    override fun configureTransitions(): TransitionsDefiner<S, T> {
+    override fun defineTransitions(): TransitionsDefinition<S, T> {
         if (processed) {
-            "State Machine Configuration already processed".also {
+            "State Machine definition already processed".also {
                 log.error(it)
-                throw StateMachineConfigurationException(it)
+                throw StateMachineDefinitionException(it)
             }
         }
-        return transitionsDefiner
+        return transitionsDefinition
     }
 
     override fun process() {
-        configureStates()
-        configureTransitions()
+        defineStates()
+        defineTransitions()
         validateStates()
         validateTransitions()
-        this.states = statesConfiguration.getStates()
-        this.transitions = transitionsDefiner.getTransitions()
+        this.states = statesDefinition.getStates()
+        this.transitions = transitionsDefinition.getTransitions()
         processed = true
     }
 
     /**
-     * Validate the states configuration
+     * Validate the states definition
      */
     private fun validateStates() {
-        val initialStates = statesConfiguration.getStates().filter { State.PseudoStateType.INITIAL == it.type }
-        val endStates = statesConfiguration.getStates().filter { State.PseudoStateType.TERMINAL == it.type }
+        val initialStates = statesDefinition.getStates().filter { State.PseudoStateType.INITIAL == it.type }
+        val endStates = statesDefinition.getStates().filter { State.PseudoStateType.TERMINAL == it.type }
 
         // Validate there is 1 INITIAL state
         if (initialStates.size != 1) {
             "Invalid number of INIITIAL states!: $initialStates".also {
-                log.error(it); throw StateMachineConfigurationException(it)
+                log.error(it); throw StateMachineDefinitionException(it)
             }
         }
 
         // Validate there is at least 1 END state
         if (endStates.isEmpty()) {
             "Invalid number of END states!: $endStates".also {
-                log.error(it); throw StateMachineConfigurationException(it)
+                log.error(it); throw StateMachineDefinitionException(it)
             }
         }
     }
 
     /**
-     * Validate the transitions configuration
+     * Validate the transitions definition
      */
     private fun validateTransitions() {
-        val states = statesConfiguration.getStates()
-        val transitions = transitionsDefiner.getTransitions()
+        val states = statesDefinition.getStates()
+        val transitions = transitionsDefinition.getTransitions()
         val stateIds = states.map { it.id }
         val statesMap = states.associateBy { it.id }
 
         val transitionStates: Set<S> = transitions.map { setOf(it.source, it.target) }.flatten().toSet()
         if (transitionStates != stateIds && (transitionStates + stateIds).size > states.size) {
             "Some transition states: $transitionStates are not defined in the states set: $states".let {
-                throw StateMachineConfigurationException(
+                throw StateMachineDefinitionException(
                     it,
                 )
             }
@@ -95,7 +94,7 @@ open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S,
         for (choiceState in states.filter { it.type == State.PseudoStateType.CHOICE }) {
             val choiceSourceTransitions = transitions.filter { it.source == choiceState.id }
             if (choiceSourceTransitions.size < 2) {
-                throw StateMachineConfigurationException("Choice state with $choiceSourceTransitions.size outgoing transitions")
+                throw StateMachineDefinitionException("Choice state with $choiceSourceTransitions.size outgoing transitions")
             }
         }
 
@@ -106,7 +105,7 @@ open class DefaultStateMachineConfiguration<S, T> : StateMachineConfiguration<S,
                     it.trigger == nonChoiceStateTransition.trigger
             }
             if (similarTransitions.size > 1) {
-                throw StateMachineConfigurationException(
+                throw StateMachineDefinitionException(
                     "Found multiple transitions with non-choice source state: ${nonChoiceStateTransition.source} " +
                         "and trigger: ${nonChoiceStateTransition.trigger}",
                 )

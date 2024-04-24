@@ -1,6 +1,6 @@
 package demo.flight.trigger;
 
-import demo.flight.FlightStateMachineConfiguration.FlightTrigger;
+import demo.flight.FlightStateMachineDefinition.FlightTrigger;
 import statemachine.trigger.Trigger;
 
 public class PassengerUpdateTrigger implements Trigger<FlightTrigger> {
