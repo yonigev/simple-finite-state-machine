@@ -13,9 +13,9 @@ public class FlightStateMachineApplication {
 
     public static void main(String[] args) {
         FlightInformation flight = mockFlightInfo();
-        FlightStateMachineConfiguration flightStateMachineConfiguration = new FlightStateMachineConfiguration();
-        DefaultStateMachineFactory<FlightStateMachineConfiguration.FlightState, FlightStateMachineConfiguration.FlightTrigger> factory = new FlightStateMachineFactory(flightStateMachineConfiguration, flight);
-        StateMachine<FlightStateMachineConfiguration.FlightState, FlightStateMachineConfiguration.FlightTrigger> sm = factory.createStarted("TEST_SM");
+        FlightStateMachineDefinition flightStateMachineDefinition = new FlightStateMachineDefinition();
+        DefaultStateMachineFactory<FlightStateMachineDefinition.FlightState, FlightStateMachineDefinition.FlightTrigger> factory = new FlightStateMachineFactory(flightStateMachineDefinition, flight);
+        StateMachine<FlightStateMachineDefinition.FlightState, FlightStateMachineDefinition.FlightTrigger> sm = factory.createStarted("TEST_SM");
 
         PassengerUpdateTrigger additionalFortyPassengers = new PassengerUpdateTrigger(40);
         PlaneLocationUpdate planeLocation = locationAwayFromGate(flight);
@@ -27,11 +27,11 @@ public class FlightStateMachineApplication {
         // All 120 passengers should be boarded by now.
 
         // Trigger a LEAVE_GATE event.
-        sm.trigger(Trigger.Companion.ofId(FlightStateMachineConfiguration.FlightTrigger.LEAVE_GATE));
+        sm.trigger(Trigger.Companion.ofId(FlightStateMachineDefinition.FlightTrigger.LEAVE_GATE));
         // Sends a location ping that's away from the gate
         sm.trigger(planeLocation);
         // Allow plane departure
-        sm.trigger(Trigger.Companion.ofId(FlightStateMachineConfiguration.FlightTrigger.DEPARTURE_CLEARED));
+        sm.trigger(Trigger.Companion.ofId(FlightStateMachineDefinition.FlightTrigger.DEPARTURE_CLEARED));
 
         // Send plane location updates indicating it is climbing
         while (planeLocation.getUpdatedLocation().getAltitude() < 10000) {

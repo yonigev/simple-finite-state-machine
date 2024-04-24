@@ -1,12 +1,12 @@
-package statemachine.configuration.state
+package statemachine.definition.state
 
 import statemachine.action.StateAction
 import statemachine.state.State
 
 /**
- * Used to configure [statemachine.StateMachine] states
+ * Used to define [statemachine.StateMachine] states
  */
-interface StatesConfiguration<S, T> {
+interface StatesDefinition<S, T> {
     /**
      * Defines an initial state for the state machine.
      * A StateMachine can only have one initial state.
@@ -49,8 +49,8 @@ interface StatesConfiguration<S, T> {
     fun terminal(stateId: S)
 
     /**
-     * Returns the configured [State]s definition
-     * used by the [statemachine.configuration.StateMachineConfiguration] to configure the StateMachine
+     * Returns the defined [states](State)
+     * used by the [statemachine.definition.StateMachineDefinition] to define the StateMachine
      */
     fun getStates(): Set<State<S, T>>
 }

@@ -1,24 +1,24 @@
-package statemachine.configuration.transition
+package statemachine.definition.transition
 
 import statemachine.action.TransitionAction
 import statemachine.guard.Guard
 import statemachine.transition.Transition
 
 /**
- * A default implementation for the [TransitionsDefiner]
+ * Used to define a [state machine's](StateMachine) available transitions
  */
-class DefaultTransitionsDefiner<S, T> : TransitionsDefiner<S, T> {
+class TransitionsDefinition<S, T> {
     private val transitions = mutableSetOf<Transition<S, T>>()
 
-    override fun add(sourceId: S, targetId: S, triggerId: T?, guard: Guard<S, T>, transitionAction: TransitionAction<S, T>?) {
+    fun add(sourceId: S, targetId: S, triggerId: T?, guard: Guard<S, T>, transitionAction: TransitionAction<S, T>? = null) {
         add(Transition.create(sourceId, targetId, triggerId, guard, transitionAction?.let { listOf(it) }))
     }
 
-    override fun add(transition: Transition<S, T>) {
+    fun add(transition: Transition<S, T>) {
         transitions.add(transition)
     }
 
-    override fun add(
+    fun add(
         sourceId: S,
         targetId: S,
         triggerId: T?,
@@ -36,7 +36,7 @@ class DefaultTransitionsDefiner<S, T> : TransitionsDefiner<S, T> {
         )
     }
 
-    override fun getTransitions(): Set<Transition<S, T>> {
+    fun getTransitions(): Set<Transition<S, T>> {
         return transitions.toSet()
     }
 }

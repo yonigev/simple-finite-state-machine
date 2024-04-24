@@ -1,25 +1,25 @@
 package demo.userlogin
 
-import statemachine.configuration.DefaultStateMachineConfiguration
-import statemachine.configuration.state.StatesConfiguration
-import demo.userlogin.LoginStateMachineConfiguration.LoginState
-import demo.userlogin.LoginStateMachineConfiguration.LoginState.INITIAL_STATE
-import demo.userlogin.LoginStateMachineConfiguration.LoginState.EMAIL_INPUT
-import demo.userlogin.LoginStateMachineConfiguration.LoginState.PASSWORD_INPUT
-import demo.userlogin.LoginStateMachineConfiguration.LoginState.LOGIN_COMPLETE
-import demo.userlogin.LoginStateMachineConfiguration.LoginState.LOGIN_FAILED
-import demo.userlogin.LoginStateMachineConfiguration.LoginTrigger
-import demo.userlogin.LoginStateMachineConfiguration.LoginTrigger.BEGIN_LOGIN_FLOW
-import demo.userlogin.LoginStateMachineConfiguration.LoginTrigger.SEND_EMAIL
-import demo.userlogin.LoginStateMachineConfiguration.LoginTrigger.SEND_PASSWORD
+import statemachine.definition.DefaultStateMachineDefinition
+import statemachine.definition.state.StatesDefinition
+import demo.userlogin.LoginStateMachineDefinition.LoginState
+import demo.userlogin.LoginStateMachineDefinition.LoginState.INITIAL_STATE
+import demo.userlogin.LoginStateMachineDefinition.LoginState.EMAIL_INPUT
+import demo.userlogin.LoginStateMachineDefinition.LoginState.PASSWORD_INPUT
+import demo.userlogin.LoginStateMachineDefinition.LoginState.LOGIN_COMPLETE
+import demo.userlogin.LoginStateMachineDefinition.LoginState.LOGIN_FAILED
+import demo.userlogin.LoginStateMachineDefinition.LoginTrigger
+import demo.userlogin.LoginStateMachineDefinition.LoginTrigger.BEGIN_LOGIN_FLOW
+import demo.userlogin.LoginStateMachineDefinition.LoginTrigger.SEND_EMAIL
+import demo.userlogin.LoginStateMachineDefinition.LoginTrigger.SEND_PASSWORD
 import demo.userlogin.trigger.EmailInputTrigger
 import demo.userlogin.trigger.PasswordInputTrigger
 import statemachine.action.TransitionAction
-import statemachine.configuration.transition.TransitionsDefiner
+import statemachine.definition.transition.TransitionsDefinition
 import statemachine.guard.Guard
 import statemachine.transition.TransitionContext
 
-class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginState, LoginTrigger>() {
+class LoginStateMachineDefinition : DefaultStateMachineDefinition<LoginState, LoginTrigger>() {
     private val MAX_ATTEMPTS = 3
 
     val mockExistingEmails = listOf("somebody@email.com", "somebody2@email.com", "somebody3@email.com")
@@ -28,9 +28,9 @@ class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginSta
     private val emailValidatorGuard = EmailValidatorGuard()
     private val passwordValidatorGuard = PasswordValidatorGuard()
     private val passwordAttemptsExceededGuard = AttemptsExceededGuard()
-    override fun configureStates(): StatesConfiguration<LoginState, LoginTrigger> {
-        val statesConfig = super.configureStates()
-        statesConfig.apply {
+    override fun defineStates(): StatesDefinition<LoginState, LoginTrigger> {
+        val statesDefinition = super.defineStates()
+        statesDefinition.apply {
             setInitial(INITIAL_STATE)
             simple(EMAIL_INPUT)
             choice(PASSWORD_INPUT)
@@ -38,13 +38,13 @@ class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginSta
             terminal(LOGIN_FAILED)
         }
 
-        return statesConfig
+        return statesDefinition
     }
 
-    override fun configureTransitions(): TransitionsDefiner<LoginState, LoginTrigger> {
-        val transitionsDefiner = super.configureTransitions()
+    override fun defineTransitions(): TransitionsDefinition<LoginState, LoginTrigger> {
+        val transitionsDefinition = super.defineTransitions()
 
-        transitionsDefiner.apply {
+        transitionsDefinition.apply {
             add(INITIAL_STATE, EMAIL_INPUT, BEGIN_LOGIN_FLOW, Guard.ofPredicate { true })
             add(EMAIL_INPUT, PASSWORD_INPUT, SEND_EMAIL, emailValidatorGuard, TransitionAction.create { c ->
                 c.stateMachineContext.setProperty("email", (c.trigger as EmailInputTrigger).email)
@@ -60,7 +60,7 @@ class LoginStateMachineConfiguration : DefaultStateMachineConfiguration<LoginSta
                 c.stateMachineContext.setProperty("attempts", attempts + 1)
             })
         }
-        return transitionsDefiner
+        return transitionsDefinition
     }
 
     enum class LoginState {

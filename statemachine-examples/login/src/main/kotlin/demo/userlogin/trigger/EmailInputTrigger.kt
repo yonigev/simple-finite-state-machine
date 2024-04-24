@@ -1,6 +1,6 @@
 package demo.userlogin.trigger
 
-import demo.userlogin.LoginStateMachineConfiguration.LoginTrigger
+import demo.userlogin.LoginStateMachineDefinition.LoginTrigger
 import statemachine.trigger.Trigger
 
 class EmailInputTrigger(val email: String) : Trigger<LoginTrigger> {

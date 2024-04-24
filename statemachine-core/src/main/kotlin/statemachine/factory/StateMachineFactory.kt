@@ -1,13 +1,13 @@
 package statemachine.factory
 
 import statemachine.StateMachine
-import statemachine.configuration.StateMachineConfiguration
+import statemachine.definition.StateMachineDefinition
 
 /**
- * A factory that creates [StateMachine] instances based on a [StateMachineConfiguration]
+ * A factory that creates [StateMachine] instances based on a [StateMachineDefinition]
  */
 interface StateMachineFactory<S, T> {
-    val configuration: StateMachineConfiguration<S, T>
+    val definition: StateMachineDefinition<S, T>
 
     fun create(id: String): StateMachine<S, T>
 }

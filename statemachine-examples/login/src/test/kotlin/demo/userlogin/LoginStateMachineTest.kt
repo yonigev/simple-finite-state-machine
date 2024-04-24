@@ -1,7 +1,7 @@
 package demo.userlogin
 
-import demo.userlogin.LoginStateMachineConfiguration.LoginState
-import demo.userlogin.LoginStateMachineConfiguration.LoginTrigger
+import demo.userlogin.LoginStateMachineDefinition.LoginState
+import demo.userlogin.LoginStateMachineDefinition.LoginTrigger
 import demo.userlogin.trigger.EmailInputTrigger
 import demo.userlogin.trigger.PasswordInputTrigger
 import org.junit.jupiter.api.Test
@@ -12,8 +12,8 @@ import kotlin.test.assertEquals
 class LoginStateMachineTest {
     @Test
     fun testLoginStateMachineBasicFlow() {
-        val config = LoginStateMachineConfiguration()
-        val factory: DefaultStateMachineFactory<LoginState, LoginTrigger> = DefaultStateMachineFactory(config)
+        val definition = LoginStateMachineDefinition()
+        val factory: DefaultStateMachineFactory<LoginState, LoginTrigger> = DefaultStateMachineFactory(definition)
         factory.createStarted("TEST_SM").apply {
             // Begin flow
             trigger(Trigger.ofId<LoginState, LoginTrigger>(LoginTrigger.BEGIN_LOGIN_FLOW))
@@ -33,8 +33,8 @@ class LoginStateMachineTest {
 
     @Test
     fun testLoginStateMachineFailsWhenAttemptsExceeded() {
-        val config = LoginStateMachineConfiguration()
-        val factory: DefaultStateMachineFactory<LoginState, LoginTrigger> = DefaultStateMachineFactory(config)
+        val definition = LoginStateMachineDefinition()
+        val factory: DefaultStateMachineFactory<LoginState, LoginTrigger> = DefaultStateMachineFactory(definition)
         factory.createStarted("TEST_SM").apply {
             // Begin flow
             trigger(Trigger.ofId<LoginState, LoginTrigger>(LoginTrigger.BEGIN_LOGIN_FLOW))

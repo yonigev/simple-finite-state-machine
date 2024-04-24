@@ -1,8 +1,8 @@
 package statemachine
 
 import org.slf4j.LoggerFactory
-import statemachine.configuration.StateMachineConfigurationException
 import statemachine.context.StateMachineContext
+import statemachine.definition.StateMachineDefinitionException
 import statemachine.state.State
 import statemachine.transition.DefaultTransitionContext
 import statemachine.transition.Transition
@@ -98,7 +98,7 @@ open class DefaultStateMachine<S, T>(
     private fun assertStarted() {
         if (!started) {
             "State Machine not running!".also {
-                log.error(it); throw StateMachineConfigurationException(it)
+                log.error(it); throw StateMachineDefinitionException(it)
             }
         }
     }
@@ -109,7 +109,7 @@ open class DefaultStateMachine<S, T>(
      */
     private fun assertNotFinished() {
         if (finished) {
-            throw StateMachineConfigurationException("Cannot start the state machine as it's in a terminal state.")
+            throw StateMachineDefinitionException("Cannot start the state machine as it's in a terminal state.")
         }
     }
 
