@@ -51,6 +51,10 @@ interface State<S, T> {
                     get() = entryAction
                 override val exitAction: StateAction<S, T>?
                     get() = exitAction
+
+                override fun toString(): String {
+                    return id?.toString() ?: "null"
+                }
             }
         }
     }
