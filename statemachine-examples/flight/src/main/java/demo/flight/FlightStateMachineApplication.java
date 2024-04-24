@@ -7,15 +7,17 @@ import demo.flight.trigger.PlaneLocationUpdate;
 import statemachine.StateMachine;
 import statemachine.factory.DefaultStateMachineFactory;
 import statemachine.trigger.Trigger;
+import static demo.flight.FlightStateMachineDefiner.FlightState;
+import static demo.flight.FlightStateMachineDefiner.FlightTrigger;
 
 public class FlightStateMachineApplication {
     public static final String FLIGHT_INFO = "FLIGHT_INFO";
 
     public static void main(String[] args) {
         FlightInformation flight = mockFlightInfo();
-        FlightStateMachineDefinition flightStateMachineDefinition = new FlightStateMachineDefinition();
-        DefaultStateMachineFactory<FlightStateMachineDefinition.FlightState, FlightStateMachineDefinition.FlightTrigger> factory = new FlightStateMachineFactory(flightStateMachineDefinition, flight);
-        StateMachine<FlightStateMachineDefinition.FlightState, FlightStateMachineDefinition.FlightTrigger> sm = factory.createStarted("TEST_SM");
+        FlightStateMachineDefiner flightStateMachineDefiner = new FlightStateMachineDefiner();
+        DefaultStateMachineFactory<FlightState, FlightTrigger> factory = new FlightStateMachineFactory(flight);
+        StateMachine<FlightState, FlightTrigger> sm = factory.createStarted("TEST_SM", flightStateMachineDefiner);
 
         PassengerUpdateTrigger additionalFortyPassengers = new PassengerUpdateTrigger(40);
         PlaneLocationUpdate planeLocation = locationAwayFromGate(flight);
@@ -27,11 +29,11 @@ public class FlightStateMachineApplication {
         // All 120 passengers should be boarded by now.
 
         // Trigger a LEAVE_GATE event.
-        sm.trigger(Trigger.Companion.ofId(FlightStateMachineDefinition.FlightTrigger.LEAVE_GATE));
+        sm.trigger(Trigger.Companion.ofId(FlightStateMachineDefiner.FlightTrigger.LEAVE_GATE));
         // Sends a location ping that's away from the gate
         sm.trigger(planeLocation);
         // Allow plane departure
-        sm.trigger(Trigger.Companion.ofId(FlightStateMachineDefinition.FlightTrigger.DEPARTURE_CLEARED));
+        sm.trigger(Trigger.Companion.ofId(FlightStateMachineDefiner.FlightTrigger.DEPARTURE_CLEARED));
 
         // Send plane location updates indicating it is climbing
         while (planeLocation.getUpdatedLocation().getAltitude() < 10000) {

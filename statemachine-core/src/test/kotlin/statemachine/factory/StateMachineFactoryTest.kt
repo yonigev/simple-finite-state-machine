@@ -2,6 +2,7 @@ package statemachine.factory
 
 import org.junit.jupiter.api.Test
 import statemachine.StateMachine
+import statemachine.definition.StateMachineDefiner
 import statemachine.util.S
 import statemachine.util.StateMachineTestUtil
 import statemachine.util.T
@@ -9,10 +10,10 @@ import statemachine.util.T
 class StateMachineFactoryTest {
     @Test
     fun testStateMachineBuilding() {
-        val definition = StateMachineTestUtil.createDefinition()
-        val factory = DefaultStateMachineFactory(definition)
+        val definer: StateMachineDefiner<S, T> = StateMachineTestUtil.basicStateMachineDefiner()
+        val factory = DefaultStateMachineFactory<S, T>()
 
-        val sm: StateMachine<S, T> = factory.create("TEST_ID").also { it.start() }
+        val sm: StateMachine<S, T> = factory.create("TEST_ID", definer).also { it.start() }
         sm.stop()
     }
 }
