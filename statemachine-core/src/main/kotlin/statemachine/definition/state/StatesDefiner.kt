@@ -6,7 +6,7 @@ import statemachine.state.State
 /**
  * Used to define [statemachine.StateMachine] states
  */
-class StatesDefiner<S, T> {
+open class StatesDefiner<S, T> {
     private val states = mutableListOf<State<S, T>>()
 
     /**

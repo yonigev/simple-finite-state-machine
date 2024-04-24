@@ -24,7 +24,7 @@ class StateMachineExceptionHandlingTest {
 
     @Test
     fun testExceptionThrownInGuardIsPropagated() {
-        val definer = object : StateMachineDefiner<S, T>() {
+        val stateMachineDefiner = object : StateMachineDefiner<S, T>() {
             override fun defineStates(definer: StatesDefiner<S, T>) {
                 definer.apply {
                     setInitial(S.INITIAL)
@@ -42,13 +42,13 @@ class StateMachineExceptionHandlingTest {
             }
         }
 
-        val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", definer)
+        val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", stateMachineDefiner.getDefinition())
         assertThrows<StateMachineException> { sm.trigger(createTrigger(T.MOVE_TO_A)) }
     }
 
     @Test
     fun testExceptionThrownInActionIsPropagated() {
-        val definer = object : StateMachineDefiner<S, T>() {
+        val stateMachineDefiner = object : StateMachineDefiner<S, T>() {
             override fun defineStates(definer: StatesDefiner<S, T>) {
                 definer.apply {
                     setInitial(S.INITIAL)
@@ -66,13 +66,13 @@ class StateMachineExceptionHandlingTest {
             }
         }
 
-        val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", definer)
+        val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", stateMachineDefiner.getDefinition())
         assertThrows<StateMachineException> { sm.trigger(createTrigger(T.MOVE_TO_A)) }
     }
 
     @Test
     fun testStateMachineThrowsException_whenStoppedAndTriggered() {
-        val definition = StateMachineTestUtil.basicStateMachineDefiner()
+        val definition = StateMachineTestUtil.basicStateMachineDefiner().getDefinition()
         val sm: StateMachine<S, T> = stateMachineFactory.create("TEST_ID", definition)
         assertEquals(S.INITIAL, sm.state.id)
         assertThrows<StateMachineDefinitionException> { sm.trigger(createTrigger(T.MOVE_TO_A)) }
@@ -80,7 +80,7 @@ class StateMachineExceptionHandlingTest {
 
     @Test
     fun testStateMachineThrowsException_whenStartedInTerminalState() {
-        val definition = StateMachineTestUtil.basicStateMachineDefiner()
+        val definition = StateMachineTestUtil.basicStateMachineDefiner().getDefinition()
         val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", definition)
         sm.trigger(createTrigger(T.MOVE_TO_A))
         sm.trigger(createTrigger(T.MOVE_TO_B))

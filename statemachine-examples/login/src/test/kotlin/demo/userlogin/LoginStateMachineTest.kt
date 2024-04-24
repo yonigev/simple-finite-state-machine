@@ -12,9 +12,9 @@ import kotlin.test.assertEquals
 class LoginStateMachineTest {
     @Test
     fun testLoginStateMachineBasicFlow() {
-        val definer = LoginStateMachineDefiner()
+        val stateMachineDefiner = LoginStateMachineDefiner()
         val factory: DefaultStateMachineFactory<LoginState, LoginTrigger> = DefaultStateMachineFactory()
-        factory.createStarted("TEST_SM", definer).apply {
+        factory.createStarted("TEST_SM", stateMachineDefiner.getDefinition()).apply {
             // Begin flow
             trigger(Trigger.ofId<LoginState, LoginTrigger>(LoginTrigger.BEGIN_LOGIN_FLOW))
             assertEquals(LoginState.EMAIL_INPUT, state.id)
@@ -33,9 +33,9 @@ class LoginStateMachineTest {
 
     @Test
     fun testLoginStateMachineFailsWhenAttemptsExceeded() {
-        val definer = LoginStateMachineDefiner()
+        val stateMachineDefiner = LoginStateMachineDefiner()
         val factory: DefaultStateMachineFactory<LoginState, LoginTrigger> = DefaultStateMachineFactory()
-        factory.createStarted("TEST_SM", definer).apply {
+        factory.createStarted("TEST_SM", stateMachineDefiner.getDefinition()).apply {
             // Begin flow
             trigger(Trigger.ofId<LoginState, LoginTrigger>(LoginTrigger.BEGIN_LOGIN_FLOW))
             assertEquals(LoginState.EMAIL_INPUT, state.id)

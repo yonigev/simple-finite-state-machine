@@ -7,7 +7,7 @@ import statemachine.transition.Transition
 /**
  * Used to define a [state machine's](StateMachine) available transitions
  */
-class TransitionsDefiner<S, T> {
+open class TransitionsDefiner<S, T> {
     private val transitions = mutableSetOf<Transition<S, T>>()
 
     fun add(sourceId: S, targetId: S, triggerId: T?, guard: Guard<S, T>, transitionAction: TransitionAction<S, T>? = null) {

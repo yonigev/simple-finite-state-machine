@@ -13,7 +13,7 @@ open class DefinitionValidator<S, T> {
 
         // Validate there is 1 INITIAL state
         if (initialStates.size != 1) {
-            "Invalid number of INIITIAL states!: $initialStates".also {
+            "Invalid number of INITIAL states!: $initialStates".also {
                 log.error(it); throw StateMachineDefinitionException(it)
             }
         }

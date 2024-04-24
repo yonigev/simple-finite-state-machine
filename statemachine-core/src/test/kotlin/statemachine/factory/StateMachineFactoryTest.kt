@@ -13,7 +13,7 @@ class StateMachineFactoryTest {
         val definer: StateMachineDefiner<S, T> = StateMachineTestUtil.basicStateMachineDefiner()
         val factory = DefaultStateMachineFactory<S, T>()
 
-        val sm: StateMachine<S, T> = factory.create("TEST_ID", definer).also { it.start() }
+        val sm: StateMachine<S, T> = factory.create("TEST_ID", definer.getDefinition()).also { it.start() }
         sm.stop()
     }
 }

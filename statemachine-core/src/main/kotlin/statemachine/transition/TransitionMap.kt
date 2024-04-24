@@ -1,8 +1,7 @@
 package statemachine.transition
 
 /**
- * A set of transitions as part of a State Machine's definition.
- * built as a map of (<state,trigger> -> transition) for faster access
+ * A set of transitions as part of a State Machine's definition for faster access
  */
 class TransitionMap<S, T>(transitions: Set<Transition<S, T>>) {
     private val transitionsMap: Map<Pair<S, T?>, Collection<Transition<S, T>>> = buildTransitionMap(transitions)
