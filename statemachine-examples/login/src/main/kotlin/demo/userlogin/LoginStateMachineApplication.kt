@@ -6,10 +6,10 @@ import statemachine.factory.DefaultStateMachineFactory
 import statemachine.trigger.Trigger
 
 fun main() {
-    val definer = LoginStateMachineDefiner()
+    val stateMachineDefiner = LoginStateMachineDefiner()
     val factory: DefaultStateMachineFactory<LoginStateMachineDefiner.LoginState, LoginStateMachineDefiner.LoginTrigger> =
         DefaultStateMachineFactory()
-    val sm = factory.createStarted("TEST_SM", definer)
+    val sm = factory.createStarted("TEST_SM", stateMachineDefiner.getDefinition())
 
     // Begin flow
     sm.trigger(

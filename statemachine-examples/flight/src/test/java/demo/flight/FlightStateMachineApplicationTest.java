@@ -20,7 +20,7 @@ class FlightStateMachineApplicationTest {
     public void testFlight() {
         FlightStateMachineDefiner flightStateMachineDefiner = new FlightStateMachineDefiner();
         DefaultStateMachineFactory<FlightState, FlightTrigger> factory = new FlightStateMachineFactory(flight);
-        StateMachine<FlightState, FlightTrigger> sm = factory.createStarted("TEST_SM", flightStateMachineDefiner);
+        StateMachine<FlightState, FlightTrigger> sm = factory.createStarted("TEST_SM", flightStateMachineDefiner.getDefinition());
 
         PassengerUpdateTrigger additionalFortyPassengers = new PassengerUpdateTrigger(40);
         PlaneLocationUpdate planeLocation = locationAwayFromGate();

@@ -21,9 +21,9 @@ class StateMachineTest {
 
     @Test
     fun testBasicStateMachineFlow() {
-        val definer = StateMachineTestUtil.basicStateMachineDefiner()
+        val stateMachineDefiner = StateMachineTestUtil.basicStateMachineDefiner()
 
-        val sm: StateMachine<S, T> = stateMachineFactory.create("TEST_ID", definer).also { it.start() }
+        val sm: StateMachine<S, T> = stateMachineFactory.create("TEST_ID", stateMachineDefiner.getDefinition()).also { it.start() }
         assertEquals(S.INITIAL, sm.state.id)
 
         sm.trigger(createTrigger(T.MOVE_TO_A)).also { assertEquals(sm.state.id, S.STATE_A) }
@@ -36,7 +36,7 @@ class StateMachineTest {
     fun testStateMachineChoiceStateFlow() {
         var shouldEnd = false
 
-        val definer = object : StateMachineDefiner<S, T>() {
+        val stateMachineDefiner = object : StateMachineDefiner<S, T>() {
             override fun defineStates(definer: StatesDefiner<S, T>) {
                 definer.setInitial(S.INITIAL)
                 definer.simple(S.STATE_A)
@@ -55,14 +55,16 @@ class StateMachineTest {
             }
         }
 
-        var sm: StateMachine<S, T> = stateMachineFactory.createStarted("SHOULD_STOP_AT_STATE_C", definer)
+        val stateMachineDefinition = stateMachineDefiner.getDefinition()
+
+        var sm: StateMachine<S, T> = stateMachineFactory.createStarted("SHOULD_STOP_AT_STATE_C", stateMachineDefinition)
             .also { assertEquals(S.INITIAL, it.state.id) }
 
         sm.trigger(createTrigger(T.MOVE_TO_A)).also { assertEquals(S.STATE_A, sm.state.id) }
         sm.trigger(createTrigger(T.MOVE_TO_B)).also { assertEquals(S.STATE_B, sm.state.id) }
 
         sm.trigger(createTrigger(T.MOVE_TO_C_OR_END)).also { assertEquals(S.STATE_C, sm.state.id) }
-        sm = stateMachineFactory.createStarted("SHOULD_END", definer)
+        sm = stateMachineFactory.createStarted("SHOULD_END", stateMachineDefinition)
         shouldEnd = true
         sm.apply {
             trigger(createTrigger(T.MOVE_TO_A))
@@ -89,9 +91,8 @@ class StateMachineTest {
             }
         }
 
-        val factory = DefaultStateMachineFactory<S, T>()
-
-        val sm: StateMachine<S, T> = factory.createStarted("TEST_ID", stateMachineDefiner)
+        val stateMachineDefinition = stateMachineDefiner.getDefinition()
+        val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", stateMachineDefinition)
         assertEquals(S.INITIAL, sm.state.id)
         sm.trigger(createTrigger(T.MOVE_TO_A))
         assertEquals(S.TERMINAL_STATE, sm.state.id)
@@ -101,7 +102,7 @@ class StateMachineTest {
     fun testStateMachine_TransitionActions_RunningSequentially() {
         val output = mutableListOf<Int>()
 
-        val definer = object : StateMachineDefiner<S, T>() {
+        val stateMachineDefiner = object : StateMachineDefiner<S, T>() {
             override fun defineStates(definer: StatesDefiner<S, T>) {
                 definer.setInitial(S.INITIAL)
                 definer.simple(S.STATE_A)
@@ -128,7 +129,7 @@ class StateMachineTest {
             }
         }
 
-        val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", definer)
+        val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", stateMachineDefiner.getDefinition())
             .apply {
                 trigger(createTrigger(T.MOVE_TO_A))
                 trigger(createTrigger(T.MOVE_TO_B))
@@ -142,7 +143,7 @@ class StateMachineTest {
     fun testStateMachine_stateActions_RunningSequentially() {
         val output = mutableListOf<Int>()
 
-        val definer = object : StateMachineDefiner<S, T>() {
+        val stateMachineDefiner = object : StateMachineDefiner<S, T>() {
             override fun defineStates(definer: StatesDefiner<S, T>) {
                 definer.setInitial(S.INITIAL)
                 definer.simple(S.STATE_A, StateAction.create { output.add(2) }, StateAction.create { output.add(3) })
@@ -157,7 +158,7 @@ class StateMachineTest {
             }
         }
 
-        stateMachineFactory.createStarted("TEST", definer)
+        stateMachineFactory.createStarted("TEST", stateMachineDefiner.getDefinition())
             .also {
                 assertEquals(S.INITIAL, it.state.id)
             }
