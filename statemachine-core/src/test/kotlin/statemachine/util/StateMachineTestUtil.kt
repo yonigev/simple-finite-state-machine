@@ -1,7 +1,8 @@
 package statemachine.util
 
-import statemachine.definition.DefaultStateMachineDefinition
-import statemachine.definition.StateMachineDefinition
+import statemachine.definition.StateMachineDefiner
+import statemachine.definition.state.StatesDefiner
+import statemachine.definition.transition.TransitionsDefiner
 import statemachine.guard.Guard.Companion.ofPredicate
 import statemachine.trigger.Trigger
 
@@ -13,24 +14,25 @@ val negativeGuard = ofPredicate<S, T> { false }
  */
 class StateMachineTestUtil {
     companion object {
-        fun createDefinition(): StateMachineDefinition<S, T> {
-            val definition = DefaultStateMachineDefinition<S, T>()
-            definition.defineStates().apply {
-                setInitial(S.INITIAL)
-                simple(S.STATE_A)
-                simple(S.STATE_B)
-                simple(S.STATE_C)
-                terminal(S.TERMINAL_STATE)
-            }
+        fun basicStateMachineDefiner(): StateMachineDefiner<S, T> {
+            val definer = object : StateMachineDefiner<S, T>() {
+                override fun defineStates(definer: StatesDefiner<S, T>) {
+                    definer.setInitial(S.INITIAL)
+                    definer.simple(S.STATE_A)
+                    definer.simple(S.STATE_B)
+                    definer.simple(S.STATE_C)
+                    definer.terminal(S.TERMINAL_STATE)
+                }
 
-            definition.defineTransitions().apply {
-                add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
-                add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
-                // Transition to STATE_C should be blocked, as the guard always returns false
-                add(S.STATE_B, S.STATE_C, T.MOVE_TO_C, negativeGuard)
-                add(S.STATE_B, S.TERMINAL_STATE, T.END, positiveGuard)
+                override fun defineTransitions(definer: TransitionsDefiner<S, T>) {
+                    definer.add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
+                    definer.add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
+                    // Transition to STATE_C should be blocked, as the guard always returns false
+                    definer.add(S.STATE_B, S.STATE_C, T.MOVE_TO_C, negativeGuard)
+                    definer.add(S.STATE_B, S.TERMINAL_STATE, T.END, positiveGuard)
+                }
             }
-            return definition
+            return definer
         }
 
         fun createTrigger(t: T): Trigger<T> {
@@ -42,6 +44,7 @@ class StateMachineTestUtil {
         }
     }
 }
+
 enum class S {
     INITIAL, STATE_A, STATE_B, STATE_C, TERMINAL_STATE
 }

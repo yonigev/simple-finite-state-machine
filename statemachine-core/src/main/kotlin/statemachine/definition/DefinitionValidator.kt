@@ -1,61 +1,15 @@
 package statemachine.definition
 
 import org.slf4j.LoggerFactory
-import statemachine.definition.state.DefaultStatesDefinition
-import statemachine.definition.state.StatesDefinition
-import statemachine.definition.transition.TransitionsDefinition
 import statemachine.state.State
 import statemachine.transition.Transition
 
-/**
- * Defines and validates a State Machine
- * Contains all necessary properties to build a [statemachine.StateMachine]
- */
-open class DefaultStateMachineDefinition<S, T> : StateMachineDefinition<S, T> {
+open class DefinitionValidator<S, T> {
     private val log = LoggerFactory.getLogger(this.javaClass)
-    private val statesDefinition = DefaultStatesDefinition<S, T>()
-    private val transitionsDefinition = TransitionsDefinition<S, T>()
 
-    override lateinit var states: Set<State<S, T>>
-    override lateinit var transitions: Set<Transition<S, T>>
-    override var processed: Boolean = false
-
-    override fun defineStates(): StatesDefinition<S, T> {
-        if (processed) {
-            "State Machine Definition already processed".also {
-                log.error(it)
-                throw StateMachineDefinitionException(it)
-            }
-        }
-        return statesDefinition
-    }
-
-    override fun defineTransitions(): TransitionsDefinition<S, T> {
-        if (processed) {
-            "State Machine definition already processed".also {
-                log.error(it)
-                throw StateMachineDefinitionException(it)
-            }
-        }
-        return transitionsDefinition
-    }
-
-    override fun process() {
-        defineStates()
-        defineTransitions()
-        validateStates()
-        validateTransitions()
-        this.states = statesDefinition.getStates()
-        this.transitions = transitionsDefinition.getTransitions()
-        processed = true
-    }
-
-    /**
-     * Validate the states definition
-     */
-    private fun validateStates() {
-        val initialStates = statesDefinition.getStates().filter { State.PseudoStateType.INITIAL == it.type }
-        val endStates = statesDefinition.getStates().filter { State.PseudoStateType.TERMINAL == it.type }
+    fun validateStates(states: Set<State<S, T>>): Boolean {
+        val initialStates = states.filter { State.PseudoStateType.INITIAL == it.type }
+        val endStates = states.filter { State.PseudoStateType.TERMINAL == it.type }
 
         // Validate there is 1 INITIAL state
         if (initialStates.size != 1) {
@@ -70,14 +24,11 @@ open class DefaultStateMachineDefinition<S, T> : StateMachineDefinition<S, T> {
                 log.error(it); throw StateMachineDefinitionException(it)
             }
         }
+
+        return true
     }
 
-    /**
-     * Validate the transitions definition
-     */
-    private fun validateTransitions() {
-        val states = statesDefinition.getStates()
-        val transitions = transitionsDefinition.getTransitions()
+    fun validateTransitions(states: Set<State<S, T>>, transitions: Set<Transition<S, T>>): Boolean {
         val stateIds = states.map { it.id }
         val statesMap = states.associateBy { it.id }
 
@@ -111,5 +62,7 @@ open class DefaultStateMachineDefinition<S, T> : StateMachineDefinition<S, T> {
                 )
             }
         }
+
+        return true
     }
 }

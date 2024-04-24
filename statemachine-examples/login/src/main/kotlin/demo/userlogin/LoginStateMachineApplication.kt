@@ -5,17 +5,16 @@ import demo.userlogin.trigger.PasswordInputTrigger
 import statemachine.factory.DefaultStateMachineFactory
 import statemachine.trigger.Trigger
 
-
 fun main() {
-    val definition = LoginStateMachineDefinition()
-    val factory: DefaultStateMachineFactory<LoginStateMachineDefinition.LoginState, LoginStateMachineDefinition.LoginTrigger> =
-        DefaultStateMachineFactory(definition)
-    val sm = factory.createStarted("TEST_SM")
+    val definer = LoginStateMachineDefiner()
+    val factory: DefaultStateMachineFactory<LoginStateMachineDefiner.LoginState, LoginStateMachineDefiner.LoginTrigger> =
+        DefaultStateMachineFactory()
+    val sm = factory.createStarted("TEST_SM", definer)
 
     // Begin flow
     sm.trigger(
-        Trigger.ofId<LoginStateMachineDefinition.LoginState, LoginStateMachineDefinition.LoginTrigger>(
-            LoginStateMachineDefinition.LoginTrigger.BEGIN_LOGIN_FLOW
+        Trigger.ofId<LoginStateMachineDefiner.LoginState, LoginStateMachineDefiner.LoginTrigger>(
+            LoginStateMachineDefiner.LoginTrigger.BEGIN_LOGIN_FLOW
         )
     )
     // Enter email
@@ -23,7 +22,7 @@ fun main() {
     sm.trigger(PasswordInputTrigger("wrong password1"))
     sm.trigger(PasswordInputTrigger("wrong password2"))
     sm.trigger(PasswordInputTrigger("somebody2spassword"))
-    if (sm.state.id != LoginStateMachineDefinition.LoginState.LOGIN_COMPLETE) {
+    if (sm.state.id != LoginStateMachineDefiner.LoginState.LOGIN_COMPLETE) {
         throw Exception("Failed to finish The login statemachine flow!")
     }
 }

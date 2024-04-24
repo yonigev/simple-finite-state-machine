@@ -1,7 +1,7 @@
 package demo.flight.guard;
 
 import demo.flight.FlightStateMachineApplication;
-import demo.flight.FlightStateMachineDefinition;
+import demo.flight.FlightStateMachineDefiner;
 import demo.flight.model.FlightInformation;
 import demo.flight.model.Location;
 import demo.flight.trigger.PlaneLocationUpdate;
@@ -11,9 +11,9 @@ import statemachine.transition.TransitionContext;
 
 import java.util.Objects;
 
-public class ArrivalGuard implements Guard<FlightStateMachineDefinition.FlightState, FlightStateMachineDefinition.FlightTrigger> {
+public class ArrivalGuard implements Guard<FlightStateMachineDefiner.FlightState, FlightStateMachineDefiner.FlightTrigger> {
     @Override
-    public boolean allow(@NotNull TransitionContext<FlightStateMachineDefinition.FlightState, FlightStateMachineDefinition.FlightTrigger> transitionContext) {
+    public boolean allow(@NotNull TransitionContext<FlightStateMachineDefiner.FlightState, FlightStateMachineDefiner.FlightTrigger> transitionContext) {
         Objects.requireNonNull(transitionContext.getTrigger());
         // Get the current extended flight state
         FlightInformation flightInfo = (FlightInformation) transitionContext.getStateMachineContext().getProperty(FlightStateMachineApplication.FLIGHT_INFO);
