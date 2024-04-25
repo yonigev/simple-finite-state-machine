@@ -9,7 +9,8 @@ This project is still under development!
 * You do _**not**_ require any advanced Statemachine features like composite states or sub-machines / sub regions.
 <br>
 ## Defining a State Machine
- _TL;DR - see examples in `statemachine-examples` module._  
+
+_TL;DR - see examples in `statemachine-examples` module._  
 
 The State Machine is made up of a few key components:
 * `States` 
