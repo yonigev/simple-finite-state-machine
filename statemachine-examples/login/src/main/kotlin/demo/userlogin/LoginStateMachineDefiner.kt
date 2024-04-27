@@ -21,14 +21,16 @@ import statemachine.transition.TransitionContext
 
 class LoginStateMachineDefiner : StateMachineDefiner<LoginState, LoginTrigger>() {
     private val MAX_ATTEMPTS = 3
-
     val mockExistingEmails = listOf("somebody@email.com", "somebody2@email.com", "somebody3@email.com")
     val mockPasswords = listOf("somebodyspassword", "somebody2spassword", "somebody3spassword")
 
     private val emailValidatorGuard = EmailValidatorGuard()
     private val passwordValidatorGuard = PasswordValidatorGuard()
     private val passwordAttemptsExceededGuard = AttemptsExceededGuard()
+
+
     override fun defineStates(definer: StatesDefiner<LoginState, LoginTrigger>) {
+
         definer.apply {
             setInitial(INITIAL_STATE)
             simple(EMAIL_INPUT)

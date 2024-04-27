@@ -1,7 +1,6 @@
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.8.10"
-
     application
 }
 
@@ -21,10 +20,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
 }
 
-// Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 
