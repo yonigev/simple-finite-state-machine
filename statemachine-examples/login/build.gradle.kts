@@ -1,11 +1,13 @@
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.8.10"
+//    id("statemachine.uml.generator") version "0.0.1"
     application
 }
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {

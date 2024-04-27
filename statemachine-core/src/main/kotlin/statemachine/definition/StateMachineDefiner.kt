@@ -23,6 +23,6 @@ abstract class StateMachineDefiner<S, T> {
         val transitions = transitionsDefiner.getTransitions().let { it.ifEmpty { defineTransitions() }; transitionsDefiner.getTransitions() }
         validator.validateStates(states)
         validator.validateTransitions(states, transitions)
-        return StateMachineDefinition( this.javaClass.simpleName, states, transitions)
+        return StateMachineDefinition(this.javaClass.simpleName, states, transitions)
     }
 }

@@ -1,7 +1,9 @@
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.8.10"
     id("com.diffplug.spotless") version "6.18.0"
-    `java-library`
+//    `java-library`
+    `java-gradle-plugin`
+    `maven-publish`
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
@@ -15,6 +17,13 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
 }
 repositories {
     mavenCentral()
+    mavenLocal()
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
 }
 
 dependencies {
@@ -28,7 +37,7 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
-// Apply a specific Java toolchain to ease working on different environments.
+
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
