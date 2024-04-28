@@ -1,9 +1,7 @@
 plugins {
-    `java-gradle-plugin`
-    `maven-publish`
     id("com.gradle.plugin-publish") version "1.2.1"
-    id("org.jetbrains.kotlin.jvm") version "1.8.10"
-    id("java")
+    kotlin("jvm") version "1.8.10"
+    `kotlin-dsl`
 }
 
 repositories {
@@ -13,26 +11,23 @@ repositories {
 
 dependencies {
     compileOnly(gradleApi())
-    api(project(mapOf("path" to ":statemachine-core")))
+    implementation(project(mapOf("path" to ":statemachine-core")))
     implementation("io.github.classgraph:classgraph:4.8.172")
+
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
 }
 
+group = "io.github.yonigev"
+version = "0.0.1"
+
 gradlePlugin {
     plugins {
         create("GenerateStateMachineUml") {
-            id = "statemachine.uml.generator"
-            version = "0.0.1"
+            id = "${group}.statemachine.uml.generator"
             implementationClass = "statemachine.uml.plugin.UmlGeneratorPlugin"
         }
-    }
-}
-
-publishing {
-    repositories {
-        mavenLocal()
     }
 }
 

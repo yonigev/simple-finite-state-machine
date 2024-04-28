@@ -18,7 +18,9 @@ import statemachine.definition.state.StatesDefiner
 import statemachine.definition.transition.TransitionsDefiner
 import statemachine.guard.Guard
 import statemachine.transition.TransitionContext
+//import statemachine.uml.annotation.Uml
 
+//@Uml
 class LoginStateMachineDefiner : StateMachineDefiner<LoginState, LoginTrigger>() {
     private val MAX_ATTEMPTS = 3
     val mockExistingEmails = listOf("somebody@email.com", "somebody2@email.com", "somebody3@email.com")

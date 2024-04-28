@@ -4,24 +4,22 @@ import io.github.classgraph.ClassGraph
 import io.github.classgraph.ClassInfo
 import statemachine.definition.StateMachineDefiner
 import statemachine.definition.StateMachineDefinition
+import java.io.File
 import java.lang.reflect.Constructor
 
 class UmlAnnotationScanner {
-    fun scanAnnotatedStateMachineDefinitions(): Collection<StateMachineDefinition<*,*>> {
-        val definitions = mutableListOf<StateMachineDefinition<*,*>>()
-        val annotatedStateMachineDefiners = findAnnotatedClasses()
-
-        for (definer in annotatedStateMachineDefiners) {
-            val instance = (definer.loadClass()
-                .constructors.first { it.parameters.isEmpty() }.newInstance() as StateMachineDefiner<*,*>)
-            definitions.add(instance.getDefinition())
-        }
-
-        return definitions
+    fun scanAnnotatedStateMachineDefinitions(classPath: String): Collection<StateMachineDefinition<*,*>> {
+        return findAnnotatedClasses(classPath)
+            .map { instantiateStateMachineDefiner(it).getDefinition() }
     }
 
-    private fun findAnnotatedClasses(): List<ClassInfo> {
+    private fun findAnnotatedClasses(classPath: String?): List<ClassInfo> {
         val classGraph = ClassGraph().enableAllInfo()
+
+        if (!classPath.isNullOrBlank()) {
+            classGraph.overrideClasspath(classPath)
+        }
+
         try {
             return classGraph.scan()
                 .getClassesWithAnnotation(Uml::class.qualifiedName)
@@ -30,6 +28,11 @@ class UmlAnnotationScanner {
         } catch (e: Exception) {
             throw Exception("Failed to find @Uml annotated classes", e)
         }
+    }
+
+    private fun instantiateStateMachineDefiner(definerClassInfo: ClassInfo): StateMachineDefiner<*, *> {
+        return (definerClassInfo.loadClass()
+            .constructors.first { it.parameters.isEmpty() }.newInstance() as StateMachineDefiner<*,*>)
     }
 
     private fun filterValidStateMachineDefiners(annotatedClasses: List<ClassInfo>): List<ClassInfo> {
