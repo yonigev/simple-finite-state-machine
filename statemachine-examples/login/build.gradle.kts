@@ -1,6 +1,6 @@
-
 plugins {
     kotlin("jvm") version "1.8.10"
+    id("io.github.yonigev.statemachine.uml.generator") version "0.0.1"
     application
 }
 

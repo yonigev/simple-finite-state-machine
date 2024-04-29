@@ -1,5 +1,6 @@
 plugins {
     application
+    id("io.github.yonigev.statemachine.uml.generator") version "0.0.1"
 }
 
 repositories {
