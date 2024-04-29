@@ -4,7 +4,7 @@ import statemachine.state.State
 import statemachine.transition.Transition
 
 open class StateMachineDefinition<S, T>(
-    val name: String? = null,
+    val name: String,
     val states: Set<State<S, T>>,
     val transitions: Set<Transition<S, T>>,
 )

@@ -11,7 +11,6 @@ import statemachine.uml.annotation.UmlAnnotationScanner
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.pathString
 
 /**
@@ -38,26 +37,29 @@ open class GenerateUmlTask : DefaultTask() {
     @TaskAction
     fun action() {
         val sourceSetFiles = project.sourceSetFiles
-        val definitions = UmlAnnotationScanner(sourceSetFiles)
-            .scan()
+        val definitions: Collection<StateMachineDefinition<*, *>> = UmlAnnotationScanner(sourceSetFiles).scan()
 
         for (definition in definitions) {
-            val dir = Path.of(project.umlResourceDir, "${definition.name}")
-            val umlString = definition.toDotUmlString()
-            val dotFile = writeToDotFile(umlString, dir.absolutePathString(), definition.name)
-            writeSvgFromDotFile(dir, definition, dotFile)
+            val outputDir = Path.of(project.umlResourceDir, definition.name)
+            val uml = definition.toDotUmlString()
+            val dotFile = writeToDotFile(uml, outputDir, definition.name)
+            writeSvgFromDotFile(dotFile, outputDir, definition.name)
         }
     }
 
-    private fun writeToDotFile(uml: String, directory: String, name: String?): File {
-        Files.createDirectories(Path.of(directory))
-        val file = File("${directory}/$name.dot")
+
+    private fun writeToDotFile(uml: String, outputDir: Path, name: String?): File {
+        Files.createDirectories(outputDir)
+        val file = File("${outputDir.toAbsolutePath()}/$name.dot")
         file.writeText(uml)
         return file
     }
 
-    private fun writeSvgFromDotFile(directory: Path, definition: StateMachineDefinition<*, *>, dotFile: File) {
-        val svgFile = File(directory.pathString, "${definition.name}.svg")
+    /**
+     * Read the generated DOT file to generate an SVG output
+     */
+    private fun writeSvgFromDotFile(dotFile: File, directory: Path, name: String) {
+        val svgFile = File(directory.pathString, "$name.svg")
         val command = listOf("dot", "-Tsvg", "-o", svgFile.absolutePath, dotFile.absolutePath)
 
         val process = ProcessBuilder()
