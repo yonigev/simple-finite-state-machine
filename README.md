@@ -1,6 +1,6 @@
 # SFSM - Simple Finite State Machine 
 This library allows Kotlin & Java developers to use  a _**simplified**_ (as the name suggests) State Machine model.
-
+<br>
 This project is still under development!
 
 ### You can find this useful if:
@@ -90,3 +90,6 @@ TransitionAction.create { log.info("A transition has happened") }
 * Construct a `DefaultStateMachineFactory<S, T>` (you can also create your own `StateMachineFactory`) 
 * Create a StateMachine instance by calling the `statemachineFactory.create(<stateMachineId>, <stateMachineDefinition>)` and `start()` it.
 * Trigger the StateMachine with the `Triggers` you defined earlier.
+
+## UML - State Machine Visualization
+See [statemachine-uml-plugin](./statemachine-uml-plugin/README.md)
