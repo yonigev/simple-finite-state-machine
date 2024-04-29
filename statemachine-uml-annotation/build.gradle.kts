@@ -4,9 +4,6 @@ plugins {
     `maven-publish`
 }
 
-group = "io.github.yonigev"
-version = "0.0.1"
-
 repositories {
     mavenCentral()
 }
@@ -23,11 +20,6 @@ publishing {
     repositories {
         mavenLocal()
     }
-}
-
-dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 tasks.test {

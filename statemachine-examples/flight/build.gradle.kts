@@ -12,6 +12,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.12")
     implementation(project(mapOf("path" to ":statemachine-core")))
     annotationProcessor("org.projectlombok:lombok:1.18.26")
+    implementation(project(mapOf("path" to ":statemachine-uml-annotation")))
 
     testImplementation(project(mapOf("path" to ":statemachine-core")))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")

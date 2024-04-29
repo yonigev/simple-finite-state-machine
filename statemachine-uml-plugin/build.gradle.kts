@@ -1,7 +1,3 @@
-
-group = "io.github.yonigev"
-version = "0.0.1"
-
 plugins {
     id("com.gradle.plugin-publish") version "1.2.1"
     kotlin("jvm") version "1.8.10"
@@ -38,6 +34,8 @@ tasks.test {
 gradlePlugin {
     plugins {
         create("GenerateStateMachineUml") {
+            group = "io.github.yonigev"
+            version = "0.0.1"
             id = "${group}.statemachine.uml.generator"
             implementationClass = "statemachine.uml.plugin.UmlGeneratorPlugin"
         }

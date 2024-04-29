@@ -10,6 +10,7 @@ plugins {
 }
 
 rootProject.name = "simple-finite-state-machine"
+
 include(":statemachine-core")
 include(":statemachine-examples")
 include(":statemachine-examples:flight")

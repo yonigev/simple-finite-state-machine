@@ -9,6 +9,7 @@ import statemachine.definition.StateMachineDefiner;
 import statemachine.definition.state.StatesDefiner;
 import statemachine.definition.transition.TransitionsDefiner;
 import statemachine.guard.Guard;
+import statemachine.uml.annotation.Uml;
 
 import java.util.Arrays;
 
@@ -17,6 +18,7 @@ import static demo.flight.FlightStateMachineDefiner.FlightTrigger.*;
 import static statemachine.action.TransitionAction.create;
 
 @Slf4j
+@Uml
 public class FlightStateMachineDefiner extends StateMachineDefiner<FlightState, FlightTrigger> {
 
     // Allows transition only when boarding is complete.

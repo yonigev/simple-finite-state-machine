@@ -10,13 +10,26 @@ import java.net.URL
 import java.net.URLClassLoader
 import kotlin.streams.toList
 
+/**
+ * By leverages the ClassGraph library, this scanner scans the given
+ * ClassPath files for classes annotated with @Uml.
+ * If found, those classes are instantiated to retrieve their "raw" StateMachineDefinition
+ *
+ * Since this is used by importing a Gradle plugin, a project classpath
+ * is required here for the scanning and class loading to work.
+ * Note the definers must have an empty constructor available for this to work.
+ */
 class UmlAnnotationScanner(private val classPath: Set<File> = setOf()) {
-    fun scanAnnotatedStateMachineDefinitions(): Collection<StateMachineDefinition<*, *>> {
-        return findAnnotatedClasses()
+
+    /**
+     * Scan for @Uml StateMachineDefiner classes that also have empty constructors
+     */
+    fun scan(): Collection<StateMachineDefinition<*, *>> {
+        return scanAnnotatedValidClasses()
             .map { instantiateStateMachineDefiner(it).getDefinition() }
     }
 
-    private fun findAnnotatedClasses(): List<ClassInfo> {
+    private fun scanAnnotatedValidClasses(): List<ClassInfo> {
         val classLoader = getClassLoader()
 
         val classGraph = ClassGraph()
@@ -33,6 +46,16 @@ class UmlAnnotationScanner(private val classPath: Set<File> = setOf()) {
             throw Exception("Failed to find @Uml annotated classes", e)
         }
     }
+
+    /**
+     * An annotated class is considered valid when it's a subclass of StateMachineDefiner
+     * and has an empty constructor available.
+     */
+    private fun isValidStateMachineDefiner(annotatedClass: ClassInfo): Boolean {
+        return annotatedClass.extendsSuperclass(StateMachineDefiner::class.qualifiedName)
+                && retrieveEmptyConstructors(annotatedClass) != null
+    }
+
     private fun getClassLoader(): ClassLoader {
         val urls: List<URL> =
             classPath.stream().map { obj: File -> obj.toURI() }
@@ -43,11 +66,6 @@ class UmlAnnotationScanner(private val classPath: Set<File> = setOf()) {
     private fun instantiateStateMachineDefiner(definerClassInfo: ClassInfo): StateMachineDefiner<*, *> {
         return (definerClassInfo.loadClass()
             .constructors.first { it.parameters.isEmpty() }.newInstance() as StateMachineDefiner<*, *>)
-    }
-
-    private fun isValidStateMachineDefiner(annotatedClass: ClassInfo): Boolean {
-        return annotatedClass.extendsSuperclass(StateMachineDefiner::class.qualifiedName)
-                && retrieveEmptyConstructors(annotatedClass) != null
     }
 
     private fun retrieveEmptyConstructors(stateMachineDefiner: ClassInfo): Constructor<*>? {
