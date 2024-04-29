@@ -24,22 +24,21 @@ open class UmlMapperTask : DefaultTask() {
         get() = this.sourceSets.getByName(MAIN_SOURCE_SET_NAME)
 
 
-
     @TaskAction
     fun action() {
 
-        val definitions = UmlAnnotationScanner()
-            .scanAnnotatedStateMachineDefinitions(getSourceSetDirs())
+        val definitions = UmlAnnotationScanner(getSourceSetFiles())
+            .scanAnnotatedStateMachineDefinitions()
 
         for (definition in definitions) {
             val uml = toUml(definition)
-            val dotFile = writeToDotFile("./", definition, uml)
+            val dotFile = writeToDotFile(project.projectDir.absolutePath, definition, uml)
             writeSvgFromDotFile(definition, dotFile)
         }
     }
 
-    private fun getSourceSetDirs(): String {
-        return project.mainSourceSets.output.classesDirs.asPath
+    private fun getSourceSetFiles(): Set<File> {
+        return project.mainSourceSets.output.classesDirs.files
     }
 
     fun toUml(definition: StateMachineDefinition<*, *>): String {

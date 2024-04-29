@@ -2,7 +2,6 @@ plugins {
     kotlin("jvm") version "1.8.10"
     id("com.diffplug.spotless") version "6.18.0"
     id("java-library")
-
     `maven-publish`
 }
 

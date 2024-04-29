@@ -14,8 +14,8 @@ dependencies {
     implementation("com.google.guava:guava:31.1-jre")
     implementation("org.projectlombok:lombok:1.18.26")
     implementation("ch.qos.logback:logback-classic:1.3.0")
-    implementation(project(mapOf("path" to ":statemachine-core")))
-//    implementation(project(mapOf("path" to ":statemachine-uml")))
+    implementation("io.github.yonigev:statemachine-uml-annotation:0.0.1")
+    implementation("io.github.yonigev:statemachine-core:0.0.1")
     annotationProcessor("org.projectlombok:lombok:1.18.26")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

@@ -14,6 +14,5 @@ include(":statemachine-core")
 include(":statemachine-examples")
 include(":statemachine-examples:flight")
 include(":statemachine-examples:login")
-include(":statemachine-uml")
-
-
+include(":statemachine-uml-plugin")
+include(":statemachine-uml-annotation")
