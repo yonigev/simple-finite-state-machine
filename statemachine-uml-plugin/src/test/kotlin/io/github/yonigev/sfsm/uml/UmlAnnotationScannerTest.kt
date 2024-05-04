@@ -17,7 +17,7 @@ class UmlAnnotationScannerTest {
 
         val scannedDefinitionUmlString = scannedStateMachineDefinition.toDotUmlString()
         val dummyDefinitionUmlString = dummyStateMachineDefinitions.toDotUmlString()
-
+        // DummyStateMachineDefiner should be scanned
         assert(scannedDefinitionUmlString == dummyDefinitionUmlString)
     }
 }

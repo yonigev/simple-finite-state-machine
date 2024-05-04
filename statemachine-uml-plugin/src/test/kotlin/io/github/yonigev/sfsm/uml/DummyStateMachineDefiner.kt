@@ -4,12 +4,12 @@ import io.github.yonigev.sfsm.definition.StateMachineDefiner
 import io.github.yonigev.sfsm.definition.state.StatesDefiner
 import io.github.yonigev.sfsm.definition.transition.TransitionsDefiner
 import io.github.yonigev.sfsm.transition.Transition
-import io.github.yonigev.sfsm.uml.TestStateMachineDefiner.S
-import io.github.yonigev.sfsm.uml.TestStateMachineDefiner.T
+import io.github.yonigev.sfsm.uml.DummyStateMachineDefiner.S
+import io.github.yonigev.sfsm.uml.DummyStateMachineDefiner.T
 import io.github.yonigev.sfsm.uml.annotation.Uml
 
 @Uml
-class TestStateMachineDefiner : StateMachineDefiner<S, T>(TEST_MACHINE_NAME) {
+class DummyStateMachineDefiner : StateMachineDefiner<S, T>(TEST_MACHINE_NAME) {
 
     override fun defineStates(definer: StatesDefiner<S, T>) {
         definer.setInitial(S.START)

@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 /**
  * This class is used to define a state machine's states and transitions
  */
-abstract class StateMachineDefiner<S, T>(val name: String? = null) {
+abstract class StateMachineDefiner<S, T>(private val name: String? = null) {
 
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val statesDefiner: StatesDefiner<S, T> = StatesDefiner()

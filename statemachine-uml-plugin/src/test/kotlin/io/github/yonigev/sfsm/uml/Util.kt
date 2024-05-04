@@ -3,8 +3,8 @@ package io.github.yonigev.sfsm.uml
 import io.github.yonigev.sfsm.definition.StateMachineDefinition
 import io.github.yonigev.sfsm.state.State
 import io.github.yonigev.sfsm.transition.Transition
-import io.github.yonigev.sfsm.uml.TestStateMachineDefiner.S
-import io.github.yonigev.sfsm.uml.TestStateMachineDefiner.T
+import io.github.yonigev.sfsm.uml.DummyStateMachineDefiner.S
+import io.github.yonigev.sfsm.uml.DummyStateMachineDefiner.T
 
 const val TEST_MACHINE_NAME = "TEST"
 fun createDummyStateMachineDefinition(name: String): StateMachineDefinition<S, T> {

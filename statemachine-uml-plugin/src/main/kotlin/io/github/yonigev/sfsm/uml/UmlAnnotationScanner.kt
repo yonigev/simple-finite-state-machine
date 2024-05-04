@@ -26,8 +26,9 @@ class UmlAnnotationScanner(private val classPath: Set<File> = setOf()) {
      * Scan for @Uml StateMachineDefiner classes that also have empty constructors
      */
     fun scan(): Collection<StateMachineDefinition<*, *>> {
-        return scanAnnotatedValidClasses()
-            .map { instantiateStateMachineDefiner(it).getDefinition() }
+        val annotatedClasses = scanAnnotatedValidClasses()
+        val stateMachineDefiners = annotatedClasses.map { instantiateStateMachineDefiner(it) }
+        return stateMachineDefiners.map { it.getDefinition() }
     }
 
     private fun scanAnnotatedValidClasses(): List<ClassInfo> {
@@ -39,8 +40,8 @@ class UmlAnnotationScanner(private val classPath: Set<File> = setOf()) {
 
         if (this.classPath.isNotEmpty()) {
             classGraph.overrideClasspath(classPathFilesAsPathString(this.classPath))
-
         }
+
         try {
             return classGraph.scan()
                 .getClassesWithAnnotation(Uml::class.qualifiedName).standardClasses
@@ -61,10 +62,13 @@ class UmlAnnotationScanner(private val classPath: Set<File> = setOf()) {
     }
 
     private fun getClassLoader(): ClassLoader {
-        val urls: List<URL> =
-            classPath.stream().map { obj: File -> obj.toURI() }
-                .map { it.toURL() }.toList()
-        return URLClassLoader(urls.toTypedArray(), this.javaClass.classLoader)
+        val urls: Array<URL> =
+            classPath.stream()
+                .map { obj: File -> obj.toURI() }
+                .map { it.toURL() }
+                .toList().toTypedArray()
+
+        return URLClassLoader(urls, this.javaClass.classLoader)
     }
 
     private fun instantiateStateMachineDefiner(definerClassInfo: ClassInfo): StateMachineDefiner<*, *> {
