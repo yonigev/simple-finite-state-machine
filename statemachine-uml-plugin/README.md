@@ -22,7 +22,7 @@ This also installs the `DOT` cli tool. the plugin leverages them to create outpu
 Apply the latest plugin version
   ```
     plugins {
-        id("io.github.yonigev.statemachine.uml.generator") version "<version>"
+        id("io.github.yonigev.sfsm.statemachine.uml.generator") version "<version>"
     }
   ```
 

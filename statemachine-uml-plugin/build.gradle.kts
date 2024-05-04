@@ -34,10 +34,10 @@ tasks.test {
 gradlePlugin {
     plugins {
         create("GenerateStateMachineUml") {
-            group = "io.github.yonigev"
+            group = "io.github.yonigev.sfsm"
             version = "0.0.1"
             id = "${group}.statemachine.uml.generator"
-            implementationClass = "statemachine.uml.plugin.UmlGeneratorPlugin"
+            implementationClass = "${group}.uml.UmlGeneratorPlugin"
         }
     }
 }
