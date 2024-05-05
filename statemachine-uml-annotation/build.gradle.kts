@@ -12,7 +12,7 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             version = "0.0.1"
-            groupId = "io.github.yonigev"
+            groupId = "io.github.yonigev.sfsm"
             artifactId = "statemachine-uml-annotation"
             from(components["java"])
         }

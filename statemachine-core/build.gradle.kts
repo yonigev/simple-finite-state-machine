@@ -23,7 +23,7 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             version = "0.0.1"
-            groupId = "io.github.yonigev"
+            groupId = "io.github.yonigev.sfsm"
             artifactId = "statemachine-core"
             from(components["java"])
         }
