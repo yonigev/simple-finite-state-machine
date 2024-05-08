@@ -30,7 +30,7 @@ open class GenerateUmlTask : DefaultTask() {
     private val Project.sourceSetFiles: Set<File>
         get() = this.mainSourceSets.output.classesDirs.files
     private val Project.umlResourceDir: String
-        get() = "${project.projectDir.absolutePath}/uml"
+        get() = "${project.projectDir.absolutePath}/generated-uml"
 
 
     @TaskAction

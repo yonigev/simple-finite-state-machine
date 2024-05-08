@@ -3,13 +3,13 @@ package io.github.yonigev.sfsm.demo.flight;
 import io.github.yonigev.sfsm.demo.flight.FlightStateMachineDefiner.FlightState;
 import io.github.yonigev.sfsm.demo.flight.FlightStateMachineDefiner.FlightTrigger;
 import io.github.yonigev.sfsm.demo.flight.guard.*;
+import io.github.yonigev.sfsm.uml.annotation.Uml;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import io.github.yonigev.sfsm.definition.StateMachineDefiner;
 import io.github.yonigev.sfsm.definition.state.StatesDefiner;
 import io.github.yonigev.sfsm.definition.transition.TransitionsDefiner;
 import io.github.yonigev.sfsm.guard.Guard;
-import io.github.yonigev.sfsm.uml.annotation.Uml;
 
 import java.util.Arrays;
 

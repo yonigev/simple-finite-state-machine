@@ -14,7 +14,6 @@ dependencies {
     implementation("org.projectlombok:lombok:1.18.26")
     implementation("ch.qos.logback:logback-classic:1.3.0")
     implementation(project(mapOf("path" to ":statemachine-core")))
-    implementation(project(mapOf("path" to ":statemachine-uml-annotation")))
 
     annotationProcessor("org.projectlombok:lombok:1.18.26")
 

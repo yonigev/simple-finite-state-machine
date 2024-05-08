@@ -26,12 +26,6 @@ Apply the latest plugin version
     }
   ```
 
-Add a dependency for the new annotation<br>
-  ```
-  dependencies {
-      implementation("io.github.yonigev:statemachine-uml-annotation:<version>")
-  }
-  ```
   
 Add the annotation to every `StateMachineDefiner` you want to visualize
 
@@ -41,4 +35,13 @@ Add the annotation to every `StateMachineDefiner` you want to visualize
        ...
     }
    ```
+
+Sync your Gradle project<br>
+Under your project's root directory, run:
+
+```agsl
+./gradlew GenerateUml
+```
+This task will create a `generated-uml` directory in your project, containing the generated `SVG` and `DOT` files
+
       

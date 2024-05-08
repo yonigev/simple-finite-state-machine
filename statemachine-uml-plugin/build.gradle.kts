@@ -13,7 +13,6 @@ repositories {
 dependencies {
     compileOnly(gradleApi())
     implementation(project(mapOf("path" to ":statemachine-core")))
-    implementation(project(mapOf("path" to ":statemachine-uml-annotation")))
     implementation("io.github.classgraph:classgraph:4.8.172")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
