@@ -1,3 +1,6 @@
+project.version = "0.3.9-SNAPSHOT"
+project.group = "io.github.yonigev.sfsm"
+
 plugins {
     id("com.gradle.plugin-publish") version "1.2.1"
     kotlin("jvm") version "1.8.10"
@@ -22,7 +25,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(8))
     }
 }
 
@@ -33,8 +36,6 @@ tasks.test {
 gradlePlugin {
     plugins {
         create("GenerateStateMachineUml") {
-            group = "io.github.yonigev.sfsm"
-            version = "0.0.1"
             id = "${group}.statemachine.uml.generator"
             implementationClass = "${group}.uml.UmlGeneratorPlugin"
         }

@@ -10,6 +10,7 @@ import io.github.yonigev.sfsm.definition.StateMachineDefinition
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
 /**
@@ -39,7 +40,7 @@ open class GenerateUmlTask : DefaultTask() {
         val definitions: Collection<StateMachineDefinition<*, *>> = UmlAnnotationScanner(sourceSetFiles).scan()
 
         for (definition in definitions) {
-            val outputDir = Path.of(project.umlResourceDir, definition.name)
+            val outputDir = Path(project.umlResourceDir, definition.name)
             val uml = definition.toDotUmlString()
             val dotFile = writeToDotFile(uml, outputDir, definition.name)
             writeSvgFromDotFile(dotFile, outputDir, definition.name)

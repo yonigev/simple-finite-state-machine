@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm") version "1.8.10"
-    id("io.github.yonigev.sfsm.statemachine.uml.generator") version "0.0.1"
     application
 }
 
@@ -12,7 +11,7 @@ repositories {
 dependencies {
     implementation("com.google.guava:guava:31.1-jre")
     implementation("org.projectlombok:lombok:1.18.26")
-    implementation("ch.qos.logback:logback-classic:1.3.0")
+    implementation("ch.qos.logback:logback-classic:1.3.14")
     implementation(project(mapOf("path" to ":statemachine-core")))
 
     annotationProcessor("org.projectlombok:lombok:1.18.26")
@@ -24,7 +23,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(8))
     }
 }
 
