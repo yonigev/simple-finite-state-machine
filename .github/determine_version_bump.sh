@@ -2,10 +2,12 @@
 
 pr_body=$1
 
-if echo "$pr_body" | grep -qE "\[[xX]\] ?[Mm]inor"; then
+if echo "$pr_body" | grep -qE "\[[xXvV]\] ?[Mm]inor"; then
   echo "minor"
-elif echo "$pr_body" | grep -qE "\[[xX]\] ?[Mm]ajor"; then
+elif echo "$pr_body" | grep -qE "\[[xXvV]\] ?[Mm]ajor"; then
   echo "major"
-else
+elif echo "$pr_body" | grep -qE "\[[xXvV]\] ?[Pp]atch"; then
   echo "patch"
+else
+  echo ""
 fi
