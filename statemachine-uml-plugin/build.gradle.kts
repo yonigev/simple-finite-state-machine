@@ -1,3 +1,6 @@
+project.version = "0.3.9-BETA"
+project.group = "io.github.yonigev.sfsm"
+
 plugins {
     id("com.gradle.plugin-publish") version "1.2.1"
     kotlin("jvm") version "1.8.10"
@@ -13,17 +16,16 @@ repositories {
 dependencies {
     compileOnly(gradleApi())
     implementation(project(mapOf("path" to ":statemachine-core")))
-    implementation(project(mapOf("path" to ":statemachine-uml-annotation")))
-    implementation("io.github.classgraph:classgraph:4.8.172")
+    implementation(lib.classGraph)
 
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(platform(test.junit.bom))
+    testImplementation(test.junit.jupiter.engine)
 
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(8))
     }
 }
 
@@ -34,8 +36,6 @@ tasks.test {
 gradlePlugin {
     plugins {
         create("GenerateStateMachineUml") {
-            group = "io.github.yonigev.sfsm"
-            version = "0.0.1"
             id = "${group}.statemachine.uml.generator"
             implementationClass = "${group}.uml.UmlGeneratorPlugin"
         }
