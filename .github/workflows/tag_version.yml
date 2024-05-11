@@ -7,17 +7,21 @@ on:
 
 jobs:
   pr-merged:
-    if: github.event.pull_request.merged == true
+#    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Run chmod for scripts
+        run: |
+          chmod +x .github/determine_version_bump.sh
+          chmod +x .github/version_bumper.sh
+
       - name: Determine required version bump from PR description
         id: determine-bump
         run: |
-          chmod +x .github/determine_version_bump.sh
-          DETERMINED_BUMP=$(./.github/determine_version_bump.sh "${{ github.event.pull_request.body }}")
+          DETERMINED_BUMP=$(./.github/determine_version_bump.sh "[x]patch")
           echo "BUMP=$(echo $DETERMINED_BUMP)" >> $GITHUB_ENV
 
       - name: Bump latest version
@@ -27,24 +31,22 @@ jobs:
           CURRENT_VERSION: $(cat ./VERSION)
         run: |
           echo "Performing a ${{ env.BUMP }} bump for version ${{ env.CURRENT_VERSION }}"
-          chmod +x .github/version_bumper.sh
           
           BUMPED_VERSION=$(./.github/version_bumper.sh ${{ env.CURRENT_VERSION }} ${{ env.BUMP }})
-          echo "CURRENT_VERSION=$CURRENT_VERSION" >> "$GITHUB_ENV"
           echo "BUMPED_VERSION=$BUMPED_VERSION" >> "$GITHUB_ENV"
           echo "next version is $BUMPED_VERSION"
-      - name: Tag Commits
-        if: ${{ env.BUMP != '' }}
-        run: |
-          if [[ ! "${BUMPED_VERSION}" =~ ^v ]]; then
-            BUMPED_VERSION="v${BUMPED_VERSION}"
-          fi
-
-          if [[ ${{ vars.BETA == 'true' }} ]]; then
-            BUMPED_VERSION="${BUMPED_VERSION}-BETA"
-          fi
-
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git tag -a "${{ BUMPED_VERSION }}" -m "Automatically tagged by GitHub Action"
-          git push origin --tags
+#      - name: Tag Commits
+#        if: ${{ env.BUMP != '' }}
+#        run: |
+#          if [[ ! ${{BUMPED_VERSION}} =~ ^v ]]; then
+#            BUMPED_VERSION="v${BUMPED_VERSION}"
+#          fi
+#
+#          if [[ ${{ vars.BETA == 'true' }} ]]; then
+#            BUMPED_VERSION="${BUMPED_VERSION}-BETA"
+#          fi
+#
+#          git config --local user.email "action@github.com"
+#          git config --local user.name "GitHub Action"
+#          git tag -a "${{ BUMPED_VERSION }}" -m "Automatically tagged by GitHub Action"
+#          git push origin --tags
