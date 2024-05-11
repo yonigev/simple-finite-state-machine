@@ -7,7 +7,7 @@ on:
 
 jobs:
   pr-merged:
-    if: github.event.pull_request.merged == true
+#    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -39,26 +39,23 @@ jobs:
           if [[ ${{ vars.BETA == 'true' }} ]]; then
             BUMPED_VERSION="${BUMPED_VERSION}-BETA"
           fi
-               
+          
           echo "BUMPED_VERSION=$BUMPED_VERSION" >> "$GITHUB_ENV"
           echo "next version is $BUMPED_VERSION"
 
       - name: Update VERSION file with bumped version
+        if: ${{ env.BUMP != '' }}
         run: |
+          echo "Updating version file to: ${{ env.BUMPED_VERSION }}"
           echo "${{ env.BUMPED_VERSION }}" > VERSION
 
       - name: Tag Commits
         if: ${{ env.BUMP != '' }}
+        env:
+          VERSION_TAG: $(cat ./VERSION)
         run: |
-          if [[ ! ${{BUMPED_VERSION}} =~ ^v ]]; then
-            BUMPED_VERSION="v${BUMPED_VERSION}"
-          fi
-
-          if [[ ${{ vars.BETA == 'true' }} ]]; then
-            BUMPED_VERSION="${BUMPED_VERSION}-BETA"
-          fi
-
+          echo "Pushing new tag: ${{ env.VERSION_TAG }}"
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git tag -a "${{ BUMPED_VERSION }}" -m "Automatically tagged by GitHub Action"
+          git tag -a "${{ env.VERSION_TAG }}" -m "Automatically tagged by GitHub Action"
           git push origin --tags
