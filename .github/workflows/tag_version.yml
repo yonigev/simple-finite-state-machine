@@ -7,7 +7,7 @@ on:
 
 jobs:
   pr-merged:
-#    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -26,27 +26,39 @@ jobs:
 
       - name: Bump latest version
         if: ${{ env.BUMP != '' }}
-        id: bump-latest-version
         env:
           CURRENT_VERSION: $(cat ./VERSION)
+        id: bump-latest-version
         run: |
           echo "Performing a ${{ env.BUMP }} bump for version ${{ env.CURRENT_VERSION }}"
           
           BUMPED_VERSION=$(./.github/version_bumper.sh ${{ env.CURRENT_VERSION }} ${{ env.BUMP }})
+          if [[ ! ${BUMPED_VERSION} =~ ^v ]]; then
+            BUMPED_VERSION="v${BUMPED_VERSION}"
+          fi
+          if [[ ${{ vars.BETA == 'true' }} ]]; then
+            BUMPED_VERSION="${BUMPED_VERSION}-BETA"
+          fi
+               
           echo "BUMPED_VERSION=$BUMPED_VERSION" >> "$GITHUB_ENV"
           echo "next version is $BUMPED_VERSION"
-#      - name: Tag Commits
-#        if: ${{ env.BUMP != '' }}
-#        run: |
-#          if [[ ! ${{BUMPED_VERSION}} =~ ^v ]]; then
-#            BUMPED_VERSION="v${BUMPED_VERSION}"
-#          fi
-#
-#          if [[ ${{ vars.BETA == 'true' }} ]]; then
-#            BUMPED_VERSION="${BUMPED_VERSION}-BETA"
-#          fi
-#
-#          git config --local user.email "action@github.com"
-#          git config --local user.name "GitHub Action"
-#          git tag -a "${{ BUMPED_VERSION }}" -m "Automatically tagged by GitHub Action"
-#          git push origin --tags
+
+      - name: Update VERSION file with bumped version
+        run: |
+          echo "${{ env.BUMPED_VERSION }}" > VERSION
+
+      - name: Tag Commits
+        if: ${{ env.BUMP != '' }}
+        run: |
+          if [[ ! ${{BUMPED_VERSION}} =~ ^v ]]; then
+            BUMPED_VERSION="v${BUMPED_VERSION}"
+          fi
+
+          if [[ ${{ vars.BETA == 'true' }} ]]; then
+            BUMPED_VERSION="${BUMPED_VERSION}-BETA"
+          fi
+
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "${{ BUMPED_VERSION }}" -m "Automatically tagged by GitHub Action"
+          git push origin --tags
