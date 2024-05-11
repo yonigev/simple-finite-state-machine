@@ -20,26 +20,30 @@ jobs:
           DETERMINED_BUMP=$(./.github/determine_version_bump.sh "${{ github.event.pull_request.body }}")
           echo "BUMP=$(echo $DETERMINED_BUMP)" >> $GITHUB_ENV
 
-      - name: Determine latest tag/version
-        id: determine-latest-version
-        run: |
-          chmod +x .github/determine_latest_tag.sh
-          LATEST_TAG=$(./.github/determine_latest_tag.sh)
-          echo "LATEST_TAG=$LATEST_TAG" >> "$GITHUB_ENV"
-
       - name: Bump latest version
+        if: ${{ env.BUMP != "" }}
         id: bump-latest-version
         run: |
-          echo "Performing a ${{ env.BUMP }} bump for version ${{ env.LATEST_TAG }}"
+          CURRENT_VERSION = $(cat VERSION)
+          echo "Performing a ${{ env.BUMP }} bump for version ${{ CURRENT_VERSION }}"
           chmod +x .github/version_bumper.sh
-          BUMPED_VERSION=$(./.github/version_bumper.sh ${{ env.LATEST_TAG }} ${{ env.BUMP }})
+          
+          BUMPED_VERSION=$(./.github/version_bumper.sh ${{ CURRENT_VERSION }} ${{ env.BUMP }})
+          echo "CURRENT_VERSION=CURRENT_VERSION" >> "$GITHUB_ENV"
           echo "BUMPED_VERSION=$BUMPED_VERSION" >> "$GITHUB_ENV"
           echo "next version is $BUMPED_VERSION"
-
-      # Runs a set of commands using the runners shell
       - name: Tag Commits
+        if: ${{ env.BUMP != "" }}
         run: |
+          if [[ ! "${BUMPED_VERSION}" =~ ^v ]]; then
+            BUMPED_VERSION="v${BUMPED_VERSION}"
+          fi
+
+          if [[ ${{ vars.BETA == 'true' }} ]]; then
+            BUMPED_VERSION="${BUMPED_VERSION}-BETA"
+          fi
+          
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git tag -a "${{ env.BUMPED_VERSION }}" -m "Automatically tagged by GitHub Action"
+          git tag -a "${{ BUMPED_VERSION }}" -m "Automatically tagged by GitHub Action"
           git push origin --tags

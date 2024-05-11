@@ -25,9 +25,6 @@ bump_version() {
             ((patch++))
             ;;
         *)
-            echo "Invalid part specified. Usage: bump_version VERSION PART (major|minor|patch)"
-            exit 1
-            ;;
     esac
 
     # Constructing the new version
@@ -37,7 +34,7 @@ bump_version() {
 
 # Checking the arguments
 if [ $# -ne 2 ]; then
-    echo "Usage: $0 VERSION PART (major|minor|patch)"
+    echo "Usage: $0 VERSION PART (major|minor|patch) or an empty string"
     exit 1
 fi
 
