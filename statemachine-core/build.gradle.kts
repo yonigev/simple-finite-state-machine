@@ -1,6 +1,3 @@
-project.version = "0.3.9-SNAPSHOT"
-project.group = "io.github.yonigev.sfsm"
-
 plugins {
     kotlin("jvm") version "1.8.10"
     id("com.diffplug.spotless") version "6.18.0"
@@ -24,11 +21,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
-    implementation("com.google.guava:guava:33.1.0-jre")
-    implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
-    implementation("ch.qos.logback:logback-classic:1.3.14")
+    testImplementation(test.kotlin.test.junit5)
+    testImplementation(test.junit.jupiter.engine)
+    implementation(lib.logging.facade)
 }
 
 tasks.test {

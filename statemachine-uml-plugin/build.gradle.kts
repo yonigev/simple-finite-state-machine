@@ -1,4 +1,4 @@
-project.version = "0.3.9-SNAPSHOT"
+project.version = "0.3.9-BETA"
 project.group = "io.github.yonigev.sfsm"
 
 plugins {
@@ -16,10 +16,10 @@ repositories {
 dependencies {
     compileOnly(gradleApi())
     implementation(project(mapOf("path" to ":statemachine-core")))
-    implementation("io.github.classgraph:classgraph:4.8.172")
+    implementation(lib.classGraph)
 
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(platform(test.junit.bom))
+    testImplementation(test.junit.jupiter.engine)
 
 }
 

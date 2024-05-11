@@ -8,15 +8,14 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.guava:guava:33.1.0-jre")
-    implementation("org.projectlombok:lombok:1.18.26")
-    implementation("ch.qos.logback:logback-classic:1.3.14")
+    implementation(lib.logback)
+    implementation(lib.lombok)
     implementation(project(mapOf("path" to ":statemachine-core")))
-    annotationProcessor("org.projectlombok:lombok:1.18.26")
+    annotationProcessor(lib.lombok)
 
     testImplementation(project(mapOf("path" to ":statemachine-core")))
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
+    testImplementation(test.junit.jupiter.api)
+    testImplementation(test.junit.jupiter.engine)
 }
 
 
