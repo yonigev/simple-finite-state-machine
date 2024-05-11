@@ -20,6 +20,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Update VERSION file with new version
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo ${{ github.event.inputs.version }} > VERSION
           git add VERSION
