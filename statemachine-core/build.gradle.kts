@@ -1,3 +1,8 @@
+val group = property("group") as String
+val author: String = property("author") as String
+val projectWebsite: String = property("website") as String
+project.group = group
+
 plugins {
     kotlin("jvm") version "1.8.10"
     id("com.diffplug.spotless") version "6.18.0"
@@ -42,18 +47,27 @@ jreleaser {
     gitRootSearch.set(true)
     signing {
         setActive("ALWAYS")
-        armored.set(true)
+        armored = true
+        verify = true
     }
     project {
-        this.license.set("Apache-2.0")
+        author(author)
+        docsUrl = projectWebsite
+        website = projectWebsite
+        license.set("Apache-2.0")
+        description.set("An abstract implementation of a Simple Finite State Machine.")
+        inceptionYear.set("2024")
+        copyright.set(author)
     }
     deploy {
         maven {
             mavenCentral {
-                this.create("sonatype") {
+                create("sonatype") {
+                    namespace = "$group-$name"
                     setActive("ALWAYS")
+                    applyMavenCentralRules = true
                     url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository("target/staging-deploy")
+                    stagingRepository("build/target/staging-deploy")
                 }
             }
         }
@@ -68,25 +82,30 @@ publishing {
             pom {
                 name.set("Simple Finite State Machine")
                 description.set("An abstract implementation of a Simple Finite State Machine.")
-
+                url.set(projectWebsite)
                 licenses {
                     license {
-                        name.set("Apache-2.0")
-                        url.set("https://spdx.org/licenses/Apache-2.0.html")
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
                     }
                 }
-
+                developers {
+                    developer {
+                        id.set("yonigev")
+                        name.set(author)
+                    }
+                }
                 scm {
                     connection.set("scm:git:https://github.com/yonigev/simple-finite-state-machine.git")
                     developerConnection.set("scm:git:ssh://github.com/yonigev/simple-finite-state-machine.git")
-                    url.set("https://github.com/yonigev/simple-finite-state-machine")
+                    url.set(projectWebsite)
                 }
             }
         }
     }
     repositories {
         maven {
-            setUrl(layout.buildDirectory.dir("staging-deploy"))
+            url = uri(layout.buildDirectory.dir("target/staging-deploy"))
         }
     }
 }

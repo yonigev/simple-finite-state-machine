@@ -1,6 +1,5 @@
 plugins {
     application
-
 }
 
 repositories {
@@ -12,7 +11,6 @@ dependencies {
     implementation(lib.lombok)
     implementation(project(mapOf("path" to ":statemachine-core")))
     annotationProcessor(lib.lombok)
-
     testImplementation(project(mapOf("path" to ":statemachine-core")))
     testImplementation(test.junit.jupiter.api)
     testImplementation(test.junit.jupiter.engine)

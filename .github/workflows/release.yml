@@ -7,24 +7,36 @@ on:
         description: 'Release version'
         required: true
 
-permissions:
-  actions: write
-  id-token: write
-  contents: write
-
 jobs:
   update-version:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Update VERSION file with new version
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Tag latest commit with new version
+        id: tag_commit
         run: |
-          echo ${{ github.event.inputs.version }} > VERSION
-          git add VERSION
           git config --global user.email "${{ secrets.AUTHOR_EMAIL }}"
           git config --global user.name "${{ secrets.AUTHOR_NAME }}"
           git commit -a -m "Setting release version: ${{ github.event.inputs.version }}"
+          VERSION="v${{ github.event.inputs.version }}"
           git tag -a "v${{ github.event.inputs.version }}" -m "Release version ${{ github.event.inputs.version }}"
-          git push origin master
+          git push origin --tags
+          echo "VERSION=VERSION" >> "$GITHUB_OUTPUT"
+      - name: build statemachine-core
+        env:
+          VERSION: ${{ steps.tag_commit.outputs.VERSION }}
+        run: ./gradlew statemachine-core:build
+      - name: create publication for statemachine-core
+        run: ./gradlew statemachine-core:publish -Pversion ${VERSION}
+      - name: create publication for statemachine-core
+        run: ./gradlew statemachine-core:publish -Pversion ${VERSION}
+      - name: release publication
+        run: ./gradlew statemachine-core:publish -Pversion ${VERSION}
+      - name: Deploy to Maven Central
+        run: ./gradlew statemachine-core:jreleaserDeploy --dry-run
+
+          
+          
