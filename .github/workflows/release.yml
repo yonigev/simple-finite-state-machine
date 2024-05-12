@@ -35,6 +35,8 @@ jobs:
         run: ./gradlew statemachine-core:publish -Pversion ${VERSION}
       - name: release publication
         run: ./gradlew statemachine-core:publish -Pversion ${VERSION}
+      - name: Deploy to Maven Central
+        run: ./gradlew statemachine-core:jreleaserDeploy --dry-run
 
           
           

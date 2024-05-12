@@ -1,4 +1,3 @@
-project.version = "0.3.9-BETA"
 project.group = "io.github.yonigev.sfsm"
 
 plugins {
