@@ -45,7 +45,10 @@ jreleaser {
         armored.set(true)
     }
     project {
-        this.license.set("Apache-2.0")
+        license.set("Apache-2.0")
+        description.set("An abstract implementation of a Simple Finite State Machine.")
+        inceptionYear.set("2024")
+        copyright.set("Jonathan Geva")
     }
     deploy {
         maven {
@@ -53,7 +56,8 @@ jreleaser {
                 this.create("sonatype") {
                     setActive("ALWAYS")
                     url = "https://central.sonatype.com/api/v1/publisher"
-                    stagingRepository("target/staging-deploy")
+                    stagingRepository("build/publications/staging-deploy")
+                    dryrun.set(true)
                 }
             }
         }
@@ -68,11 +72,11 @@ publishing {
             pom {
                 name.set("Simple Finite State Machine")
                 description.set("An abstract implementation of a Simple Finite State Machine.")
-
+                url.set("https://github.com/yonigev/simple-finite-state-machine")
                 licenses {
                     license {
-                        name.set("Apache-2.0")
-                        url.set("https://spdx.org/licenses/Apache-2.0.html")
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
                     }
                 }
 
@@ -86,7 +90,10 @@ publishing {
     }
     repositories {
         maven {
-            setUrl(layout.buildDirectory.dir("staging-deploy"))
+            val release = uri(layout.buildDirectory.dir("publications/releases"))
+            val snapshot = uri(layout.buildDirectory.dir("publications/snapshots"))
+            val staging = uri(layout.buildDirectory.dir("publications/staging-deploy"))
+            url = staging
         }
     }
 }
