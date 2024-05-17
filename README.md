@@ -1,5 +1,5 @@
 # SFSM - Simple Finite State Machine
-[![build](https://github.com/yonigev/simple-finite-state-machine/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/yonigev/simple-finite-state-machine/actions/workflows/build.yml)
+[![build](https://github.com/yonigev/simple-finite-state-machine/actions/workflows/build.yml/badge.svg)](https://github.com/yonigev/simple-finite-state-machine/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![Maven Central Version](https://img.shields.io/maven-central/v/io.github.yonigev.sfsm/statemachine-core)
 

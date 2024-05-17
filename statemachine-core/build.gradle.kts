@@ -114,7 +114,13 @@ publishing {
 }
 
 coverallsJacoco {
-    reportPath = "${project.name}/build/reports/jacoco/test/jacocoTestReport.xml"
+    val isGitHubEnv = System.getenv("GITHUB_ACTIONS") != null
+
+    reportPath = if (isGitHubEnv) {
+        "build/reports/jacoco/test/jacocoTestReport.xml"
+    } else {
+        "${project.name}/build/reports/jacoco/test/jacocoTestReport.xml"
+    }
 }
 
 tasks.jacocoTestReport {
