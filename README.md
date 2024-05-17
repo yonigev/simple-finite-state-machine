@@ -1,4 +1,11 @@
-# SFSM - Simple Finite State Machine 
+# SFSM - Simple Finite State Machine
+[![build](https://github.com/yonigev/simple-finite-state-machine/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/yonigev/simple-finite-state-machine/actions/workflows/build.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+![Maven Central Version](https://img.shields.io/maven-central/v/io.github.yonigev.sfsm/statemachine-core)
+
+
+
+
 This library allows Kotlin & Java developers to use  a _**simplified**_ (as the name suggests) State Machine model.
 <br>
 This project is still under development!
