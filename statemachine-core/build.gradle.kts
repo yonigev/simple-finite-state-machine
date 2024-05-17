@@ -4,12 +4,15 @@ val projectWebsite: String = property("website") as String
 project.group = group
 
 plugins {
+    `maven-publish`
+    jacoco
     kotlin("jvm") version "1.8.10"
     id("com.diffplug.spotless") version "6.18.0"
     id("java-library")
     id("org.jreleaser") version "1.12.0"
-    `maven-publish`
+    id("com.github.nbaztec.coveralls-jacoco") version "1.2.20"
 }
+
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     kotlin {
         ktfmt()
@@ -108,4 +111,21 @@ publishing {
             url = uri(layout.buildDirectory.dir("target/staging-deploy"))
         }
     }
+}
+
+coverallsJacoco {
+    reportPath = "${project.name}/build/reports/jacoco/test/jacocoTestReport.xml"
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
 }

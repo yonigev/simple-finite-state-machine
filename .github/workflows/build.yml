@@ -1,7 +1,9 @@
-name: PR update
+name: build
 on:
   pull_request:
-    types: [opened, reopened, edited]
+  push:
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
