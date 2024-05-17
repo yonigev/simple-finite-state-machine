@@ -11,7 +11,16 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - name: test and publish coverage
+
+      - name: run tests
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: ./gradlew statemachine-core:test statemachine-core:jacocoTestReport statemachine-core:coverallsJacoco
+        run: ./gradlew statemachine-core:test
+
+      - name: generate report
+        run: ./gradlew statemachine-core:jacocoTestReport
+
+      - name: publish report to coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: ./gradlew statemachine-core:coverallsJacoco
