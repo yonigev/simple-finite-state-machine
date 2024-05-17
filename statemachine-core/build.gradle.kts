@@ -114,7 +114,13 @@ publishing {
 }
 
 coverallsJacoco {
-    reportPath = "${project.name}/build/reports/jacoco/test/jacocoTestReport.xml"
+    val isGitHubEnv = System.getenv("GITHUB_ACTIONS") != null
+
+    reportPath = if (isGitHubEnv) {
+        "${project.name}/build/reports/jacoco/test/jacocoTestReport.xml"
+    } else {
+        "build/reports/jacoco/test/jacocoTestReport.xml"
+    }
 }
 
 tasks.jacocoTestReport {
@@ -128,4 +134,11 @@ tasks.test {
 }
 tasks.jacocoTestReport {
     dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
+tasks.withType<JacocoReport> {
+    val reports = reports
+    doLast {
+        println("XML report generated: " + reports.xml.outputLocation.get())
+    }
 }
