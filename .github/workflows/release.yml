@@ -6,9 +6,17 @@ on:
       version:
         description: 'Release version'
         required: true
-
+env:
+  VERSION: v${{ github.event.inputs.version }}
+  SEMVER_VERSION: ${{ github.event.inputs.version }}
+  JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+  JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
+  JRELEASER_MAVENCENTRAL_SONATYPE_PASSWORD: ${{ secrets.JRELEASER_MAVENCENTRAL_SONATYPE_PASSWORD }}
+  JRELEASER_MAVENCENTRAL_SONATYPE_USERNAME: ${{ secrets.JRELEASER_MAVENCENTRAL_SONATYPE_USERNAME }}
+  JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
 jobs:
-  update-version:
+  publish_version:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -20,23 +28,40 @@ jobs:
         run: |
           git config --global user.email "${{ secrets.AUTHOR_EMAIL }}"
           git config --global user.name "${{ secrets.AUTHOR_NAME }}"
-          git commit -a -m "Setting release version: ${{ github.event.inputs.version }}"
-          VERSION="v${{ github.event.inputs.version }}"
-          git tag -a "v${{ github.event.inputs.version }}" -m "Release version ${{ github.event.inputs.version }}"
+          git commit -a -m "Setting release version: ${{ env.VERSION }}"
+          git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
           git push origin --tags
-          echo "VERSION=VERSION" >> "$GITHUB_OUTPUT"
-      - name: build statemachine-core
-        env:
-          VERSION: ${{ steps.tag_commit.outputs.VERSION }}
-        run: ./gradlew statemachine-core:build
-      - name: create publication for statemachine-core
-        run: ./gradlew statemachine-core:publish -Pversion ${VERSION}
-      - name: create publication for statemachine-core
-        run: ./gradlew statemachine-core:publish -Pversion ${VERSION}
-      - name: release publication
-        run: ./gradlew statemachine-core:publish -Pversion ${VERSION}
-      - name: Deploy to Maven Central
-        run: ./gradlew statemachine-core:jreleaserDeploy --dry-run
 
-          
-          
+      - name: build statemachine-core
+        run: ./gradlew statemachine-core:build
+
+      - name: create publication for statemachine-core
+        run: ./gradlew statemachine-core:publish -Pversion=${{ env.SEMVER_VERSION }}
+
+      - name: Deploy to Maven Central
+        run: ./gradlew statemachine-core:jreleaserDeploy -Pversion=${{ env.SEMVER_VERSION }}
+  
+
+  create_release:
+    needs: publish_version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        if: ${{ always() }}
+        uses: actions/checkout@v4
+
+      - name: Create draft GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ env.VERSION }} \
+            --title "Release ${{ env.VERSION }}" \
+            --notes-from-tag \
+            --draft
+
+      - name: Upload release artifacts
+        env:
+          ARTIFACTS_ZIP: ${{ vars.DEPLOYMENTS_PATH }}/${{ vars.GROUP }}-${{ vars.CORE_ARTIFACT_ID }}-${{ env.SEMVER_VERSION }}-bundle.zip
+        run: |
+          echo {{ env.ARTIFACTS_ZIP }}
+          gh release upload ${{ env.VERSION }} ${{ env.ARTIFACTS_ZIP }} 

@@ -69,7 +69,7 @@ jreleaser {
                     namespace = "$group-$name"
                     setActive("ALWAYS")
                     applyMavenCentralRules = true
-                    url = "https://central.sonatype.com/api/v1/publisher"
+                    url = "https://central.sonatype.com/api/v1/publisher?publishingType=USER_MANAGED"
                     stagingRepository("build/target/staging-deploy")
                 }
             }
