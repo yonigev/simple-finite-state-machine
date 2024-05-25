@@ -10,10 +10,11 @@ env:
   VERSION: v${{ github.event.inputs.version }}
   SEMVER_VERSION: ${{ github.event.inputs.version }}
   JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  JRELEASER_GPG_PUBLIC_KEY: ${{ JRELEASER_GPG_PUBLIC_KEY }}
-  JRELEASER_GPG_SECRET_KEY: ${{ JRELEASER_GPG_SECRET_KEY }}
-  JRELEASER_MAVENCENTRAL_SONATYPE_PASSWORD: ${{ JRELEASER_MAVENCENTRAL_SONATYPE_PASSWORD }}
-  JRELEASER_MAVENCENTRAL_SONATYPE_USERNAME: ${{ JRELEASER_MAVENCENTRAL_SONATYPE_USERNAME }}
+  JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+  JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
+  JRELEASER_MAVENCENTRAL_SONATYPE_PASSWORD: ${{ secrets.JRELEASER_MAVENCENTRAL_SONATYPE_PASSWORD }}
+  JRELEASER_MAVENCENTRAL_SONATYPE_USERNAME: ${{ secrets.JRELEASER_MAVENCENTRAL_SONATYPE_USERNAME }}
+  JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
 jobs:
   publish_version:
     runs-on: ubuntu-latest
@@ -38,15 +39,16 @@ jobs:
         run: ./gradlew statemachine-core:publish -Pversion=${{ env.SEMVER_VERSION }}
 
       - name: Deploy to Maven Central
-        run: ./gradlew statemachine-core:jreleaserDeploy -Pversion=${{ env.SEMVER_VERSION }}
+        run: ./gradlew statemachine-core:jreleaserDeploy -Pversion=${{ env.SEMVER_VERSION }} --stacktrace
   
 
   create_release:
     needs: publish_version
     runs-on: ubuntu-latest
-
+    if: ${{ always() }}
     steps:
       - name: Checkout repository
+        if: ${{ always() }}
         uses: actions/checkout@v4
 
       - name: Create draft GitHub Release
@@ -60,7 +62,7 @@ jobs:
 
       - name: Upload release artifacts
         env:
-          ARTIFACTS_ZIP: ${{ vars.DEPLOYMENTS_PATH }}/${{ vars.GROUP }}-${{ vars.CORE_ARTIFACT_ID }}-${{ github.event.inputs.version }}-bundle.zip
+          ARTIFACTS_ZIP: ${{ vars.DEPLOYMENTS_PATH }}/${{ vars.GROUP }}-${{ vars.CORE_ARTIFACT_ID }}-${{ env.SEMVER_VERSION }}-bundle.zip
         run: |
           echo {{ env.ARTIFACTS_ZIP }}
-#          gh release upload ${{ env.VERSION }} some/path/project.zip
+          gh release upload ${{ env.VERSION }} ${{ env.ARTIFACTS_ZIP }} 
