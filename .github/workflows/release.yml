@@ -23,14 +23,14 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-#      - name: Tag latest commit with new version
-#        id: tag_commit
-#        run: |
-#          git config --global user.email "${{ secrets.AUTHOR_EMAIL }}"
-#          git config --global user.name "${{ secrets.AUTHOR_NAME }}"
-#          git commit -a -m "Setting release version: ${{ env.VERSION }}"
-#          git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
-#          git push origin --tags
+      - name: Tag latest commit with new version
+        id: tag_commit
+        run: |
+          git config --global user.email "${{ secrets.AUTHOR_EMAIL }}"
+          git config --global user.name "${{ secrets.AUTHOR_NAME }}"
+          git commit -a -m "Setting release version: ${{ env.VERSION }}"
+          git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
+          git push origin --tags
 
       - name: build statemachine-core
         run: ./gradlew statemachine-core:build
@@ -39,13 +39,12 @@ jobs:
         run: ./gradlew statemachine-core:publish -Pversion=${{ env.SEMVER_VERSION }}
 
       - name: Deploy to Maven Central
-        run: ./gradlew statemachine-core:jreleaserDeploy -Pversion=${{ env.SEMVER_VERSION }} --stacktrace
+        run: ./gradlew statemachine-core:jreleaserDeploy -Pversion=${{ env.SEMVER_VERSION }}
   
 
   create_release:
     needs: publish_version
     runs-on: ubuntu-latest
-    if: ${{ always() }}
     steps:
       - name: Checkout repository
         if: ${{ always() }}
