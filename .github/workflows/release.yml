@@ -69,13 +69,14 @@ jobs:
 
       - name: Upload release artifacts
         env:
-          ARTIFACTS_ZIP: ${{ vars.DEPLOYMENTS_PATH }}/${{ vars.GROUP }}-${{ vars.CORE_ARTIFACT_ID }}-${{ env.SEMVER_VERSION }}-bundle.zip
+          ARTIFACTS_ZIP: ${{ vars.CORE_DEPLOYMENTS_PATH }}/${{ vars.GROUP }}-${{ vars.CORE_ARTIFACT_ID }}-${{ env.SEMVER_VERSION }}-bundle.zip
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo ${{ env.ARTIFACTS_ZIP }}
           pwd
-          ls /build
-          ls /build/jreleaser
-          ls /build/jreleaser/deploy
-          ls /build/jreleaser/deploy/mavenCentral
+          ls
+          ls statemachine-core/build
+          ls statemachine-core/build/jreleaser
+          ls statemachine-core/build/jreleaser/deploy
+          ls statemachine-core/build/jreleaser/deploy/mavenCentral
           gh release upload ${{ env.VERSION }} ${{ env.ARTIFACTS_ZIP }} 
