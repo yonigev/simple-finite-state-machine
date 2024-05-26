@@ -78,7 +78,7 @@ jobs:
       - name: Download previously generated artifacts ZIP
         uses: actions/download-artifact@v4
         with:
-          pattern: ${{ vars.GROUP }}.*
+          pattern: ${{ vars.GROUP }}*
           merge-multiple: true
 
       - name: Tag latest commit with new version
@@ -101,7 +101,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create ${{ env.VERSION }} "./${{ env.CORE_ARTIFACT_ZIP_NAME }}" \
+          gh release create "${{ env.VERSION }}" "${{ env.CORE_ARTIFACT_ZIP_NAME }}" "${{ env.UML_PLUGIN_ARTIFACT_ZIP_NAME }}"\
             --title "Release ${{ env.VERSION }}" \
             --generate-notes \
             --draft
