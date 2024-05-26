@@ -28,7 +28,6 @@ jobs:
         run: |
           git config --global user.email "${{ secrets.AUTHOR_EMAIL }}"
           git config --global user.name "${{ secrets.AUTHOR_NAME }}"
-          git commit -a -m "Setting release version: ${{ env.VERSION }}"
           git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
           git push origin --tags
 
