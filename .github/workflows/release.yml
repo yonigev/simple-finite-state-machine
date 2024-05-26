@@ -103,7 +103,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create ${{ env.VERSION }} ${{ env.CORE_ARTIFACT_ZIP_NAME }} ${{ env.UML_PLUGIN_ARTIFACT_ZIP_NAME }} \
+          gh release create ${{ env.VERSION }} "${{ env.CORE_ARTIFACT_ZIP_NAME }}" "${{ env.UML_PLUGIN_ARTIFACT_ZIP_NAME }}" \
             --title "Release ${{ env.VERSION }}" \
             --generate-notes \
             --draft
