@@ -49,7 +49,8 @@ jobs:
         env:
           GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
           GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
-        run: ./gradlew statemachine-uml-plugin:publishPlugins -Pversion=${{ env.SEMVER_VERSION }}
+        run: ./gradlew -Dgradle.publish.key=${{ env.GRADLE_PUBLISH_KEY }} -Dgradle.publish.secret=${{ env.GRADLE_PUBLISH_SECRET }} \
+              statemachine-uml-plugin:publishPlugins -Pversion=${{ env.SEMVER_VERSION }}
 
       - name: Upload core artifacts zip
         id: upload_core
