@@ -9,14 +9,18 @@ on:
 env:
   VERSION: v${{ github.event.inputs.version }}
   SEMVER_VERSION: ${{ github.event.inputs.version }}
-  ARTIFACT_ZIP_NAME: ${{ vars.GROUP }}-${{ vars.CORE_ARTIFACT_ID }}-${{ github.event.inputs.version }}-bundle.zip
+  CORE_ARTIFACT_ZIP_NAME: ${{ vars.GROUP }}-${{ vars.CORE_ARTIFACT_ID }}-${{ github.event.inputs.version }}-bundle.zip
+  UML_PLUGIN_ARTIFACT_ZIP_NAME: ${{ vars.GROUP }}-${{ vars.UML_PLUGIN_ARTIFACT_ID }}-${{ github.event.inputs.version }}.zip
   JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
   JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
   JRELEASER_MAVENCENTRAL_SONATYPE_PASSWORD: ${{ secrets.JRELEASER_MAVENCENTRAL_SONATYPE_PASSWORD }}
   JRELEASER_MAVENCENTRAL_SONATYPE_USERNAME: ${{ secrets.JRELEASER_MAVENCENTRAL_SONATYPE_USERNAME }}
   JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
-
+  GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+  GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
+  ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GRADLE_SIGNING_KEY }}
+  ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GRADLE_SIGNING_PASSWORD }}
 
 jobs:
   publish_version:
@@ -32,18 +36,37 @@ jobs:
       - name: build statemachine-core
         run: ./gradlew statemachine-core:build
 
+      - name: build statemachine-uml-plugin
+        run: ./gradlew statemachine-uml-plugin:build
+
       - name: create publication for statemachine-core
         run: ./gradlew statemachine-core:publish -Pversion=${{ env.SEMVER_VERSION }}
 
-      - name: Deploy to Maven Central
+      - name: create publication for statemachine-uml-plugin
+        run: ./gradlew statemachine-uml-plugin:publish -Pversion=${{ env.SEMVER_VERSION }}
+
+      - name: Deploy statemachine-core to Maven Central
         run: ./gradlew statemachine-core:jreleaserDeploy -Pversion=${{ env.SEMVER_VERSION }}
 
-      - name: Upload artifacts zip
-        id: upload
+      - name: Publish statemachine-uml-plugin to Gradle Plugin Portal
+        run: ./gradlew statemachine-uml-plugin:publishPlugins -Pversion=${{ env.SEMVER_VERSION }}
+
+      - name: Zip statemachine-uml-plugin artifacts
+        run: ./gradlew statemachine-uml-plugin:zipArtifacts -Pversion=${{ env.SEMVER_VERSION }}
+
+      - name: Upload core artifacts zip
+        id: upload_core
         uses: actions/upload-artifact@v4
         with:
-          path: ${{ vars.CORE_DEPLOYMENTS_PATH }}/${{ env.ARTIFACT_ZIP_NAME }}
-          name: ${{ env.ARTIFACT_ZIP_NAME }}
+          path: ${{ vars.CORE_ARTIFACTS_PATH }}/${{ env.CORE_ARTIFACT_ZIP_NAME }}
+          name: ${{ env.CORE_ARTIFACT_ZIP_NAME }}
+
+      - name: Upload uml generator plugin artifacts zip
+        id: upload_plugin
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ vars.UML_PLUGIN_ARTIFACTS_PATH }}/${{ env.UML_PLUGIN_ARTIFACT_ZIP_NAME }}
+          name: ${{ env.UML_PLUGIN_ARTIFACT_ZIP_NAME }}
 
   create_release:
     needs: publish_version
@@ -55,7 +78,8 @@ jobs:
       - name: Download previously generated artifacts ZIP
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_ZIP_NAME }}
+          pattern: ${{ vars.GROUP }}*
+          merge-multiple: true
 
       - name: Tag latest commit with new version
         id: tag_commit
@@ -77,7 +101,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create ${{ env.VERSION }} ${{ env.ARTIFACT_ZIP_NAME }} \
+          gh release create "${{ env.VERSION }}" "${{ env.CORE_ARTIFACT_ZIP_NAME }}" "${{ env.UML_PLUGIN_ARTIFACT_ZIP_NAME }}"\
             --title "Release ${{ env.VERSION }}" \
             --generate-notes \
             --draft
