@@ -79,6 +79,6 @@ jobs:
         run: |
           gh release create ${{ env.VERSION }} ${{ env.ARTIFACT_ZIP_NAME }} \
             --title "Release ${{ env.VERSION }}" \
-            --notes-from-tag \
+            --generate-notes \
             --draft
 
