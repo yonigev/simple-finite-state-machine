@@ -60,7 +60,7 @@ jobs:
 
       - name: Create draft GitHub Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create ${{ env.VERSION }} \
             --title "Release ${{ env.VERSION }}" \
@@ -70,6 +70,7 @@ jobs:
       - name: Upload release artifacts
         env:
           ARTIFACTS_ZIP: ${{ vars.DEPLOYMENTS_PATH }}/${{ vars.GROUP }}-${{ vars.CORE_ARTIFACT_ID }}-${{ env.SEMVER_VERSION }}-bundle.zip
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo {{ env.ARTIFACTS_ZIP }}
           gh release upload ${{ env.VERSION }} ${{ env.ARTIFACTS_ZIP }} 
