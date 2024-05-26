@@ -17,7 +17,10 @@ env:
   JRELEASER_MAVENCENTRAL_SONATYPE_PASSWORD: ${{ secrets.JRELEASER_MAVENCENTRAL_SONATYPE_PASSWORD }}
   JRELEASER_MAVENCENTRAL_SONATYPE_USERNAME: ${{ secrets.JRELEASER_MAVENCENTRAL_SONATYPE_USERNAME }}
   JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
-
+  GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+  GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
+  ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GRADLE_SIGNING_KEY }}
+  ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GRADLE_SIGNING_PASSWORD }}
 
 jobs:
   publish_version:
@@ -46,11 +49,6 @@ jobs:
         run: ./gradlew statemachine-core:jreleaserDeploy -Pversion=${{ env.SEMVER_VERSION }}
 
       - name: Public statemachine-uml-plugin to Gradle Plugin Portal
-        env:
-          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
-          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GRADLE_SIGNING_KEY }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.GRADLE_SIGNING_PASSWORD }}
 #        run: ./gradlew statemachine-uml-plugin:signGenerateStateMachineUmlPluginMarkerMavenPublication -Pversion=${{ env.SEMVER_VERSION }}
         run: ./gradlew statemachine-uml-plugin:publishPlugins -Pversion=${{ env.SEMVER_VERSION }} --stacktrace
 
