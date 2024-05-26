@@ -62,9 +62,9 @@ publishing {
 }
 
 signing {
-    val signingKey: String? by project
-    val signingPassword: String? by project
-    useInMemoryPgpKeys(signingKey, signingPassword)
+    val signingKey = findProperty("ORG_GRADLE_PROJECT_signingKey")
+    val signingPassword = findProperty("ORG_GRADLE_PROJECT_signingPassword")
+    useInMemoryPgpKeys(signingKey.toString(), signingPassword.toString())
     sign(publishing.publications)
 }
 
