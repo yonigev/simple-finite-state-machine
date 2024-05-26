@@ -48,9 +48,11 @@ jobs:
       - name: Deploy statemachine-core to Maven Central
         run: ./gradlew statemachine-core:jreleaserDeploy -Pversion=${{ env.SEMVER_VERSION }}
 
-      - name: Public statemachine-uml-plugin to Gradle Plugin Portal
-#        run: ./gradlew statemachine-uml-plugin:signGenerateStateMachineUmlPluginMarkerMavenPublication -Pversion=${{ env.SEMVER_VERSION }}
-        run: ./gradlew statemachine-uml-plugin:publishPlugins -Pversion=${{ env.SEMVER_VERSION }} --stacktrace
+      - name: Publish statemachine-uml-plugin to Gradle Plugin Portal
+        run: ./gradlew statemachine-uml-plugin:publishPlugins -Pversion=${{ env.SEMVER_VERSION }}
+
+      - name: Zip statemachine-uml-plugin artifacts
+        run: ./gradlew statemachine-uml-plugin:zipArtifacts -Pversion=${{ env.SEMVER_VERSION }}
 
       - name: Upload core artifacts zip
         id: upload_core
