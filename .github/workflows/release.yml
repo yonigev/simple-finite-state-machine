@@ -21,15 +21,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-      - name: Tag latest commit with new version
-        id: tag_commit
-        run: |
-          git config --global user.email "${{ secrets.AUTHOR_EMAIL }}"
-          git config --global user.name "${{ secrets.AUTHOR_NAME }}"
-          git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
-          git push origin --tags
 
       - name: build statemachine-core
         run: ./gradlew statemachine-core:build
@@ -46,8 +40,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        if: ${{ always() }}
         uses: actions/checkout@v4
+
+      - name: Tag latest commit with new version
+        id: tag_commit
+        run: |
+          git config --global user.email "${{ secrets.AUTHOR_EMAIL }}"
+          git config --global user.name "${{ secrets.AUTHOR_NAME }}"
+          git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
+          git push origin --tags
 
       - name: Create draft GitHub Release
         env:
