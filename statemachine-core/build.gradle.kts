@@ -1,3 +1,5 @@
+import org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer
+
 val group = property("group") as String
 val author: String = property("author") as String
 val projectWebsite: String = property("website") as String
@@ -69,8 +71,9 @@ jreleaser {
                     namespace = "$group-$name"
                     setActive("ALWAYS")
                     applyMavenCentralRules = true
-                    url = "https://central.sonatype.com/api/v1/publisher?publishingType=USER_MANAGED"
+                    url = "https://central.sonatype.com/api/v1/publisher"
                     stagingRepository("build/target/staging-deploy")
+                    stage.set(MavenCentralMavenDeployer.Stage.UPLOAD)
                 }
             }
         }
