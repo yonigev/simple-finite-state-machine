@@ -61,6 +61,12 @@ publishing {
     }
 }
 
+signing {
+    val signingKey: String? by project
+    val signingPassword: String? by project
+    useInMemoryPgpKeys(signingKey, signingPassword)
+}
+
 tasks.register<Zip>("zipArtifacts") {
     val artifactsPath = uri(layout.buildDirectory.dir("${stagingRepository}/${projectId.replace(".", "/")}"))
     project.fileTree(artifactsPath).forEach { from(it.path) }
