@@ -50,6 +50,14 @@ jobs:
           git tag -a "${{ env.VERSION }}" -m "Release version ${{ env.VERSION }}"
           git push origin --tags
 
+      - name: Verify tag exists
+        run: |
+          git fetch --tags
+          if ! git rev-parse "${{ env.VERSION }}" >/dev/null 2>&1; then
+            echo "Tag $VERSION does not exist."
+            exit 1
+          fi
+
       - name: Create draft GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
