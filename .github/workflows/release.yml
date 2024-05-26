@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: ${{ vars.CORE_DEPLOYMENTS_PATH }}/${{ env.ARTIFACT_ZIP_NAME }}
-          name: ${{ vars.GROUP }}-${{ vars.CORE_ARTIFACT_ID }}-${{ env.SEMVER_VERSION }}-bundle.zip
+          name: ${{ env.ARTIFACT_ZIP_NAME }}
 
   create_release:
     needs: publish_version
