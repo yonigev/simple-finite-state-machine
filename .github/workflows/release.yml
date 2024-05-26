@@ -52,7 +52,9 @@ jobs:
         run: ./gradlew statemachine-uml-plugin:publishPlugins -Pversion=${{ env.SEMVER_VERSION }}
 
       - name: Zip statemachine-uml-plugin artifacts
-        run: ./gradlew statemachine-uml-plugin:zipArtifacts -Pversion=${{ env.SEMVER_VERSION }}
+        run: |
+              ./gradlew statemachine-uml-plugin:zipArtifacts -Pversion=${{ env.SEMVER_VERSION }}
+              ls statemachine-uml-plugin/build/output
 
       - name: Upload core artifacts zip
         id: upload_core

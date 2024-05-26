@@ -3,7 +3,7 @@ project.group = group
 
 val author: String = property("author") as String
 val projectWebsite: String = property("website") as String
-val projectId = "${group}.statemachine-uml-generator"
+val projectId = "${group}-statemachine-uml-generator"
 val stagingRepository = "target/staging-deploy"
 
 plugins {
