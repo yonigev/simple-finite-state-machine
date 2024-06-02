@@ -7,9 +7,9 @@ import io.github.yonigev.sfsm.definition.state.StatesDefiner
 import io.github.yonigev.sfsm.definition.transition.TransitionsDefiner
 import io.github.yonigev.sfsm.factory.DefaultStateMachineFactory
 import io.github.yonigev.sfsm.guard.Guard
+import io.github.yonigev.sfsm.trigger.Trigger
 import io.github.yonigev.sfsm.util.S
 import io.github.yonigev.sfsm.util.StateMachineTestUtil
-import io.github.yonigev.sfsm.util.StateMachineTestUtil.Companion.createTrigger
 import io.github.yonigev.sfsm.util.T
 import io.github.yonigev.sfsm.util.positiveGuard
 import org.junit.jupiter.api.Test
@@ -26,10 +26,10 @@ class StateMachineTest {
         val sm: StateMachine<S, T> = stateMachineFactory.create("TEST_ID", stateMachineDefiner.getDefinition()).also { it.start() }
         assertEquals(S.INITIAL, sm.state.id)
 
-        sm.trigger(createTrigger(T.MOVE_TO_A)).also { assertEquals(sm.state.id, S.STATE_A) }
-        sm.trigger(createTrigger(T.MOVE_TO_B)).also { assertEquals(sm.state.id, S.STATE_B) }
-        sm.trigger(createTrigger(T.MOVE_TO_C)).also { assertNotEquals(sm.state.id, S.STATE_C) }
-        sm.trigger(createTrigger(T.END)).also { assertEquals(sm.state.id, S.TERMINAL_STATE) }
+        sm.trigger(Trigger.ofId(T.MOVE_TO_A)).also { assertEquals(sm.state.id, S.STATE_A) }
+        sm.trigger(Trigger.ofId(T.MOVE_TO_B)).also { assertEquals(sm.state.id, S.STATE_B) }
+        sm.trigger(Trigger.ofId(T.MOVE_TO_C)).also { assertNotEquals(sm.state.id, S.STATE_C) }
+        sm.trigger(Trigger.ofId(T.END)).also { assertEquals(sm.state.id, S.TERMINAL_STATE) }
     }
 
     @Test
@@ -60,16 +60,16 @@ class StateMachineTest {
         var sm: StateMachine<S, T> = stateMachineFactory.createStarted("SHOULD_STOP_AT_STATE_C", stateMachineDefinition)
             .also { assertEquals(S.INITIAL, it.state.id) }
 
-        sm.trigger(createTrigger(T.MOVE_TO_A)).also { assertEquals(S.STATE_A, sm.state.id) }
-        sm.trigger(createTrigger(T.MOVE_TO_B)).also { assertEquals(S.STATE_B, sm.state.id) }
+        sm.trigger(Trigger.ofId(T.MOVE_TO_A)).also { assertEquals(S.STATE_A, sm.state.id) }
+        sm.trigger(Trigger.ofId(T.MOVE_TO_B)).also { assertEquals(S.STATE_B, sm.state.id) }
 
-        sm.trigger(createTrigger(T.MOVE_TO_C_OR_END)).also { assertEquals(S.STATE_C, sm.state.id) }
+        sm.trigger(Trigger.ofId(T.MOVE_TO_C_OR_END)).also { assertEquals(S.STATE_C, sm.state.id) }
         sm = stateMachineFactory.createStarted("SHOULD_END", stateMachineDefinition)
         shouldEnd = true
         sm.apply {
-            trigger(createTrigger(T.MOVE_TO_A))
-            trigger(createTrigger(T.MOVE_TO_B))
-            trigger(createTrigger(T.MOVE_TO_C_OR_END))
+            trigger(Trigger.ofId(T.MOVE_TO_A))
+            trigger(Trigger.ofId(T.MOVE_TO_B))
+            trigger(Trigger.ofId(T.MOVE_TO_C_OR_END))
         }.also { assertEquals(S.TERMINAL_STATE, sm.state.id) }
     }
 
@@ -94,7 +94,7 @@ class StateMachineTest {
         val stateMachineDefinition = stateMachineDefiner.getDefinition()
         val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", stateMachineDefinition)
         assertEquals(S.INITIAL, sm.state.id)
-        sm.trigger(createTrigger(T.MOVE_TO_A))
+        sm.trigger(Trigger.ofId(T.MOVE_TO_A))
         assertEquals(S.TERMINAL_STATE, sm.state.id)
     }
 
@@ -131,9 +131,9 @@ class StateMachineTest {
 
         val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", stateMachineDefiner.getDefinition())
             .apply {
-                trigger(createTrigger(T.MOVE_TO_A))
-                trigger(createTrigger(T.MOVE_TO_B))
-                trigger(createTrigger(T.FORCE_MOVE_TO_C))
+                trigger(Trigger.ofId(T.MOVE_TO_A))
+                trigger(Trigger.ofId(T.MOVE_TO_B))
+                trigger(Trigger.ofId(T.FORCE_MOVE_TO_C))
             }
         assertEquals(S.STATE_C, sm.state.id)
         assertEquals(output, listOf(1, 2, 3))
@@ -163,9 +163,9 @@ class StateMachineTest {
                 assertEquals(S.INITIAL, it.state.id)
             }
             .apply {
-                trigger(createTrigger(T.MOVE_TO_A))
-                trigger(createTrigger(T.MOVE_TO_B))
-                trigger(createTrigger(T.END))
+                trigger(Trigger.ofId(T.MOVE_TO_A))
+                trigger(Trigger.ofId(T.MOVE_TO_B))
+                trigger(Trigger.ofId(T.END))
             }
 
         assertEquals(listOf(1, 2, 3, 4, 5, 6, 7, 8), output)

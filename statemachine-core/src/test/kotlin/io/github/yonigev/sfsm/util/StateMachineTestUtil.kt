@@ -4,7 +4,6 @@ import io.github.yonigev.sfsm.definition.StateMachineDefiner
 import io.github.yonigev.sfsm.definition.state.StatesDefiner
 import io.github.yonigev.sfsm.definition.transition.TransitionsDefiner
 import io.github.yonigev.sfsm.guard.Guard.Companion.ofPredicate
-import io.github.yonigev.sfsm.trigger.Trigger
 
 val positiveGuard = ofPredicate<S, T> { true }
 val negativeGuard = ofPredicate<S, T> { false }
@@ -33,14 +32,6 @@ class StateMachineTestUtil {
                 }
             }
             return definer
-        }
-
-        fun createTrigger(t: T): Trigger<T> {
-            return object : Trigger<T> {
-                override fun getTriggerId(): T {
-                    return t
-                }
-            }
         }
     }
 }
