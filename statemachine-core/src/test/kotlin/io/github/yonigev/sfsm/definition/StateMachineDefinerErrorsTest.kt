@@ -117,4 +117,20 @@ class StateMachineDefinerErrorsTest {
             definer.getDefinition()
         }
     }
+
+    @Test
+    fun testMissingInitialStateThrowsException() {
+        val definer = object : StateMachineDefiner<S, T>() {
+            override fun defineStates(definer: StatesDefiner<S, T>) {
+                definer.simple(S.STATE_A)
+            }
+
+            override fun defineTransitions(definer: TransitionsDefiner<S, T>) {
+            }
+        }
+
+        assertThrows<StateMachineDefinitionException> {
+            definer.getDefinition()
+        }
+    }
 }

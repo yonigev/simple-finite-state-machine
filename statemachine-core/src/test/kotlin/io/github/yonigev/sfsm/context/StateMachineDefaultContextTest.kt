@@ -11,7 +11,6 @@ class StateMachineDefaultContextTest {
     private val id = "TEST_STATE_MACHINE_ID"
     private val stateId = S.STATE_B
 
-
     @Test
     fun testStateMachineContextCreation() {
         val context = createContext()
@@ -33,5 +32,4 @@ class StateMachineDefaultContextTest {
     private fun createContext(): DefaultStateMachineContext<S, T> {
         return DefaultStateMachineContext(id, State.create(stateId))
     }
-
 }

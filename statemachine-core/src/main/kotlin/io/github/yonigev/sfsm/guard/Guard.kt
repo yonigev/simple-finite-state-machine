@@ -13,10 +13,10 @@ interface Guard<S, T> {
         /**
          * Create a [io.github.yonigev.sfsm.transition.Transition] guard, based on the provided predicate.
          */
-        fun <S, T> ofPredicate(predicate: () -> Boolean): Guard<S, T> {
+        fun <S, T> ofPredicate(predicate: (TransitionContext<S, T>) -> Boolean): Guard<S, T> {
             return object : Guard<S, T> {
                 override fun allow(transitionContext: TransitionContext<S, T>): Boolean {
-                    return predicate()
+                    return predicate(transitionContext)
                 }
             }
         }

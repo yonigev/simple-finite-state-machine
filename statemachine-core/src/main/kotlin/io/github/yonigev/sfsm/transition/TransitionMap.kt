@@ -15,7 +15,7 @@ class TransitionMap<S, T> (transitions: Set<Transition<S, T>>) {
     private fun buildTransitionMap(transitions: Set<Transition<S, T>>): Map<Pair<S, T?>, Collection<Transition<S, T>>> {
         val mutableMap = mutableMapOf<Pair<S, T?>, List<Transition<S, T>>>()
         transitions.forEach { t ->
-            val key = Pair(t.source, t.trigger)
+            val key = Pair(t.sourceId, t.triggerId)
             mutableMap.computeIfPresent(key) { k, v -> mutableMap[k].also { (v as MutableList).add(t) } }
             mutableMap.computeIfAbsent(key) { _ -> mutableListOf(t) }
         }

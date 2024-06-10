@@ -10,6 +10,6 @@ class UmlMapperTest {
         assert(umlString.isNotBlank())
         assert(umlString.contains(smDefinition.name))
         smDefinition.states.forEach { assert(umlString.contains(it.toString())) }
-        smDefinition.transitions.forEach { assert(umlString.contains(it.trigger.toString())) }
+        smDefinition.transitions.forEach { assert(umlString.contains(it.triggerId.toString())) }
     }
 }

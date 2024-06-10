@@ -14,16 +14,14 @@ class TransitionMapTest {
         val transitionMap = TransitionMap(transitions)
 
         for (transition in transitions) {
-            val mappedTransitions = transitionMap.getTransitions(transition.source, transition.trigger)
+            val mappedTransitions = transitionMap.getTransitions(transition.sourceId, transition.triggerId)
             assertNotNull(mappedTransitions)
             assertTrue(mappedTransitions.isNotEmpty())
 
             mappedTransitions.forEach {
-                assertEquals(it.source, transition.source)
-                assertEquals(it.trigger, transition.trigger)
+                assertEquals(it.sourceId, transition.sourceId)
+                assertEquals(it.triggerId, transition.triggerId)
             }
         }
     }
-
-
 }

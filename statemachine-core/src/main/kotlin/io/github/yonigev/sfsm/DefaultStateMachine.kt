@@ -68,10 +68,10 @@ open class DefaultStateMachine<S, T>(
         return transitionMap.getTransitions(state.id, trigger?.id)
             .map { DefaultTransitionContext(context, it, trigger) }
             .firstOrNull { shouldTransition(it) }
-            ?.also { log.debug("Guard evaluated to true. transitioning to {}", it.transition.target) }
+            ?.also { log.debug("Guard evaluated to true. transitioning to {}", it.transition.targetId) }
             ?.let { transitionContext ->
                 state.exitAction?.act(context)
-                val targetState = statesMap[transitionContext.transition.target]!!
+                val targetState = statesMap[transitionContext.transition.targetId]!!
                 transitionContext.transition.actions.forEach { action -> action.act(transitionContext) }
                 context.transitionToState(targetState)
                 // execute entry action

@@ -4,7 +4,7 @@ import io.github.yonigev.sfsm.action.StateAction
 import io.github.yonigev.sfsm.state.State
 
 /**
- * Used to define [io.github.yonigev.sfsm.StateMachine] states
+ * Used to create and define [io.github.yonigev.sfsm.StateMachine] states
  */
 open class StatesDefiner<S, T> {
     private val states = mutableListOf<State<S, T>>()
@@ -33,7 +33,7 @@ open class StatesDefiner<S, T> {
     }
 
     /**
-     * Adds a simple state of the state machine, with optional entry and exit actions
+     * Adds a choice state of the state machine, with optional entry and exit actions
      * Added separately to allow Java callers to use the shorter method.
      */
     fun choice(stateId: S, entryAction: StateAction<S, T>?, exitAction: StateAction<S, T>?) {

@@ -6,7 +6,8 @@ import io.github.yonigev.sfsm.state.State
 open class DefaultStateMachineContext<S, T> (
     override val id: String,
     override var state: State<S, T>,
-    private val properties: MutableMap<Any, Any> = mutableMapOf()) : StateMachineContext<S, T> {
+    private val properties: MutableMap<Any, Any> = mutableMapOf(),
+) : StateMachineContext<S, T> {
     override fun transitionToState(state: State<S, T>) {
         this.state = state
     }

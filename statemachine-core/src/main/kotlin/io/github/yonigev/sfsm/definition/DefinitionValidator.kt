@@ -31,9 +31,9 @@ open class DefinitionValidator<S, T> {
     fun validateTransitions(states: Set<State<S, T>>, transitions: Set<Transition<S, T>>): Boolean {
         val stateIds = states.map { it.id }
         val statesMap = states.associateBy { it.id }
+        val transitionStates: Set<S> = transitions.map { setOf(it.sourceId, it.targetId) }.flatten().toSet()
 
-        val transitionStates: Set<S> = transitions.map { setOf(it.source, it.target) }.flatten().toSet()
-        if (transitionStates != stateIds && (transitionStates + stateIds).size > states.size) {
+        if ((transitionStates + stateIds).size > states.size) {
             "Some transition states: $transitionStates are not defined in the states set: $states".let {
                 throw StateMachineDefinitionException(
                     it,
@@ -43,22 +43,22 @@ open class DefinitionValidator<S, T> {
 
         // Validate transition with a CHOICE state source
         for (choiceState in states.filter { it.type == State.PseudoStateType.CHOICE }) {
-            val choiceSourceTransitions = transitions.filter { it.source == choiceState.id }
+            val choiceSourceTransitions = transitions.filter { it.sourceId == choiceState.id }
             if (choiceSourceTransitions.size < 2) {
-                throw StateMachineDefinitionException("Choice state with $choiceSourceTransitions.size outgoing transitions")
+                throw StateMachineDefinitionException("Choice state with ${choiceSourceTransitions.size} outgoing transitions")
             }
         }
 
         // Validate transition with a non-choice state source
-        for (nonChoiceStateTransition in transitions.filter { statesMap[it.source]!!.type != State.PseudoStateType.CHOICE }) {
+        for (nonChoiceStateTransition in transitions.filter { statesMap[it.sourceId]!!.type != State.PseudoStateType.CHOICE }) {
             val similarTransitions = transitions.filter {
-                it.source == nonChoiceStateTransition.source &&
-                    it.trigger == nonChoiceStateTransition.trigger
+                it.sourceId == nonChoiceStateTransition.sourceId &&
+                    it.triggerId == nonChoiceStateTransition.triggerId
             }
             if (similarTransitions.size > 1) {
                 throw StateMachineDefinitionException(
-                    "Found multiple transitions with non-choice source state: ${nonChoiceStateTransition.source} " +
-                        "and trigger: ${nonChoiceStateTransition.trigger}",
+                    "Found multiple transitions with non-choice source state: ${nonChoiceStateTransition.sourceId} " +
+                        "and trigger: ${nonChoiceStateTransition.triggerId}",
                 )
             }
         }
