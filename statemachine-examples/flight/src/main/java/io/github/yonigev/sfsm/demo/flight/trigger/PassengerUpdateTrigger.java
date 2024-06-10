@@ -10,7 +10,7 @@ public class PassengerUpdateTrigger implements Trigger<FlightStateMachineDefiner
     }
 
     @Override
-    public FlightStateMachineDefiner.FlightTrigger getTriggerId() {
+    public FlightStateMachineDefiner.FlightTrigger getId() {
         return FlightStateMachineDefiner.FlightTrigger.PASSENGERS_BOARDED;
     }
 

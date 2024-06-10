@@ -13,7 +13,7 @@ fun main() {
 
     // Begin flow
     sm.trigger(
-        Trigger.ofId<LoginStateMachineDefiner.LoginState, LoginStateMachineDefiner.LoginTrigger>(
+        Trigger.ofId(
             LoginStateMachineDefiner.LoginTrigger.BEGIN_LOGIN_FLOW
         )
     )

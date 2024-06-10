@@ -25,8 +25,8 @@ open class DefaultStateMachine<S, T>(
     private var started = false
     private var finished = false
 
-    override val state: State<S, T> get() = context.getState()
-    override val id: String get() = context.getId()
+    override val state: State<S, T> get() = context.state
+    override val id: String get() = context.id
 
     override fun start() {
         assertNotFinished()
@@ -65,13 +65,13 @@ open class DefaultStateMachine<S, T>(
     }
 
     private fun runTriggerFlow(trigger: Trigger<T>?): State<S, T> {
-        return transitionMap.getTransitions(state.id, trigger?.getTriggerId())
+        return transitionMap.getTransitions(state.id, trigger?.id)
             .map { DefaultTransitionContext(context, it, trigger) }
             .firstOrNull { shouldTransition(it) }
-            ?.also { log.debug("Guard evaluated to true. transitioning to {}", it.transition.target) }
+            ?.also { log.debug("Guard evaluated to true. transitioning to {}", it.transition.targetId) }
             ?.let { transitionContext ->
                 state.exitAction?.act(context)
-                val targetState = statesMap[transitionContext.transition.target]!!
+                val targetState = statesMap[transitionContext.transition.targetId]!!
                 transitionContext.transition.actions.forEach { action -> action.act(transitionContext) }
                 context.transitionToState(targetState)
                 // execute entry action

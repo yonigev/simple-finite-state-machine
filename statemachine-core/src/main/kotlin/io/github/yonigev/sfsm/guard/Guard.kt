@@ -11,12 +11,23 @@ interface Guard<S, T> {
 
     companion object {
         /**
-         * Create a [io.github.yonigev.sfsm.transition.Transition] guard, based on the provided predicate.
+         * Create a [io.github.yonigev.sfsm.transition.Transition] guard, based on the provided predicate and transition context.
          */
         fun <S, T> ofPredicate(predicate: () -> Boolean): Guard<S, T> {
             return object : Guard<S, T> {
                 override fun allow(transitionContext: TransitionContext<S, T>): Boolean {
                     return predicate()
+                }
+            }
+        }
+
+        /**
+         * Convenience function to create a [io.github.yonigev.sfsm.transition.Transition] guard, based on the provided predicate.
+         */
+        fun <S, T> ofContextualPredicate(predicate: (TransitionContext<S, T>) -> Boolean): Guard<S, T> {
+            return object : Guard<S, T> {
+                override fun allow(transitionContext: TransitionContext<S, T>): Boolean {
+                    return predicate(transitionContext)
                 }
             }
         }

@@ -24,7 +24,7 @@ open class TransitionsDefiner<S, T> {
         targetId: S,
         triggerId: T?,
         guard: Guard<S, T>,
-        transitionTransitionActions: List<TransitionAction<S, T>>,
+        transitionActions: List<TransitionAction<S, T>>,
     ) {
         add(
             Transition.create(
@@ -32,7 +32,7 @@ open class TransitionsDefiner<S, T> {
                 targetId,
                 triggerId,
                 guard,
-                transitionTransitionActions,
+                transitionActions,
             ),
         )
     }

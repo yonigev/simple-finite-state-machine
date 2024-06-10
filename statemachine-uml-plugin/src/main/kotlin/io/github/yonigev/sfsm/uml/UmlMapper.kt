@@ -31,5 +31,5 @@ private fun mapState(state: State<*, *>): String {
 }
 
 private fun mapTransition(transition: Transition<*, *>): String {
-    return "${transition.source} -> ${transition.target} [label=\"${transition.trigger}\"];"
+    return "${transition.sourceId} -> ${transition.targetId} [label=\"${transition.triggerId}\"];"
 }

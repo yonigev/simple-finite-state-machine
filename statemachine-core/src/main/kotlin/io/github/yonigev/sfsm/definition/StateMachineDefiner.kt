@@ -2,6 +2,8 @@ package io.github.yonigev.sfsm.definition
 
 import io.github.yonigev.sfsm.definition.state.StatesDefiner
 import io.github.yonigev.sfsm.definition.transition.TransitionsDefiner
+import io.github.yonigev.sfsm.state.State
+import io.github.yonigev.sfsm.transition.Transition
 import org.slf4j.LoggerFactory
 
 /**
@@ -19,11 +21,14 @@ abstract class StateMachineDefiner<S, T>(private val name: String? = null) {
     protected abstract fun defineTransitions(definer: TransitionsDefiner<S, T> = this.transitionsDefiner)
 
     fun getDefinition(): StateMachineDefinition<S, T> {
-        val states = statesDefiner.getStates().let { it.ifEmpty { defineStates() }; statesDefiner.getStates() }
-        val transitions = transitionsDefiner.getTransitions()
-            .let { it.ifEmpty { defineTransitions() }; transitionsDefiner.getTransitions() }
-        validator.validateStates(states)
-        validator.validateTransitions(states, transitions)
+        val states = defineStates().let { statesDefiner.getStates() }
+        val transitions = defineTransitions().let { transitionsDefiner.getTransitions() }
+        validateDefinition(states, transitions)
         return StateMachineDefinition(this.name ?: this.javaClass.simpleName, states, transitions)
+    }
+
+    private fun validateDefinition(states: Set<State<S, T>>, transition: Set<Transition<S, T>>) {
+        validator.validateStates(states)
+        validator.validateTransitions(states, transition)
     }
 }

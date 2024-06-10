@@ -5,13 +5,13 @@ package io.github.yonigev.sfsm.trigger
  * T is the ID type of the trigger
  */
 interface Trigger<T> {
-    fun getTriggerId(): T
+    val id: T
+
     companion object {
-        fun <S, T> ofId(id: T): Trigger<T> {
+        fun <T> ofId(id: T): Trigger<T> {
             return object : Trigger<T> {
-                override fun getTriggerId(): T {
-                    return id
-                }
+                override val id: T
+                    get() = id
             }
         }
     }

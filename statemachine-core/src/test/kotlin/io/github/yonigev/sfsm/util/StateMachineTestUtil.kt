@@ -14,8 +14,8 @@ val negativeGuard = ofPredicate<S, T> { false }
  */
 class StateMachineTestUtil {
     companion object {
-        fun basicStateMachineDefiner(): StateMachineDefiner<S, T> {
-            val definer = object : StateMachineDefiner<S, T>() {
+        fun basicStateMachineDefiner(name: String? = null): StateMachineDefiner<S, T> {
+            val definer = object : StateMachineDefiner<S, T>(name) {
                 override fun defineStates(definer: StatesDefiner<S, T>) {
                     definer.setInitial(S.INITIAL)
                     definer.simple(S.STATE_A)
@@ -34,16 +34,10 @@ class StateMachineTestUtil {
             }
             return definer
         }
-
-        fun createTrigger(t: T): Trigger<T> {
-            return object : Trigger<T> {
-                override fun getTriggerId(): T {
-                    return t
-                }
-            }
-        }
     }
 }
+
+class StatefulTrigger(override val id: T, val state: String) : Trigger<T>
 
 enum class S {
     INITIAL, STATE_A, STATE_B, STATE_C, TERMINAL_STATE

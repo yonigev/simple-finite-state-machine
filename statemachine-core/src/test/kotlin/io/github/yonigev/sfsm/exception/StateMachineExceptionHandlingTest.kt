@@ -9,13 +9,15 @@ import io.github.yonigev.sfsm.definition.state.StatesDefiner
 import io.github.yonigev.sfsm.definition.transition.TransitionsDefiner
 import io.github.yonigev.sfsm.factory.DefaultStateMachineFactory
 import io.github.yonigev.sfsm.guard.Guard.Companion.ofPredicate
+import io.github.yonigev.sfsm.trigger.Trigger
 import io.github.yonigev.sfsm.util.S
 import io.github.yonigev.sfsm.util.StateMachineTestUtil
-import io.github.yonigev.sfsm.util.StateMachineTestUtil.Companion.createTrigger
 import io.github.yonigev.sfsm.util.T
 import io.github.yonigev.sfsm.util.positiveGuard
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.lang.NullPointerException
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class StateMachineExceptionHandlingTest {
@@ -33,7 +35,6 @@ class StateMachineExceptionHandlingTest {
                     terminal(S.TERMINAL_STATE)
                 }
             }
-
             override fun defineTransitions(definer: TransitionsDefiner<S, T>) {
                 definer.apply {
                     add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, ofPredicate { throw Exception("Exception Throwing Guard") })
@@ -43,7 +44,9 @@ class StateMachineExceptionHandlingTest {
         }
 
         val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", stateMachineDefiner.getDefinition())
-        assertThrows<StateMachineException> { sm.trigger(createTrigger(T.MOVE_TO_A)) }
+        val e = assertThrows<StateMachineException> { sm.trigger(Trigger.ofId(T.MOVE_TO_A)) }
+        assertEquals(e.getStateMachineId(), sm.id)
+        assertContains(e.message, sm.id)
     }
 
     @Test
@@ -67,7 +70,8 @@ class StateMachineExceptionHandlingTest {
         }
 
         val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", stateMachineDefiner.getDefinition())
-        assertThrows<StateMachineException> { sm.trigger(createTrigger(T.MOVE_TO_A)) }
+        val e = assertThrows<StateMachineException> { sm.trigger(Trigger.ofId(T.MOVE_TO_A)) }
+        assertEquals(e.getStateMachineId(), sm.id)
     }
 
     @Test
@@ -75,17 +79,40 @@ class StateMachineExceptionHandlingTest {
         val definition = StateMachineTestUtil.basicStateMachineDefiner().getDefinition()
         val sm: StateMachine<S, T> = stateMachineFactory.create("TEST_ID", definition)
         assertEquals(S.INITIAL, sm.state.id)
-        assertThrows<StateMachineDefinitionException> { sm.trigger(createTrigger(T.MOVE_TO_A)) }
+        assertThrows<StateMachineDefinitionException> { sm.trigger(Trigger.ofId(T.MOVE_TO_A)) }
     }
 
     @Test
     fun testStateMachineThrowsException_whenStartedInTerminalState() {
         val definition = StateMachineTestUtil.basicStateMachineDefiner().getDefinition()
         val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", definition)
-        sm.trigger(createTrigger(T.MOVE_TO_A))
-        sm.trigger(createTrigger(T.MOVE_TO_B))
-        sm.trigger(createTrigger(T.END))
+        sm.trigger(Trigger.ofId(T.MOVE_TO_A))
+        sm.trigger(Trigger.ofId(T.MOVE_TO_B))
+        sm.trigger(Trigger.ofId(T.END))
         assertEquals(S.TERMINAL_STATE, sm.state.id)
         assertThrows<StateMachineDefinitionException> { sm.start() }
+    }
+
+    @Test
+    fun testStateMachineExceptionCreation_withCausingException() {
+        val definition = StateMachineTestUtil.basicStateMachineDefiner().getDefinition()
+        val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", definition)
+        val causingException = NullPointerException("TEST_EXCEPTION_MESSAGE")
+        val exception = StateMachineException(causingException, sm)
+
+        assertEquals(exception.getStateMachineId(), sm.id)
+        assertContains(exception.message, "TEST_EXCEPTION_MESSAGE")
+        assertContains(exception.message, "TEST_ID")
+    }
+
+    @Test
+    fun testStateMachineExceptionCreation_withErrorMessage() {
+        val definition = StateMachineTestUtil.basicStateMachineDefiner().getDefinition()
+        val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", definition)
+        val exception = StateMachineException("TEST_EXCEPTION_MESSAGE", sm)
+
+        assertEquals(exception.getStateMachineId(), sm.id)
+        assertContains(exception.message, "TEST_EXCEPTION_MESSAGE")
+        assertContains(exception.message, "TEST_ID")
     }
 }
