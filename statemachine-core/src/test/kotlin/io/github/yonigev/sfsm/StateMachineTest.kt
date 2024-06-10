@@ -116,10 +116,8 @@ class StateMachineTest {
             }
 
             override fun defineTransitions(definer: TransitionsDefiner<S, T>) {
-                val statefulTriggerGuard = object : Guard<S, T> {
-                    override fun allow(transitionContext: TransitionContext<S, T>): Boolean {
-                        return (transitionContext.trigger as StatefulTrigger).state.isNotBlank()
-                    }
+                val statefulTriggerGuard = Guard.ofContextualPredicate<S, T> {
+                    (it.trigger as StatefulTrigger).state.isNotBlank()
                 }
 
                 definer.add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, statefulTriggerGuard)
@@ -140,10 +138,10 @@ class StateMachineTest {
     }
 
     @Test
-    fun testStateMachineTransition_affectedByStateMachine_context() {
+    fun testStateMachineTransition_contextAwareGuard() {
         // Allow transition only if the state machine's ID matches a certain ID.
         // this is to ensure the state machine's context is accessed and read properly when a Guard calculates a transition
-        val stateMachineContextGuard = object : Guard<S, T> {
+        val stateMachineContextAwareGuard = object : Guard<S, T> {
             override fun allow(transitionContext: TransitionContext<S, T>): Boolean {
                 return transitionContext.stateMachineContext.id == "TEST_ID"
             }
@@ -157,7 +155,7 @@ class StateMachineTest {
             }
 
             override fun defineTransitions(definer: TransitionsDefiner<S, T>) {
-                definer.add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, stateMachineContextGuard)
+                definer.add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, stateMachineContextAwareGuard)
                 definer.add(S.STATE_A, S.STATE_B, null, positiveGuard)
                 definer.add(S.STATE_B, S.TERMINAL_STATE, null, positiveGuard)
             }
@@ -172,6 +170,41 @@ class StateMachineTest {
         sm2.trigger(Trigger.ofId(T.MOVE_TO_A))
         assertEquals(S.TERMINAL_STATE, sm1.state.id)
         assertNotEquals(S.TERMINAL_STATE, sm2.state.id)
+    }
+
+    @Test
+    fun testStateMachineTransition_contextPropertyAwareGuard() {
+        val setPropertyAction = create<S, T> {
+            it.stateMachineContext.setProperty("PROPERTY", true)
+        }
+        // this guard allows transition only when the value of key "PROPERTY" is true
+        val stateMachineContextAwareGuard = object : Guard<S, T> {
+
+            override fun allow(transitionContext: TransitionContext<S, T>): Boolean {
+                return transitionContext.stateMachineContext.getPropertyOrDefault("PROPERTY", false) as Boolean
+            }
+        }
+
+        val stateMachineDefiner = object : StateMachineDefiner<S, T>() {
+            override fun defineStates(definer: StatesDefiner<S, T>) {
+                definer.setInitial(S.INITIAL)
+                definer.simple(S.STATE_A)
+                definer.simple(S.STATE_B)
+                definer.terminal(S.TERMINAL_STATE)
+            }
+
+            override fun defineTransitions(definer: TransitionsDefiner<S, T>) {
+                definer.add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard, setPropertyAction)
+                definer.add(S.STATE_A, S.STATE_B, null, stateMachineContextAwareGuard)
+                definer.add(S.STATE_B, S.TERMINAL_STATE, null, positiveGuard)
+            }
+        }
+
+        val stateMachineDefinition = stateMachineDefiner.getDefinition()
+        val sm = stateMachineFactory.createStarted("TEST_ID", stateMachineDefinition)
+        assertEquals(S.INITIAL, sm.state.id)
+        sm.trigger(Trigger.ofId(T.MOVE_TO_A))
+        assertEquals(S.TERMINAL_STATE, sm.state.id)
     }
 
     @Test

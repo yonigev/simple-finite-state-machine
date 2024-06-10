@@ -16,6 +16,7 @@ import io.github.yonigev.sfsm.util.T
 import io.github.yonigev.sfsm.util.positiveGuard
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.lang.NullPointerException
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
@@ -90,5 +91,28 @@ class StateMachineExceptionHandlingTest {
         sm.trigger(Trigger.ofId(T.END))
         assertEquals(S.TERMINAL_STATE, sm.state.id)
         assertThrows<StateMachineDefinitionException> { sm.start() }
+    }
+
+    @Test
+    fun testStateMachineExceptionCreation_withCausingException() {
+        val definition = StateMachineTestUtil.basicStateMachineDefiner().getDefinition()
+        val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", definition)
+        val causingException = NullPointerException("TEST_EXCEPTION_MESSAGE")
+        val exception = StateMachineException(causingException, sm)
+
+        assertEquals(exception.getStateMachineId(), sm.id)
+        assertContains(exception.message, "TEST_EXCEPTION_MESSAGE")
+        assertContains(exception.message, "TEST_ID")
+    }
+
+    @Test
+    fun testStateMachineExceptionCreation_withErrorMessage() {
+        val definition = StateMachineTestUtil.basicStateMachineDefiner().getDefinition()
+        val sm: StateMachine<S, T> = stateMachineFactory.createStarted("TEST_ID", definition)
+        val exception = StateMachineException("TEST_EXCEPTION_MESSAGE", sm)
+
+        assertEquals(exception.getStateMachineId(), sm.id)
+        assertContains(exception.message, "TEST_EXCEPTION_MESSAGE")
+        assertContains(exception.message, "TEST_ID")
     }
 }

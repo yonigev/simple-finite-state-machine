@@ -24,6 +24,7 @@ interface Transition<S, T> {
             transitionActions: List<TransitionAction<S, T>>? = null,
         ): Transition<S, T> {
             return object : Transition<S, T> {
+
                 override val sourceId: S
                     get() = sourceId
                 override val targetId: S

@@ -14,8 +14,8 @@ val negativeGuard = ofPredicate<S, T> { false }
  */
 class StateMachineTestUtil {
     companion object {
-        fun basicStateMachineDefiner(): StateMachineDefiner<S, T> {
-            val definer = object : StateMachineDefiner<S, T>() {
+        fun basicStateMachineDefiner(name: String? = null): StateMachineDefiner<S, T> {
+            val definer = object : StateMachineDefiner<S, T>(name) {
                 override fun defineStates(definer: StatesDefiner<S, T>) {
                     definer.setInitial(S.INITIAL)
                     definer.simple(S.STATE_A)

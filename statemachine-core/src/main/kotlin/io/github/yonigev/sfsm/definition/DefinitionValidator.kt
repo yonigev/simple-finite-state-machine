@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory
 
 open class DefinitionValidator<S, T> {
     private val log = LoggerFactory.getLogger(this.javaClass)
+    private val choiceStateMinOutgoingTransitions = 2
 
     fun validateStates(states: Set<State<S, T>>): Boolean {
         val initialStates = states.filter { State.PseudoStateType.INITIAL == it.type }
@@ -44,7 +45,7 @@ open class DefinitionValidator<S, T> {
         // Validate transition with a CHOICE state source
         for (choiceState in states.filter { it.type == State.PseudoStateType.CHOICE }) {
             val choiceSourceTransitions = transitions.filter { it.sourceId == choiceState.id }
-            if (choiceSourceTransitions.size < 2) {
+            if (choiceSourceTransitions.size < choiceStateMinOutgoingTransitions) {
                 throw StateMachineDefinitionException("Choice state with ${choiceSourceTransitions.size} outgoing transitions")
             }
         }
@@ -55,7 +56,7 @@ open class DefinitionValidator<S, T> {
                 it.sourceId == nonChoiceStateTransition.sourceId &&
                     it.triggerId == nonChoiceStateTransition.triggerId
             }
-            if (similarTransitions.size > 1) {
+            if (similarTransitions.size >= choiceStateMinOutgoingTransitions) {
                 throw StateMachineDefinitionException(
                     "Found multiple transitions with non-choice source state: ${nonChoiceStateTransition.sourceId} " +
                         "and trigger: ${nonChoiceStateTransition.triggerId}",

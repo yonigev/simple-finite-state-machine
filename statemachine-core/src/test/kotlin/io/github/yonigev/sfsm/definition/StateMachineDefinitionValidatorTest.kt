@@ -13,7 +13,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class StateMachineDefinitionValidatorTest {
-    val validator = DefinitionValidator<S, T>()
+    private val validator = DefinitionValidator<S, T>()
 
     @Test
     fun test_valid() {

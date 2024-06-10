@@ -16,7 +16,7 @@ public class PlaneLocationUpdate implements Trigger<FlightTrigger> {
     }
 
     @Override
-    public FlightTrigger getTriggerId() {
+    public FlightTrigger getId() {
         return triggerId;
     }
 }

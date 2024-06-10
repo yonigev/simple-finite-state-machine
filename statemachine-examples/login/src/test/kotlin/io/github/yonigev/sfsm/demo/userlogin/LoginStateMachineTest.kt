@@ -16,7 +16,7 @@ class LoginStateMachineTest {
         val factory: DefaultStateMachineFactory<LoginState, LoginTrigger> = DefaultStateMachineFactory()
         factory.createStarted("TEST_SM", stateMachineDefiner.getDefinition()).apply {
             // Begin flow
-            trigger(Trigger.ofId<LoginState, LoginTrigger>(LoginTrigger.BEGIN_LOGIN_FLOW))
+            trigger(Trigger.ofId(LoginTrigger.BEGIN_LOGIN_FLOW))
             assertEquals(LoginState.EMAIL_INPUT, state.id)
             // Enter email
             trigger(EmailInputTrigger("somebody2@email.com"))
@@ -37,7 +37,7 @@ class LoginStateMachineTest {
         val factory: DefaultStateMachineFactory<LoginState, LoginTrigger> = DefaultStateMachineFactory()
         factory.createStarted("TEST_SM", stateMachineDefiner.getDefinition()).apply {
             // Begin flow
-            trigger(Trigger.ofId<LoginState, LoginTrigger>(LoginTrigger.BEGIN_LOGIN_FLOW))
+            trigger(Trigger.ofId(LoginTrigger.BEGIN_LOGIN_FLOW))
             assertEquals(LoginState.EMAIL_INPUT, state.id)
             // Enter email
             trigger(EmailInputTrigger("somebody2@email.com"))
