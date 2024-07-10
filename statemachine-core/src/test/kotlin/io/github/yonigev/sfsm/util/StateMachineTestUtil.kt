@@ -25,7 +25,7 @@ class StateMachineTestUtil {
                 }
 
                 override fun defineTransitions(definer: TransitionsDefiner<S, T>) {
-                    definer.add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard)
+                    definer.add(S.INITIAL, S.STATE_A, T.MOVE_TO_A)
                     definer.add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
                     // Transition to STATE_C should be blocked, as the guard always returns false
                     definer.add(S.STATE_B, S.STATE_C, T.MOVE_TO_C, negativeGuard)

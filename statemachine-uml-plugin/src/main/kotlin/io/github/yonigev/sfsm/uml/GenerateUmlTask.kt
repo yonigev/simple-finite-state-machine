@@ -1,17 +1,15 @@
 package io.github.yonigev.sfsm.uml
 
+import io.github.yonigev.sfsm.definition.StateMachineDefiner
+import io.github.yonigev.sfsm.uml.annotation.Uml
+import io.github.yonigev.sfsm.uml.annotation.UmlGenerationType
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSet.MAIN_SOURCE_SET_NAME
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskAction
-import io.github.yonigev.sfsm.definition.StateMachineDefinition
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import kotlin.io.path.Path
-import kotlin.io.path.pathString
 
 /**
  * A Gradle task for generating Uml diagrams.
@@ -37,39 +35,47 @@ open class GenerateUmlTask : DefaultTask() {
     @TaskAction
     fun action() {
         val sourceSetFiles = project.sourceSetFiles
-        val definitions: Collection<StateMachineDefinition<*, *>> = UmlAnnotationScanner(sourceSetFiles).scan()
+        val classScanner = UmlAnnotationScanner(sourceSetFiles)
+        val definers = classScanner.scan().ifEmpty { classScanner.scan(false) }
 
-        for (definition in definitions) {
-            val outputDir = Path(project.umlResourceDir, definition.name)
-            val uml = definition.toDotUmlString()
-            val dotFile = writeToDotFile(uml, outputDir, definition.name)
-            writeSvgFromDotFile(dotFile, outputDir, definition.name)
+        for (definer in definers) {
+            val generationType = getUmlGenerationType(definer)
+            val modes = getUmlGenerationModes(generationType)
+            val definition = definer.getDefinition()
+
+            modes.forEach {
+                generateUml(definition, project.umlResourceDir, it)
+            }
         }
-    }
-
-    private fun writeToDotFile(uml: String, outputDir: Path, name: String?): File {
-        Files.createDirectories(outputDir)
-        val file = File("${outputDir.toAbsolutePath()}/$name.dot")
-        file.writeText(uml)
-        return file
     }
 
     /**
-     * Read the generated DOT file to generate an SVG output
+     * Extract the requested UML generation type
      */
-    private fun writeSvgFromDotFile(dotFile: File, directory: Path, name: String) {
-        val svgFile = File(directory.pathString, "$name.svg")
-        val command = listOf("dot", "-Tsvg", "-o", svgFile.absolutePath, dotFile.absolutePath)
+    private fun getUmlGenerationType(stateMachineDefiner: StateMachineDefiner<*, *>): UmlGenerationType {
+        return (stateMachineDefiner.javaClass).getAnnotation(Uml::class.java).type
+    }
 
-        val process = ProcessBuilder()
-            .command(command)
-            .redirectErrorStream(true)
-            .start()
-        val exitCode = process.waitFor()
-        if (exitCode == 0) {
-            println("SVG file generated: ${svgFile.absolutePath}")
-        } else {
-            println("Error: Failed to generate SVG file")
+    /**
+     * Extract the UML Generation Modes from the requested Uml Generation Type (A @Uml annotation parameter)
+     * e.g. [UmlGenerationType.ALL] will turn into both [Mode.SIMPLE] and [Mode.DETAILED] modes
+     */
+    private fun getUmlGenerationModes(umlGenerationType: UmlGenerationType): List<Mode> {
+        return when (umlGenerationType) {
+            UmlGenerationType.ALL -> listOf(Mode.SIMPLE, Mode.DETAILED)
+            else -> listOf(Mode.valueOf(umlGenerationType.toString()))
         }
     }
+}
+
+enum class Mode {
+    /**
+     * Generate a simple UML of a state machine
+     */
+    SIMPLE,
+
+    /**
+     * Generate a detailed UML of a state machine, including its Guards and Actions
+     */
+    DETAILED
 }

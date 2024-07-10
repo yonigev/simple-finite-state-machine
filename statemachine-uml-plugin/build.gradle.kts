@@ -25,8 +25,8 @@ dependencies {
     implementation(lib.classGraph)
 
     testImplementation(platform(test.junit.bom))
+    testImplementation(test.kotlin.test.junit5)
     testImplementation(test.junit.jupiter.engine)
-
 }
 
 java {

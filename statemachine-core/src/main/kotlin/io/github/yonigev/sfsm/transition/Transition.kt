@@ -12,15 +12,15 @@ interface Transition<S, T> {
     val sourceId: S
     val targetId: S
     val triggerId: T?
-    val guard: Guard<S, T>
-    val actions: Iterable<TransitionAction<S, T>>
+    val guard: Guard<S, T>?
+    val actions: List<TransitionAction<S, T>>
 
     companion object {
         fun <S, T> create(
             sourceId: S,
             targetId: S,
             triggerId: T?,
-            guard: Guard<S, T> = Guard.ofPredicate { true },
+            guard: Guard<S, T>? = Guard.ofPredicate { true },
             transitionActions: List<TransitionAction<S, T>>? = null,
         ): Transition<S, T> {
             return object : Transition<S, T> {
@@ -32,7 +32,7 @@ interface Transition<S, T> {
                 override val triggerId: T?
                     get() = triggerId
                 override val guard: Guard<S, T>
-                    get() = guard
+                    get() = guard!!
                 override val actions: List<TransitionAction<S, T>>
                     get() = when (transitionActions) {
                         null -> emptyList()

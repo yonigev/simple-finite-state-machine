@@ -86,6 +86,11 @@ open class DefaultStateMachine<S, T>(
         val transition = transitionContext.transition
         val transitionGuard = transition.guard
 
+        if (transitionGuard == null) {
+            log.debug("No Guard defined for transition {}, allowing transition by default", transition)
+            return true
+        }
+
         return (transitionGuard.allow(transitionContext)).also {
             log.debug("Evaluation of transition {} is: {}", transition, it)
         }

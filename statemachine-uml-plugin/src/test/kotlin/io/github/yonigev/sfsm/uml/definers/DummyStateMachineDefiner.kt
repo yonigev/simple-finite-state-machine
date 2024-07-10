@@ -1,23 +1,23 @@
-package io.github.yonigev.sfsm.uml
+package io.github.yonigev.sfsm.uml.definers
 
 import io.github.yonigev.sfsm.definition.StateMachineDefiner
 import io.github.yonigev.sfsm.definition.state.StatesDefiner
 import io.github.yonigev.sfsm.definition.transition.TransitionsDefiner
 import io.github.yonigev.sfsm.transition.Transition
-import io.github.yonigev.sfsm.uml.DummyStateMachineDefiner.S
-import io.github.yonigev.sfsm.uml.DummyStateMachineDefiner.T
-import io.github.yonigev.sfsm.uml.annotation.Uml
+import io.github.yonigev.sfsm.uml.definers.DummyStateMachineDefiner.S
+import io.github.yonigev.sfsm.uml.definers.DummyStateMachineDefiner.T
 
-@Uml
-class DummyStateMachineDefiner : StateMachineDefiner<S, T>(TEST_MACHINE_NAME) {
+open class DummyStateMachineDefiner(name: String? = null) : StateMachineDefiner<S, T>(name) {
 
     override fun defineStates(definer: StatesDefiner<S, T>) {
-        definer.setInitial(S.START)
-        definer.simple(S.S1)
-        definer.simple(S.S2)
-        definer.simple(S.S3)
-        definer.terminal(S.END1)
-        definer.terminal(S.END2)
+        definer.apply {
+            setInitial(S.START)
+            simple(S.S1)
+            simple(S.S2)
+            choice(S.S3)
+            terminal(S.END1)
+            terminal(S.END2)
+        }
     }
 
     override fun defineTransitions(definer: TransitionsDefiner<S, T>) {
