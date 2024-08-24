@@ -11,7 +11,13 @@ import io.github.yonigev.sfsm.transition.Transition
 open class TransitionsDefiner<S, T> {
     private val transitions = mutableSetOf<Transition<S, T>>()
 
-    fun add(sourceId: S, targetId: S, triggerId: T?, guard: Guard<S, T>, transitionAction: TransitionAction<S, T>? = null) {
+    fun add(
+        sourceId: S,
+        targetId: S,
+        triggerId: T?,
+        guard: Guard<S, T>? = Guard.ofPredicate { true },
+        transitionAction: TransitionAction<S, T>? = null,
+    ) {
         add(Transition.create(sourceId, targetId, triggerId, guard, transitionAction?.let { listOf(it) }))
     }
 
@@ -23,7 +29,7 @@ open class TransitionsDefiner<S, T> {
         sourceId: S,
         targetId: S,
         triggerId: T?,
-        guard: Guard<S, T>,
+        guard: Guard<S, T>?,
         transitionActions: List<TransitionAction<S, T>>,
     ) {
         add(

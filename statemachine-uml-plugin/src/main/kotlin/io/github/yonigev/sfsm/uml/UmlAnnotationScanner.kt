@@ -3,7 +3,6 @@ package io.github.yonigev.sfsm.uml
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ClassInfo
 import io.github.yonigev.sfsm.definition.StateMachineDefiner
-import io.github.yonigev.sfsm.definition.StateMachineDefinition
 import io.github.yonigev.sfsm.uml.annotation.Uml
 import java.io.File
 import java.lang.reflect.Constructor
@@ -12,11 +11,11 @@ import java.net.URLClassLoader
 import kotlin.streams.toList
 
 /**
- * By leverages the ClassGraph library, this scanner scans the given
+ * By leveraging the ClassGraph library, this scanner scans the given
  * ClassPath files for classes annotated with @Uml.
  * If found, those classes are instantiated to retrieve their "raw" StateMachineDefinition
  *
- * Since this is used by importing a Gradle plugin, a project classpath
+ * Since this is used when importing a Gradle plugin, a project classpath
  * is required here for the scanning and class loading to work.
  * Note the definers must have an empty constructor available for this to work.
  */
@@ -24,21 +23,21 @@ class UmlAnnotationScanner(private val classPath: Set<File> = setOf()) {
 
     /**
      * Scan for @Uml StateMachineDefiner classes that also have empty constructors
+     * @param useCustomClasspath will be false during testing
      */
-    fun scan(): Collection<StateMachineDefinition<*, *>> {
-        val annotatedClasses = scanAnnotatedValidClasses()
-        val stateMachineDefiners = annotatedClasses.map { instantiateStateMachineDefiner(it) }
-        return stateMachineDefiners.map { it.getDefinition() }
+    fun scan(useCustomClasspath: Boolean = true): List<StateMachineDefiner<*, *>> {
+        val annotatedClasses = scanAnnotatedValidClasses(useCustomClasspath)
+        return annotatedClasses.map { instantiateStateMachineDefiner(it) }
     }
 
-    private fun scanAnnotatedValidClasses(): List<ClassInfo> {
+    private fun scanAnnotatedValidClasses(useCustomClasspath: Boolean = true): List<ClassInfo> {
         val classLoader = getClassLoader()
 
         val classGraph = ClassGraph()
             .enableAllInfo()
             .addClassLoader(classLoader)
 
-        if (this.classPath.isNotEmpty()) {
+        if (useCustomClasspath && this.classPath.isNotEmpty()) {
             classGraph.overrideClasspath(classPathFilesAsPathString(this.classPath))
         }
 

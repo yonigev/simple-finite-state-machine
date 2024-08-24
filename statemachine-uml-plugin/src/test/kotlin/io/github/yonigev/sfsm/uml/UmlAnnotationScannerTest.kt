@@ -1,23 +1,26 @@
 package io.github.yonigev.sfsm.uml
 
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+
 
 class UmlAnnotationScannerTest {
 
     @Test
     fun testUmlAnnotationScanner_detectsUmlAnnotation() {
-        val scannedStateMachineDefinitions = UmlAnnotationScanner().scan()
-        assert(scannedStateMachineDefinitions.isNotEmpty())
+        val scannedStateMachineDefiners = UmlAnnotationScanner().scan()
+        val definitions = scannedStateMachineDefiners.map { it.getDefinition() }
+        assert(definitions.isNotEmpty())
     }
 
     @Test
     fun testUmlAnnotationScanner_extracts_ProperStateMachineDefinitions() {
-        val scannedStateMachineDefinition = UmlAnnotationScanner().scan().first()
-        val dummyStateMachineDefinitions = createDummyStateMachineDefinition(TEST_MACHINE_NAME)
+        val scannedStateMachineDefiner = UmlAnnotationScanner().scan().first()
+        val scannedStateMachineDefinition = scannedStateMachineDefiner.getDefinition()
+        val dummyStateMachineDefinition = createDummyStateMachineDefinition(scannedStateMachineDefinition.name)
 
         val scannedDefinitionUmlString = scannedStateMachineDefinition.toDotUmlString()
-        val dummyDefinitionUmlString = dummyStateMachineDefinitions.toDotUmlString()
-        // DummyStateMachineDefiner should be scanned
-        assert(scannedDefinitionUmlString == dummyDefinitionUmlString)
+        val expectedDefinitionUmlString = dummyStateMachineDefinition.toDotUmlString()
+        assertEquals(scannedDefinitionUmlString, expectedDefinitionUmlString)
     }
 }

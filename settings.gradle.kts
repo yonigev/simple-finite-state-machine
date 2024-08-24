@@ -38,6 +38,7 @@ dependencyResolutionManagement {
         }
         create("test") {
             library("kotlin-test-junit5", "org.jetbrains.kotlin:kotlin-test-junit5:1.9.24")
+
             library("junit-jupiter-engine", "org.junit.jupiter:junit-jupiter-engine:5.9.1")
             library("junit-jupiter-api", "org.junit.jupiter:junit-jupiter-api:5.9.1")
             library("junit-bom", "org.junit:junit-bom:5.9.1")

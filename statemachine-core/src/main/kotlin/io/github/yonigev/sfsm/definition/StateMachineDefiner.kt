@@ -21,8 +21,15 @@ abstract class StateMachineDefiner<S, T>(private val name: String? = null) {
     protected abstract fun defineTransitions(definer: TransitionsDefiner<S, T> = this.transitionsDefiner)
 
     fun getDefinition(): StateMachineDefinition<S, T> {
-        val states = defineStates().let { statesDefiner.getStates() }
-        val transitions = defineTransitions().let { transitionsDefiner.getTransitions() }
+        if (statesDefiner.getStates().isEmpty()) {
+            defineStates()
+        }
+
+        if (transitionsDefiner.getTransitions().isEmpty()) {
+            defineTransitions()
+        }
+        val states = statesDefiner.getStates()
+        val transitions = transitionsDefiner.getTransitions()
         validateDefinition(states, transitions)
         return StateMachineDefinition(this.name ?: this.javaClass.simpleName, states, transitions)
     }

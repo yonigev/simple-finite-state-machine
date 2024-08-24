@@ -27,14 +27,15 @@ Apply the latest plugin version
   ```
 
   
-Add the annotation to every `StateMachineDefiner` you want to visualize
-
+Add the annotation to every `StateMachineDefiner` you want to visualize<br>
+Note you can specify the `UmlGenerationType` to be `SIMPLE`, `DETAILED` or `ALL`
    ```
-    @Uml
+    @Uml(UmlGenerationType.SIMPLE)
     class LoginStateMachineDefiner : StateMachineDefiner<LoginState, LoginTrigger>() {
        ...
     }
    ```
+
 
 Sync your Gradle project<br>
 Under your project's root directory, run:
@@ -44,4 +45,5 @@ Under your project's root directory, run:
 ```
 This task will create a `generated-uml` directory in your project, containing the generated `SVG` and `DOT` files
 
+`DETAILED` Uml is better as visualizing state machines with entry/exist state actions.
       
