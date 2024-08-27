@@ -6,7 +6,7 @@ import io.github.yonigev.sfsm.state.State
 /**
  * Used to create and define [io.github.yonigev.sfsm.StateMachine] states
  */
-open class StatesDefiner<S, T> {
+class StatesDefiner<S, T> {
     private val states = mutableListOf<State<S, T>>()
 
     /**

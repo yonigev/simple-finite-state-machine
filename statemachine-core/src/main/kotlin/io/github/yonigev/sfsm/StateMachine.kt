@@ -12,7 +12,10 @@ interface StateMachine<S, T> {
     val state: State<S, T>
     val context: StateMachineContext<S, T>
 
-    /** Trigger a state machine to run */
+    /**
+     * Trigger the state machine
+     * @param trigger can be null for automatic (non-trigger) transitions
+     */
     fun trigger(trigger: Trigger<T>?): State<S, T>
     fun start()
     fun stop()

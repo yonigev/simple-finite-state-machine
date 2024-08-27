@@ -24,4 +24,24 @@ class StateMachineDefinerTest {
         val definition = definer.getDefinition()
         assertEquals(testName, definition.name)
     }
+
+    @Test
+    fun `test StateMachineDefiner does not redefine states when already defined `() {
+        val testName = "test definer name"
+        val definer = StateMachineTestUtil.basicStateMachineDefiner(testName)
+        var definition = definer.getDefinition()
+        val states = definition.states
+        definition = definer.getDefinition()
+        assertEquals(states.size, definition.states.size)
+    }
+
+    @Test
+    fun `test StateMachineDefiner does not redefine transitions when already defined `() {
+        val testName = "test definer name"
+        val definer = StateMachineTestUtil.basicStateMachineDefiner(testName)
+        var definition = definer.getDefinition()
+        val transitions = definition.transitions
+        definition = definer.getDefinition()
+        assertEquals(transitions.size, definition.transitions.size)
+    }
 }

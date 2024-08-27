@@ -20,6 +20,7 @@ abstract class StateMachineDefiner<S, T>(private val name: String? = null) {
 
     protected abstract fun defineTransitions(definer: TransitionsDefiner<S, T> = this.transitionsDefiner)
 
+    @Synchronized
     fun getDefinition(): StateMachineDefinition<S, T> {
         if (statesDefiner.getStates().isEmpty()) {
             defineStates()
@@ -28,6 +29,7 @@ abstract class StateMachineDefiner<S, T>(private val name: String? = null) {
         if (transitionsDefiner.getTransitions().isEmpty()) {
             defineTransitions()
         }
+
         val states = statesDefiner.getStates()
         val transitions = transitionsDefiner.getTransitions()
         validateDefinition(states, transitions)

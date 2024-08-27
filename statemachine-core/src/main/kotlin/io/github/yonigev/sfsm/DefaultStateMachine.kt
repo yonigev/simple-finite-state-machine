@@ -5,7 +5,6 @@ import io.github.yonigev.sfsm.definition.StateMachineDefinitionException
 import io.github.yonigev.sfsm.state.State
 import io.github.yonigev.sfsm.transition.DefaultTransitionContext
 import io.github.yonigev.sfsm.transition.Transition
-import io.github.yonigev.sfsm.transition.TransitionContext
 import io.github.yonigev.sfsm.transition.TransitionMap
 import io.github.yonigev.sfsm.trigger.Trigger
 import org.slf4j.LoggerFactory
@@ -23,7 +22,7 @@ open class DefaultStateMachine<S, T>(
     private val statesMap = states.associateBy { it.id }
     private val transitionMap = TransitionMap(transitions)
     private var started = false
-    private var finished = false
+    private val finished: Boolean get() = State.PseudoStateType.TERMINAL == state.type
 
     override val state: State<S, T> get() = context.state
     override val id: String get() = context.id
@@ -40,24 +39,15 @@ open class DefaultStateMachine<S, T>(
         started = false
     }
 
-    /**
-     * Trigger the state machine
-     * can be null for automatic (non-trigger) transitions
-     */
+    @Synchronized
     override fun trigger(trigger: Trigger<T>?): State<S, T> {
         assertStarted()
         var nextTrigger = trigger
 
         do {
-            val sourceStateId: S = state.id
-            try {
-                runTriggerFlow(nextTrigger)
-            } catch (e: Exception) {
-                throw StateMachineException(e, this)
-            }
-
-            val targetStateId = state.id
-            val transitioned = targetStateId != sourceStateId
+            val sourceStateId = state.id
+            val targetState = runTriggerFlow(nextTrigger)
+            val transitioned = targetState.id != sourceStateId
             // Try a trigger-less transition in case it's defined.
             nextTrigger = null
         } while (!finished && transitioned)
@@ -65,34 +55,30 @@ open class DefaultStateMachine<S, T>(
     }
 
     private fun runTriggerFlow(trigger: Trigger<T>?): State<S, T> {
-        return transitionMap.getTransitions(state.id, trigger?.id)
-            .map { DefaultTransitionContext(context, it, trigger) }
-            .firstOrNull { shouldTransition(it) }
-            ?.also { log.debug("Guard evaluated to true. transitioning to {}", it.transition.targetId) }
-            ?.let { transitionContext ->
-                state.exitAction?.act(context)
-                val targetState = statesMap[transitionContext.transition.targetId]!!
-                transitionContext.transition.actions.forEach { action -> action.act(transitionContext) }
-                context.transitionToState(targetState)
-                // execute entry action
-                targetState.entryAction?.act(context)
-            }.let {
-            ifTerminal()
-            state
-        }
-    }
+        try {
+            transitionMap.getTransitions(state.id, trigger?.id)
+                .map { DefaultTransitionContext(context, it, trigger) }
+                .firstOrNull { it.shouldTransition() }
+                ?.also {
+                    log.debug("Transition allowed. transitioning to {}", it.transition.targetId)
+                    // exit source state
+                    state.exitAction?.act(context)
 
-    private fun shouldTransition(transitionContext: TransitionContext<S, T>): Boolean {
-        val transition = transitionContext.transition
-        val transitionGuard = transition.guard
+                    // perform transition actions
+                    it.runTransitionActions()
 
-        if (transitionGuard == null) {
-            log.debug("No Guard defined for transition {}, allowing transition by default", transition)
-            return true
-        }
-
-        return (transitionGuard.allow(transitionContext)).also {
-            log.debug("Evaluation of transition {} is: {}", transition, it)
+                    // enter target state
+                    context.state = statesMap[it.transition.targetId]!!
+                    state.entryAction?.act(context)
+                }
+                ?.let {
+                    if (finished) {
+                        stop()
+                    }
+                }
+            return state
+        } catch (e: Exception) {
+            throw StateMachineException(e, this)
         }
     }
 
@@ -115,13 +101,6 @@ open class DefaultStateMachine<S, T>(
     private fun assertNotFinished() {
         if (finished) {
             throw StateMachineDefinitionException("Cannot start the state machine as it's in a terminal state.")
-        }
-    }
-
-    private fun ifTerminal() {
-        if (State.PseudoStateType.TERMINAL == state.type) {
-            finished = true
-            stop()
         }
     }
 }
