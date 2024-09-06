@@ -8,4 +8,7 @@ interface TransitionContext<S, T> {
     val stateMachineContext: StateMachineContext<S, T>
     val transition: Transition<S, T>
     val trigger: Trigger<T>?
+    fun runTransitionActions()
+
+    fun shouldTransition(): Boolean
 }

@@ -8,10 +8,6 @@ open class DefaultStateMachineContext<S, T> (
     override var state: State<S, T>,
     private val properties: MutableMap<Any, Any> = mutableMapOf(),
 ) : StateMachineContext<S, T> {
-    override fun transitionToState(state: State<S, T>) {
-        this.state = state
-    }
-
     override fun getProperty(key: Any): Any? {
         return properties[key]
     }

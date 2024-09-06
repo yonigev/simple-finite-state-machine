@@ -1,7 +1,6 @@
 package io.github.yonigev.sfsm
 
-import io.github.yonigev.sfsm.action.StateAction
-import io.github.yonigev.sfsm.action.TransitionAction.Companion.create
+import io.github.yonigev.sfsm.action.TransitionAction
 import io.github.yonigev.sfsm.definition.StateMachineDefiner
 import io.github.yonigev.sfsm.definition.state.StatesDefiner
 import io.github.yonigev.sfsm.definition.transition.TransitionsDefiner
@@ -174,7 +173,7 @@ class StateMachineTest {
 
     @Test
     fun testStateMachineTransition_contextPropertyAwareGuard() {
-        val setPropertyAction = create<S, T> {
+        val setPropertyAction = TransitionAction<S, T> {
             it.stateMachineContext.setProperty("PROPERTY", true)
         }
         // this guard allows transition only when the value of key "PROPERTY" is true
@@ -229,9 +228,9 @@ class StateMachineTest {
                     triggerId = T.MOVE_TO_B,
                     guard = positiveGuard,
                     transitionActions = listOf(
-                        create { output.add(1) },
-                        create { output.add(2) },
-                        create { output.add(3) },
+                        TransitionAction { output.add(1) },
+                        TransitionAction { output.add(2) },
+                        TransitionAction { output.add(3) },
                     ),
                 )
                 definer.add(
@@ -240,9 +239,9 @@ class StateMachineTest {
                         targetId = S.STATE_C,
                         triggerId = T.FORCE_MOVE_TO_C,
                         transitionActions = listOf(
-                            create { output.add(1) },
-                            create { output.add(2) },
-                            create { output.add(3) },
+                            TransitionAction { output.add(1) },
+                            TransitionAction { output.add(2) },
+                            TransitionAction { output.add(3) },
                         ),
                     ),
                 )
@@ -267,17 +266,17 @@ class StateMachineTest {
         val stateMachineDefiner = object : StateMachineDefiner<S, T>() {
             override fun defineStates(definer: StatesDefiner<S, T>) {
                 definer.setInitial(S.INITIAL)
-                definer.simple(S.STATE_A, StateAction.create { output.add(2) }, StateAction.create { output.add(3) })
-                definer.simple(S.STATE_B, StateAction.create { output.add(5) }, StateAction.create { output.add(6) })
-                definer.choice(S.STATE_B, StateAction.create { output.add(5) }, StateAction.create { output.add(6) })
-                definer.terminal(S.TERMINAL_STATE, StateAction.create { output.add(8) })
+                definer.simple(S.STATE_A, { output.add(2) }, { output.add(3) })
+                definer.simple(S.STATE_B, { output.add(5) }, { output.add(6) })
+                definer.choice(S.STATE_B, { output.add(5) }, { output.add(6) })
+                definer.terminal(S.TERMINAL_STATE) { output.add(8) }
             }
 
             override fun defineTransitions(definer: TransitionsDefiner<S, T>) {
-                definer.add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard, create { output.add(1) })
-                definer.add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard, create { output.add(4) })
-                definer.add(S.STATE_B, S.TERMINAL_STATE, T.END, positiveGuard, create { output.add(7) })
-                definer.add(S.STATE_B, S.STATE_A, T.MOVE_TO_A, positiveGuard, create { output.add(7) })
+                definer.add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard) { output.add(1) }
+                definer.add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard) { output.add(4) }
+                definer.add(S.STATE_B, S.TERMINAL_STATE, T.END, positiveGuard) { output.add(7) }
+                definer.add(S.STATE_B, S.STATE_A, T.MOVE_TO_A, positiveGuard) { output.add(7) }
             }
         }
 

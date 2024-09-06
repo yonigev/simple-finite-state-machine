@@ -2,7 +2,6 @@ package io.github.yonigev.sfsm.exception
 
 import io.github.yonigev.sfsm.StateMachine
 import io.github.yonigev.sfsm.StateMachineException
-import io.github.yonigev.sfsm.action.TransitionAction.Companion.create
 import io.github.yonigev.sfsm.definition.StateMachineDefiner
 import io.github.yonigev.sfsm.definition.StateMachineDefinitionException
 import io.github.yonigev.sfsm.definition.state.StatesDefiner
@@ -63,7 +62,7 @@ class StateMachineExceptionHandlingTest {
 
             override fun defineTransitions(definer: TransitionsDefiner<S, T>) {
                 definer.apply {
-                    add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard, create<S, T> { throw Exception("Exception thrown in a Transition Action") })
+                    add(S.INITIAL, S.STATE_A, T.MOVE_TO_A, positiveGuard) { throw Exception("Exception thrown in a Transition Action") }
                     add(S.STATE_A, S.STATE_B, T.MOVE_TO_B, positiveGuard)
                 }
             }

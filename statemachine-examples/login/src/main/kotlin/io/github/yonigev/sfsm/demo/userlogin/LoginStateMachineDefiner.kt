@@ -12,7 +12,6 @@ import io.github.yonigev.sfsm.demo.userlogin.LoginStateMachineDefiner.LoginTrigg
 import io.github.yonigev.sfsm.demo.userlogin.LoginStateMachineDefiner.LoginTrigger.SEND_PASSWORD
 import io.github.yonigev.sfsm.demo.userlogin.trigger.EmailInputTrigger
 import io.github.yonigev.sfsm.demo.userlogin.trigger.PasswordInputTrigger
-import io.github.yonigev.sfsm.action.TransitionAction
 import io.github.yonigev.sfsm.definition.StateMachineDefiner
 import io.github.yonigev.sfsm.definition.state.StatesDefiner
 import io.github.yonigev.sfsm.definition.transition.TransitionsDefiner
@@ -45,19 +44,19 @@ class LoginStateMachineDefiner : StateMachineDefiner<LoginState, LoginTrigger>()
     override fun defineTransitions(definer: TransitionsDefiner<LoginState, LoginTrigger>) {
         definer.apply {
             add(INITIAL_STATE, EMAIL_INPUT, BEGIN_LOGIN_FLOW, Guard.ofPredicate { true })
-            add(EMAIL_INPUT, PASSWORD_INPUT, SEND_EMAIL, emailValidatorGuard, TransitionAction.create { c ->
+            add(EMAIL_INPUT, PASSWORD_INPUT, SEND_EMAIL, emailValidatorGuard) { c ->
                 c.stateMachineContext.setProperty("email", (c.trigger as EmailInputTrigger).email)
-            })
+            }
             // PASSWORD_INPUT is a Choice state:
             // if password is valid, finish login
             // otherwise increment the login attempt counter
             // otherwise, if login attempts exceeded - fail the login flow
             add(PASSWORD_INPUT, LOGIN_COMPLETE, SEND_PASSWORD, passwordValidatorGuard)
             add(PASSWORD_INPUT, LOGIN_FAILED, SEND_PASSWORD, passwordAttemptsExceededGuard)
-            add(PASSWORD_INPUT, PASSWORD_INPUT, SEND_PASSWORD, Guard.ofPredicate { true }, TransitionAction.create { c ->
+            add(PASSWORD_INPUT, PASSWORD_INPUT, SEND_PASSWORD, Guard.ofPredicate { true }) { c ->
                 val attempts = (c.stateMachineContext.getPropertyOrDefault("attempts", 0) as Int)
                 c.stateMachineContext.setProperty("attempts", attempts + 1)
-            })
+            }
         }
     }
 

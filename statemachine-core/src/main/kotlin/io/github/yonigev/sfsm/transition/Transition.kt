@@ -31,8 +31,8 @@ interface Transition<S, T> {
                     get() = targetId
                 override val triggerId: T?
                     get() = triggerId
-                override val guard: Guard<S, T>
-                    get() = guard!!
+                override val guard: Guard<S, T>?
+                    get() = guard
                 override val actions: List<TransitionAction<S, T>>
                     get() = when (transitionActions) {
                         null -> emptyList()

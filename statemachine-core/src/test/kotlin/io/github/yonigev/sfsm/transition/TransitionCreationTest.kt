@@ -26,8 +26,8 @@ class TransitionCreationTest {
 
     @Test
     fun testTransitionCreation_nonNullActions() {
-        val action1 = TransitionAction.create<S, T> { }
-        val action2 = TransitionAction.create<S, T> { }
+        val action1 = TransitionAction<S, T> { }
+        val action2 = TransitionAction<S, T> { }
         val transition = Transition.create(
             S.STATE_A,
             S.STATE_B,
