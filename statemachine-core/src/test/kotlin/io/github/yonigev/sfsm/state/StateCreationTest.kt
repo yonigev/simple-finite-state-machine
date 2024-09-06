@@ -18,7 +18,7 @@ class StateCreationTest {
 
     @Test
     fun testSimpleStateCreation() {
-        val someAction = StateAction.create<S, T> {}
+        val someAction = StateAction<S, T> {}
         val state = State.create(S.STATE_A, entryAction = someAction, exitAction = someAction)
         assertEquals(state.id, S.STATE_A)
         assertEquals(State.PseudoStateType.SIMPLE, state.type)
@@ -38,7 +38,7 @@ class StateCreationTest {
 
     @Test
     fun testTerminalStateCreation() {
-        val someAction = StateAction.create<S, T> {}
+        val someAction = StateAction<S, T> {}
         val state = State.terminal(S.STATE_A, entryAction = someAction)
         assertEquals(state.id, S.STATE_A)
         assertEquals(State.PseudoStateType.TERMINAL, state.type)

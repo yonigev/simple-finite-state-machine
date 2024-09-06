@@ -2,10 +2,12 @@ package io.github.yonigev.sfsm
 
 import io.github.yonigev.sfsm.action.StateAction
 import io.github.yonigev.sfsm.action.TransitionAction
+import io.github.yonigev.sfsm.context.StateMachineContext
 import io.github.yonigev.sfsm.definition.StateMachineDefiner
 import io.github.yonigev.sfsm.definition.state.StatesDefiner
 import io.github.yonigev.sfsm.definition.transition.TransitionsDefiner
 import io.github.yonigev.sfsm.factory.DefaultStateMachineFactory
+import io.github.yonigev.sfsm.transition.TransitionContext
 import io.github.yonigev.sfsm.trigger.Trigger
 import io.github.yonigev.sfsm.util.S
 import io.github.yonigev.sfsm.util.T
@@ -43,15 +45,16 @@ class StateMachineThreadSafetyTest {
 
     private fun counterStateMachineDefiner(): StateMachineDefiner<S, T> {
         val definer = object : StateMachineDefiner<S, T>("Simple Counter State Machine") {
-            val incrementingStateAction = StateAction.create<S, T> {
-                var count: Int = it.getProperty("count") as Int
+            val incrementingStateAction = StateAction { ctx: StateMachineContext<S, T> ->
+                var count: Int = ctx.getProperty("count") as Int
                 count++
-                it.setProperty("count", count)
+                ctx.setProperty("count", count)
             }
-            val incrementingTransitionAction = TransitionAction.create<S, T> {
-                var count: Int = it.stateMachineContext.getPropertyOrDefault("count", 0) as Int
+
+            val incrementingTransitionAction = TransitionAction { ctx: TransitionContext<S, T> ->
+                var count: Int = ctx.stateMachineContext.getPropertyOrDefault("count", 0) as Int
                 count++
-                it.stateMachineContext.setProperty("count", count)
+                ctx.stateMachineContext.setProperty("count", count)
             }
 
             override fun defineStates(definer: StatesDefiner<S, T>) {
